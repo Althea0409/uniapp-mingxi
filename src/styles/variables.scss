@@ -1,0 +1,86 @@
+// 学生端小程序 - SCSS全局变量
+// 基于UI设计方案的色板定义
+
+// ==================== 主色系 ====================
+$primary-color: #2B46FE;        // 主色-科技蓝
+$secondary-color: #7B61FF;      // 辅助色-活力紫
+$accent-color: #FFB84D;         // 强调色-温暖橙（用于奖励、成就）
+
+// 渐变色
+$gradient-primary: linear-gradient(135deg, $primary-color, $secondary-color);
+$gradient-progress: linear-gradient(90deg, $primary-color, $secondary-color);
+
+// ==================== 背景色 ====================
+$bg-color: #F7F8FC;             // 页面背景色-浅灰蓝
+$card-bg: #FFFFFF;              // 卡片背景色-白色
+
+// ==================== 文字色 ====================
+$text-primary: #333333;         // 主文字色
+$text-secondary: #666666;       // 次要文字色
+$text-placeholder: #999999;     // 占位符文字色
+$text-disabled: #CCCCCC;        // 禁用文字色
+$text-white: #FFFFFF;           // 白色文字
+
+// ==================== 功能色 ====================
+$success-color: #52C41A;        // 成功色-绿色
+$warning-color: #FAAD14;        // 警告色-橙色
+$error-color: #F5222D;          // 错误色-红色
+$info-color: #1890FF;           // 信息色-蓝色
+
+// ==================== 边框色 ====================
+$border-color: #E5E5E5;         // 边框色
+$divider-color: #F0F0F0;        // 分割线色
+
+// ==================== 尺寸变量 ====================
+// 圆角
+$border-radius-small: 8rpx;     // 小圆角
+$border-radius: 16rpx;          // 标准圆角
+$border-radius-large: 24rpx;    // 大圆角
+$border-radius-round: 44rpx;    // 全圆角（按钮）
+
+// 间距
+$spacing-xs: 8rpx;              // 超小间距
+$spacing-sm: 16rpx;             // 小间距
+$spacing-md: 24rpx;             // 中等间距
+$spacing-lg: 32rpx;             // 大间距
+$spacing-xl: 48rpx;             // 超大间距
+
+// 内边距
+$padding-xs: 8rpx;
+$padding-sm: 16rpx;
+$padding-md: 24rpx;
+$padding-lg: 32rpx;
+
+// 卡片
+$card-padding: 24rpx;           // 卡片内边距
+$card-margin: 24rpx;            // 卡片外边距
+
+// 按钮
+$button-height: 88rpx;          // 按钮高度
+$button-height-small: 64rpx;    // 小按钮高度
+
+// ==================== 字体大小 ====================
+$font-size-xs: 24rpx;           // 12px - 最小字体
+$font-size-sm: 26rpx;           // 13px - 小字体
+$font-size-base: 28rpx;         // 14px - 基础字体
+$font-size-md: 30rpx;           // 15px - 中等字体
+$font-size-lg: 32rpx;           // 16px - 标题字体
+$font-size-xl: 36rpx;           // 18px - 大标题字体
+$font-size-xxl: 40rpx;          // 20px - 超大标题字体
+
+// ==================== 阴影 ====================
+$shadow-card: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);        // 卡片阴影
+$shadow-button: 0 8rpx 16rpx rgba(43, 70, 254, 0.3);   // 按钮阴影
+
+// ==================== z-index层级 ====================
+$z-index-modal: 1000;           // 弹窗
+$z-index-popup: 900;            // 弹出层
+$z-index-fixed: 800;            // 固定定位
+$z-index-tabbar: 700;           // TabBar
+$z-index-navbar: 600;           // 导航栏
+
+// ==================== 过渡动画 ====================
+$transition-base: all 0.3s ease;
+$transition-fast: all 0.2s ease;
+$transition-slow: all 0.5s ease;
+

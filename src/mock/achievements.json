@@ -1,0 +1,103 @@
+{
+  "achievements": [
+    {
+      "id": "a001",
+      "name": "连续学习7天",
+      "icon": "🎖️",
+      "description": "连续7天登录并完成学习任务",
+      "status": "unlocked",
+      "reward": 100,
+      "unlockTime": "2025-11-15"
+    },
+    {
+      "id": "a002",
+      "name": "作业全勤王",
+      "icon": "🏅",
+      "description": "完成所有作业，完成率100%",
+      "status": "unlocked",
+      "progress": 15,
+      "total": 15,
+      "reward": 200,
+      "unlockTime": "2025-11-10"
+    },
+    {
+      "id": "a003",
+      "name": "讨论达人",
+      "icon": "⭐",
+      "description": "参与课堂讨论30次",
+      "status": "in-progress",
+      "progress": 18,
+      "total": 30,
+      "reward": 150
+    },
+    {
+      "id": "a004",
+      "name": "学霸之路",
+      "icon": "🏆",
+      "description": "综合评分达到95分以上",
+      "status": "locked",
+      "reward": 500
+    },
+    {
+      "id": "a005",
+      "name": "早起鸟儿",
+      "icon": "🌅",
+      "description": "连续10天早上8点前完成学习",
+      "status": "locked",
+      "reward": 120
+    }
+  ],
+  "discussions": [
+    {
+      "id": "d001",
+      "authorId": "1002",
+      "authorName": "小红",
+      "authorAvatar": "/static/avatar/default.png",
+      "group": "高数讨论组",
+      "title": "关于极限的一个困惑",
+      "content": "在学习ε-δ语言时，遇到了这样的问题...",
+      "images": [],
+      "replies": 15,
+      "likes": 32,
+      "heat": 98,
+      "createTime": "2小时前"
+    },
+    {
+      "id": "d002",
+      "authorId": "1003",
+      "authorName": "张明",
+      "authorAvatar": "/static/avatar/default.png",
+      "group": "英语角",
+      "title": "分享一个背单词的好方法",
+      "content": "最近发现了艾宾浩斯遗忘曲线...",
+      "images": ["/static/discussion/method.png"],
+      "replies": 8,
+      "likes": 25,
+      "heat": 75,
+      "createTime": "5小时前"
+    }
+  ],
+  "resources": [
+    {
+      "id": "r001",
+      "type": "document",
+      "title": "线性代数经典习题集",
+      "cover": "/static/resource/math-book.png",
+      "description": "包含线性代数所有章节的经典习题",
+      "matchRate": 95,
+      "reason": "你在这个章节的正确率较低，建议加强练习"
+    },
+    {
+      "id": "r002",
+      "type": "video",
+      "title": "三角函数解题技巧",
+      "cover": "/static/resource/video-thumb.png",
+      "description": "详细讲解三角函数的各类解题方法",
+      "matchRate": 88,
+      "reason": "你收藏的同类视频评分很高",
+      "duration": 18,
+      "rating": 4.9
+    }
+  ]
+}
+

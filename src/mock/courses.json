@@ -1,0 +1,49 @@
+{
+  "courses": [
+    {
+      "id": "c001",
+      "name": "高等数学（上）",
+      "teacher": "张教授",
+      "department": "数学学院",
+      "cover": "/static/course/math.png",
+      "progress": 78,
+      "chapter": "第8章",
+      "nextClass": "本周3节课",
+      "status": "ongoing"
+    },
+    {
+      "id": "c002",
+      "name": "大学英语（二）",
+      "teacher": "Lisa老师",
+      "department": "外语学院",
+      "cover": "/static/course/english.png",
+      "progress": 45,
+      "chapter": "Unit 5",
+      "nextClass": "明天10:00",
+      "status": "ongoing"
+    },
+    {
+      "id": "c003",
+      "name": "计算机导论",
+      "teacher": "王老师",
+      "department": "计算机学院",
+      "cover": "/static/course/computer.png",
+      "progress": 100,
+      "chapter": "已完成",
+      "nextClass": "",
+      "status": "completed"
+    },
+    {
+      "id": "c004",
+      "name": "大学物理",
+      "teacher": "李教授",
+      "department": "物理学院",
+      "cover": "/static/course/physics.png",
+      "progress": 62,
+      "chapter": "第7章",
+      "nextClass": "周三14:00",
+      "status": "ongoing"
+    }
+  ]
+}
+
