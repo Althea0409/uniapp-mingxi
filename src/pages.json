@@ -115,26 +115,14 @@
 	"tabBar": {
 		"color": "#999999",
 		"selectedColor": "#2B46FE",
-		"backgroundColor": "#FFFFFF",
-		"borderStyle": "black",
-		"list": [
-            {
-                "pagePath": "pages/home/index",
-                "text": "首页",
-                "iconPath": "static/tabbar/home.svg",
-                "selectedIconPath": "static/tabbar/home-active.svg"
-            },
+        "backgroundColor": "#FFFFFF",
+        "borderStyle": "white",
+        "list": [
             {
                 "pagePath": "pages/study/index",
                 "text": "学习",
                 "iconPath": "static/tabbar/study.svg",
                 "selectedIconPath": "static/tabbar/study-active.svg"
-            },
-            {
-                "pagePath": "pages/assistant/index",
-                "text": "明小蹊",
-                "iconPath": "static/tabbar/assistant.svg",
-                "selectedIconPath": "static/tabbar/assistant-active.svg"
             },
             {
                 "pagePath": "pages/discover/index",
@@ -143,11 +131,23 @@
                 "selectedIconPath": "static/tabbar/discover-active.svg"
             },
             {
+                "pagePath": "pages/home/index",
+                "text": "首页",
+                "iconPath": "static/tabbar/home.svg",
+                "selectedIconPath": "static/tabbar/home-active.svg"
+            },
+            {
+                "pagePath": "pages/assistant/index",
+                "text": "对话",
+                "iconPath": "static/tabbar/assistant.svg",
+                "selectedIconPath": "static/tabbar/assistant-active.svg"
+            },
+            {
                 "pagePath": "pages/profile/index",
                 "text": "我的",
                 "iconPath": "static/tabbar/profile.svg",
                 "selectedIconPath": "static/tabbar/profile-active.svg"
             }
-		]
+        ]
 	}
 }

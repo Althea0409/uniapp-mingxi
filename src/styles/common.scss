@@ -38,6 +38,31 @@ page {
   -ms-overflow-style: none;
 }
 
+// ==================== TabBar顶部线条去除 ====================
+.uni-tabbar,
+.uni-tabbar-bottom,
+.uni-tabbar__content,
+.uni-tabbar__placeholder {
+  border-top: none !important;
+  box-shadow: none !important;
+}
+.uni-tabbar::before,
+.uni-tabbar-bottom::before,
+.uni-tabbar__content::before {
+  display: none !important;
+}
+
+// ==================== TabBar高度与内边距 ====================
+.uni-tabbar,
+.uni-tabbar-bottom {
+  height: 68px !important;
+}
+.uni-tabbar__content {
+  padding-top: 10px !important;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-sizing: border-box;
+}
+
 // 隐藏scroll-view组件滚动条
 scroll-view {
   &::-webkit-scrollbar {

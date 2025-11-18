@@ -58,17 +58,14 @@ import { ref, computed } from 'vue';
 import Card from '@/components/common/Card.vue';
 import Button from '@/components/common/Button.vue';
 import { useAppStore } from '@/stores/app';
+import { useUserStore } from '@/stores/user';
+import achievementsJson from '@/mock/achievements.json';
 
 const appStore = useAppStore();
+const userStore = useUserStore();
 
-const points = ref(1250);
-const achievements = ref([
-  { id: 'a001', name: '连续学习7天', icon: '🎖️', description: '', status: 'unlocked', reward: 100, unlockTime: '2025-11-15' },
-  { id: 'a002', name: '作业全勤王', icon: '🏅', description: '', status: 'unlocked', reward: 200, progress: 15, total: 15, unlockTime: '2025-11-10' },
-  { id: 'a003', name: '讨论达人', icon: '⭐', description: '', status: 'in-progress', reward: 150, progress: 18, total: 30 },
-  { id: 'a004', name: '学霸之路', icon: '🏆', description: '', status: 'locked', reward: 500 },
-  { id: 'a005', name: '早起鸟儿', icon: '🌅', description: '', status: 'locked', reward: 120 },
-]);
+const points = ref(userStore.userPoints);
+const achievements = ref(achievementsJson.achievements);
 
 const unlocked = computed(() => achievements.value.filter(a => a.status === 'unlocked'));
 const inProgress = computed(() => achievements.value.filter(a => a.status === 'in-progress'));

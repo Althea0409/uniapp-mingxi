@@ -157,6 +157,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import Card from '@/components/common/Card.vue';
+import coursesJson from '@/mock/courses.json';
+import homeworkJson from '@/mock/homework.json';
+import { useAppStore } from '@/stores/app';
 
 // Tab配置
 const tabs = ref([
@@ -176,96 +179,40 @@ const selectedStatus = ref('');
 const showSubjectPicker = ref(false);
 const showStatusPicker = ref(false);
 
-// Mock数据
-const courses = ref([
-  {
-    id: 'c001',
-    name: '高等数学（上）',
-    teacher: '张教授',
-    department: '数学学院',
-    subject: '数学',
-    cover: '/static/course/math.png',
-    progress: 78,
-    chapter: '第8章',
-    nextClass: '本周3节课',
-    status: 'ongoing'
-  },
-  {
-    id: 'c002',
-    name: '大学物理',
-    teacher: '李老师',
-    department: '物理学院',
-    subject: '物理',
-    cover: '/static/course/physics.png',
-    progress: 45,
-    chapter: '第5章',
-    nextClass: '本周2节课',
-    status: 'ongoing'
-  },
-  {
-    id: 'c003',
-    name: '英语精读',
-    teacher: '王老师',
-    department: '外语学院',
-    subject: '英语',
-    cover: '/static/course/english.png',
-    progress: 92,
-    chapter: '第12章',
-    nextClass: '本周2节课',
-    status: 'ongoing'
-  }
-]);
+const appStore = useAppStore();
+const courses = ref((coursesJson.courses || []).map((c:any)=>({
+  id: c.id,
+  name: c.name,
+  teacher: c.teacher,
+  department: c.department,
+  subject: c.department.includes('数学')?'数学':c.department.includes('物理')?'物理':c.department.includes('外语')?'英语':'综合',
+  cover: c.cover,
+  progress: c.progress,
+  chapter: c.chapter,
+  nextClass: c.nextClass,
+  status: c.status
+})));
 
-const homework = ref([
-  {
-    id: 'h001',
-    title: '高等数学作业 - 第8章习题',
-    subject: '数学',
-    deadline: '2024-11-20 23:59',
-    remainingTime: '2天12小时',
-    status: 'pending',
-    statusText: '待完成'
-  },
-  {
-    id: 'h002',
-    title: '大学物理实验报告',
-    subject: '物理',
-    deadline: '2024-11-18 23:59',
-    remainingTime: '12小时',
-    status: 'pending',
-    statusText: '待完成'
-  },
-  {
-    id: 'h003',
-    title: '英语阅读理解练习',
-    subject: '英语',
-    deadline: '2024-11-15 23:59',
-    remainingTime: '-',
-    status: 'completed',
-    statusText: '已完成'
-  }
-]);
+function statusText(s:string){ return s==='pending'?'待完成': s==='completed'?'已完成': s==='graded'?'已批改':'进行中'; }
+const homework = ref((homeworkJson.homework||[]).map((h:any)=>({
+  id: h.id,
+  title: h.title,
+  subject: h.courseName,
+  deadline: h.deadline||'-',
+  remainingTime: h.deadline? '—' : '-',
+  status: h.status,
+  statusText: statusText(h.status)
+})));
 
-const preview = ref([
-  {
-    id: 'p001',
-    title: '高等数学 - 第9章预习',
-    subject: '数学',
-    duration: 30,
-    contents: ['函数定义', '函数性质', '函数图像'],
-    status: 'pending',
-    statusText: '待预习'
-  },
-  {
-    id: 'p002',
-    title: '大学物理 - 第6章预习',
-    subject: '物理',
-    duration: 25,
-    contents: ['电磁感应', '楞次定律'],
-    status: 'completed',
-    statusText: '已完成'
-  }
-]);
+const preview = ref((homeworkJson.preview||[]).map((p:any)=>({
+  id: p.id,
+  title: `${p.courseName} - ${p.title}`,
+  subject: p.courseName,
+  duration: p.duration,
+  contents: p.content,
+  status: p.completed?'completed':'pending',
+  statusText: p.completed?'已完成':'待预习'
+})));
 
 // 过滤数据
 const filteredCourses = computed(() => {
@@ -336,12 +283,14 @@ const goToHomeworkDetail = (hw: any) => {
   uni.navigateTo({
     url: `/pages/study/homework-detail?id=${hw.id}`
   });
+  appStore.recordStudySession(20);
 };
 
 const goToPreviewDetail = (pv: any) => {
   uni.navigateTo({
     url: `/pages/study/preview-detail?id=${pv.id}`
   });
+  appStore.recordStudySession(15);
 };
 
 // 监听全局事件（来自首页快捷入口）

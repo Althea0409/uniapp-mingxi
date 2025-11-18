@@ -1,4 +1,7 @@
 import { storage, StorageKeys } from '@/utils/storage';
+import coursesJson from '@/mock/courses.json';
+import homeworkJson from '@/mock/homework.json';
+import achievementsJson from '@/mock/achievements.json';
 
 export type ChatRole = 'system' | 'user' | 'assistant';
 export interface ChatMessage { role: ChatRole; content: string }
@@ -97,6 +100,28 @@ function rand(min: number, max: number) { return Math.floor(Math.random() * (max
 
 function buildMockResponse(q: string): string {
   const s = q.toLowerCase();
+  if (/课表|课程|上课|老师|下节课/.test(q)) {
+    const list = (coursesJson.courses||[]).slice(0,3).map(c=>`· ${c.name}（${c.teacher}） · 进度${c.progress}% · ${c.chapter} · 下一次：${c.nextClass}`);
+    return `你的课程概览：\n${list.join('\n')}\n可在“学习中心-我的课程”查看详情`;
+  }
+  if (/作业|提交|截止|批改|分数|成绩/.test(q)) {
+    const pending = (homeworkJson.homework||[]).filter(h=>h.status==='pending').slice(0,2).map(h=>`· ${h.courseName}｜${h.title} · 截止：${h.deadline}`);
+    const graded = (homeworkJson.homework||[]).find(h=>h.status==='graded');
+    const gradedLine = graded? `最新批改：${graded.courseName}｜${graded.title} · 得分 ${graded.score}/${graded.totalScore}` : '暂无批改记录';
+    return `作业提醒：\n${pending.length?pending.join('\n'):'暂无待交作业'}\n${gradedLine}`;
+  }
+  if (/预习|课前|准备|计划/.test(q)) {
+    const pv = (homeworkJson.preview||[]).filter(p=>!p.completed).slice(0,2).map(p=>`· ${p.courseName}｜${p.title} · 建议${p.duration}分钟`);
+    return `近期课前预习：\n${pv.length?pv.join('\n'):'暂无预习任务'}\n建议按任务清单完成：视频→阅读→思考题`;
+  }
+  if (/资源|推荐|资料|视频|题库/.test(q)) {
+    const rs = (achievementsJson.resources||[]).slice(0,2).map(r=>`· ${r.title}（匹配度${r.matchRate}%） · ${r.description}`);
+    return `个性化资源推荐：\n${rs.join('\n')}\n在“发现”页可查看完整资源列表`;
+  }
+  if (/讨论|交流|问答|同学/.test(q)) {
+    const ds = (achievementsJson.discussions||[]).slice(0,2).map(d=>`· ${d.group}｜${d.title} · 回复${d.replies} · 热度${d.heat}`);
+    return `课堂讨论热点：\n${ds.join('\n')}\n欢迎参与讨论提升课堂参与度`;
+  }
   if (/高数|数学|函数|极限|微积分/.test(q)) {
     return `关于高数学习：\n1）先掌握函数与极限的概念与常见等价代换\n2）配合例题，分步骤写出定义与判定条件\n3）建立错题本，按题型归纳方法\n4）每天进行10～20分钟计算训练\n5）遇到困难，用数形结合与极限直觉辅助理解`;
   }

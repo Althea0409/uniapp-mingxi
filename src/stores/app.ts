@@ -16,6 +16,8 @@ export const useAppStore = defineStore('app', () => {
   const encouragementList = ref<string[]>(
     storage.get(StorageKeys.ENCOURAGEMENT) || encouragementJson.encouragement
   );
+  const todayStudyMinutes = ref<number>((storage.get(StorageKeys.STUDY_STATS)?.todayStudyMinutes) || 0);
+  const consecutiveWrong = ref<number>((storage.get(StorageKeys.STUDY_STATS)?.consecutiveWrong) || 0);
   
   // 方法
   /**
@@ -107,6 +109,23 @@ export const useAppStore = defineStore('app', () => {
   function closeEncouragement() {
     encourageVisible.value = false;
   }
+  function recordStudySession(minutes: number) {
+    todayStudyMinutes.value += minutes;
+    storage.set(StorageKeys.STUDY_STATS, { todayStudyMinutes: todayStudyMinutes.value, consecutiveWrong: consecutiveWrong.value });
+    if (minutes >= 60 || todayStudyMinutes.value >= 120) triggerEncouragement('fatigue');
+  }
+  function recordWrongAnswer(count: number = 1) {
+    consecutiveWrong.value += count;
+    storage.set(StorageKeys.STUDY_STATS, { todayStudyMinutes: todayStudyMinutes.value, consecutiveWrong: consecutiveWrong.value });
+    if (consecutiveWrong.value >= 3) triggerEncouragement('encourage');
+  }
+  function resetWrongAnswer() {
+    consecutiveWrong.value = 0;
+    storage.set(StorageKeys.STUDY_STATS, { todayStudyMinutes: todayStudyMinutes.value, consecutiveWrong: consecutiveWrong.value });
+  }
+  function recordDailyCheckin(hour: number) {
+    if (hour >= 21) triggerEncouragement('daily');
+  }
   
   /**
    * 页面跳转
@@ -155,6 +174,10 @@ export const useAppStore = defineStore('app', () => {
     addEncouragement,
     triggerEncouragement,
     closeEncouragement,
+    recordStudySession,
+    recordWrongAnswer,
+    resetWrongAnswer,
+    recordDailyCheckin,
     navigateTo,
     navigateBack,
   };
