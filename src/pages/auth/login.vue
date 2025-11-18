@@ -13,7 +13,7 @@
 
     <!-- 登录表单 -->
     <view class="login-form">
-      <Card>
+      <Card :margin="'24rpx 0'" :padding="'68rpx'">
         <!-- 手机号输入 -->
         <view class="form-item">
           <view class="form-label">
@@ -250,7 +250,7 @@ onMounted(() => {
 // 顶部装饰
 .login-header {
   position: relative;
-  height: 400rpx;
+  height: 480rpx;
   background: $gradient-primary;
   overflow: hidden;
   
@@ -271,7 +271,7 @@ onMounted(() => {
     align-items: center;
     justify-content: center;
     height: 100%;
-    padding-bottom: 60rpx;
+    padding-bottom: 80rpx;
     position: relative;
     z-index: 1;
     
@@ -303,9 +303,13 @@ onMounted(() => {
 // 登录表单
 .login-form {
   padding: 0 48rpx;
-  margin-top: -60rpx;
+  margin-top: 0;
   position: relative;
   z-index: 2;
+  min-height: calc(100vh - 600rpx);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .form-item {

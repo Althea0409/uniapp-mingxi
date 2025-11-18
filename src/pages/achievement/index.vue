@@ -10,6 +10,7 @@
             <text class="p-sub">今日 +50 · 本周 +320</text>
           </view>
           <Button text="积分明细" type="secondary" size="small" @click="showDetail" />
+          <Button text="查看成长档案" type="primary" size="small" @click="goGrowth" />
         </view>
       </Card>
 
@@ -73,6 +74,9 @@ const locked = computed(() => achievements.value.filter(a => a.status === 'locke
 
 const showDetail = () => {
   appStore.showToast('积分明细功能开发中', 'none');
+};
+const goGrowth = () => {
+  uni.navigateTo({ url: '/pages/growth/index' });
 };
 </script>
 

@@ -58,17 +58,30 @@ const statusText = computed(() => {
 });
 
 const questions = ref([
-  { title: '阅读理解题（节选）', answer: '' },
-  { title: '词汇填空（5空）', answer: '' },
+  { title: '阅读理解题（节选）', answer: '', key: 'A' },
+  { title: '词汇填空（5空）', answer: '', key: 'memory' },
 ]);
 
 const submitHomework = async () => {
   const ok = await appStore.showConfirm('确认提交作业吗？');
   if (!ok) return;
-  hw.value.status = 'submitted';
-  appStore.showToast('已提交作业，等待教师批改', 'success');
-  userStore.addPoints(30);
-  appStore.triggerEncouragement('celebration');
+  let wrong = 0;
+  for (const q of questions.value) {
+    const a = (q.answer||'').trim();
+    const k = (q as any).key;
+    if (!a) wrong++;
+    else if (k && a.toLowerCase() !== String(k).toLowerCase()) wrong++;
+  }
+  if (wrong > 0) {
+    appStore.recordWrongAnswer(wrong);
+    appStore.showToast(`有${wrong}题错误或未作答，建议继续练习`, 'none');
+  } else {
+    appStore.resetWrongAnswer();
+    hw.value.status = 'submitted';
+    appStore.showToast('已提交作业，等待教师批改', 'success');
+    userStore.addPoints(30);
+    appStore.triggerEncouragement('celebration');
+  }
 };
 </script>
 

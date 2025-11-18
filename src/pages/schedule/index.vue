@@ -7,9 +7,11 @@
     </view>
 
     <scroll-view class="day-tabs" scroll-x>
-      <view v-for="d in days" :key="d.date" :class="['day-item', { current: d.isToday }]">
-        <text class="day-week">{{ d.week }}</text>
-        <text class="day-date">{{ d.date }}</text>
+      <view class="day-row">
+        <view v-for="d in days" :key="d.date" :class="['day-item', { current: d.isToday }]">
+          <text class="day-week">{{ d.week }}</text>
+          <text class="day-date">{{ d.date }}</text>
+        </view>
       </view>
     </scroll-view>
 
@@ -65,8 +67,9 @@ const nextWeek = () => { week.value++; };
 .arrow { font-size: 40rpx; cursor: pointer; }
 .week-text { font-size: $font-size-base; color: $text-primary; }
 
-.day-tabs { display: flex; gap: 16rpx; padding: 8rpx 0 16rpx; }
-.day-item { width: 96rpx; height: 88rpx; background: $bg-color; border-radius: $border-radius; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.day-tabs { padding: 8rpx 0 16rpx; }
+.day-row { display: flex; gap: 16rpx; }
+.day-item { flex: 0 0 auto; width: 96rpx; height: 88rpx; background: $bg-color; border-radius: $border-radius; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .day-item.current { background: $card-bg; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05); }
 .day-week { font-size: $font-size-xs; color: $text-secondary; }
 .day-date { font-size: $font-size-base; color: $text-primary; font-weight: bold; }

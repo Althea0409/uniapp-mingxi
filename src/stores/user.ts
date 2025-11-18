@@ -111,6 +111,9 @@ export const useUserStore = defineStore('user', () => {
     if (userInfo.value) {
       userInfo.value.points += points;
       storage.set(StorageKeys.USER_INFO, userInfo.value);
+      const logs = (storage.get(StorageKeys.GROWTH_LOG) as any) || [];
+      logs.push({ type: 'points', delta: points, at: Date.now() });
+      storage.set(StorageKeys.GROWTH_LOG, logs);
     }
   }
   

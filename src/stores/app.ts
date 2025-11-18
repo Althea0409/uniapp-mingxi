@@ -104,6 +104,9 @@ export const useAppStore = defineStore('app', () => {
     encourageType.value = type;
     encouragement.value = getRandomEncouragement();
     encourageVisible.value = true;
+    const logs = (storage.get(StorageKeys.GROWTH_LOG) as any) || [];
+    logs.push({ type: 'encourage', encourageType: type, text: encouragement.value, at: Date.now() });
+    storage.set(StorageKeys.GROWTH_LOG, logs);
   }
 
   function closeEncouragement() {

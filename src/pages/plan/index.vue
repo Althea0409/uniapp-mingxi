@@ -18,6 +18,7 @@
         <view class="task-main">
           <text class="task-title">{{ item.title }}</text>
           <text class="task-meta">学科：{{ item.subject }} · 预计：{{ item.duration }}分钟 · 难度：{{ item.level }}</text>
+          <text v-if="item.reason" class="task-reason">{{ item.reason }}</text>
           <view class="task-res">
             <text v-for="r in item.resources" :key="r" class="res-tag">{{ r }}</text>
           </view>
@@ -37,6 +38,7 @@ import Card from '@/components/common/Card.vue';
 import Button from '@/components/common/Button.vue';
 import { useAppStore } from '@/stores/app';
 import { useUserStore } from '@/stores/user';
+import { storage, StorageKeys } from '@/utils/storage';
 import planData from '@/mock/plan.json';
 import portraitData from '@/mock/portrait.json';
 
@@ -57,7 +59,8 @@ function genTasksFromPortrait(s: string) {
     subject: s,
     duration: 25 + Math.floor((80 - k.value) / 2),
     level: k.value < 60 ? '较难' : '中等',
-    resources: ['练习题','讲解视频']
+    resources: ['练习题','讲解视频'],
+    reason: `由于你在“${k.name}”的掌握度为${k.value}%，建议进行专项巩固`
   }));
   return [...base, ...planData.tasks.filter(t=>t.subject===s)].slice(0,5);
 }
@@ -70,13 +73,25 @@ const switchSubject = (s: string) => {
 };
 
 const startTask = (item: any) => {
+  appStore.recordStudySession(Math.min(item.duration || 20, 30));
   appStore.showToast(`已开始：${item.title}`, 'none');
+  const res = (item.resources||[]) as string[];
+  if (res.some(r=>/题库|练习题/.test(r))) {
+    uni.switchTab({ url: '/pages/study/index' });
+    setTimeout(()=>uni.$emit('switchTab', { tab: 'homework' }), 100);
+  } else if (res.some(r=>/视频|讲解视频/.test(r))) {
+    uni.switchTab({ url: '/pages/discover/index' });
+    setTimeout(()=>uni.$emit('switchTab', { tab: 'resource' }), 100);
+  }
 };
 
 const finishTask = (item: any) => {
   userStore.addPoints(20);
-  appStore.showToast('恭喜完成任务，积分+20', 'success');
+  appStore.showToast('恭喜你完成任务 积分+20', 'success');
   appStore.triggerEncouragement('celebration');
+  const logs = (storage.get(StorageKeys.GROWTH_LOG) as any) || [];
+  logs.push({ type:'task', id: item.id, title: item.title, subject: item.subject, duration: item.duration, finishedAt: Date.now(), reason: item.reason });
+  storage.set(StorageKeys.GROWTH_LOG, logs);
 };
 </script>
 
@@ -94,6 +109,7 @@ const finishTask = (item: any) => {
 .task-icon { font-size: 44rpx; }
 .task-title { font-size: $font-size-base; font-weight: 600; color: $text-primary; }
 .task-meta { display: block; font-size: $font-size-xs; color: $text-secondary; margin-top: 6rpx; }
+.task-reason { display: block; font-size: $font-size-xs; color: $primary-color; margin-top: 6rpx; }
 .task-res { display: flex; gap: 8rpx; margin-top: 8rpx; }
 .res-tag { padding: 6rpx 12rpx; background: $bg-color; border-radius: 16rpx; font-size: $font-size-xs; color: $text-secondary; }
 .task-actions { display: flex; gap: 12rpx; }

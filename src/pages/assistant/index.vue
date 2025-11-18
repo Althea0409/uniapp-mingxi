@@ -117,7 +117,7 @@ const scrollBottom = async () => {
 <style lang="scss" scoped>
 @import '@/styles/variables.scss';
 
-.content { padding: 24rpx 32rpx 24rpx 32rpx; box-sizing: border-box; width: 100%; padding-bottom: 140rpx; }
+.content { padding: 24rpx 32rpx 24rpx 32rpx; box-sizing: border-box; width: 100%; padding-bottom: 160rpx; }
 
 .assistant-hero { display: flex; align-items: center; gap: 16rpx; }
 .hero-avatar { font-size: 64rpx; }
@@ -138,7 +138,7 @@ const scrollBottom = async () => {
 .fb { font-size: $font-size-xs; color: $text-secondary; }
 
 .chat-spacer { height: 1rpx; }
-.input-fixed { position: fixed; left: 0; right: 0; bottom: calc(var(--window-bottom)); padding: 16rpx 32rpx; background: transparent; }
+.input-fixed { position: fixed; left: 0; right: 0; bottom: calc(var(--window-bottom) + 32rpx); padding: 16rpx 32rpx; background: transparent; }
 .input-bar { display: flex; align-items: center; gap: 12rpx; background: #FFFFFF; border-radius: 24rpx; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.08); padding: 12rpx; }
 .input { flex: 1; background: $bg-color; border-radius: $border-radius; padding: 16rpx; }
 .actions { display: flex; align-items: center; gap: 12rpx; }

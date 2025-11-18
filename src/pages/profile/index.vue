@@ -130,7 +130,8 @@ const studyMenus = ref([
   { icon: '📅', label: '我的课表', url: '/pages/schedule/index' },
   { icon: '📊', label: '学习数据', url: '/pages/evaluation/index' },
   { icon: '🧠', label: '学生画像', url: '/pages/portrait/index' },
-  { icon: '🏆', label: '成就勋章', url: '/pages/achievement/index' }
+  { icon: '🏆', label: '成就勋章', url: '/pages/achievement/index' },
+  { icon: '📈', label: '成长档案', url: '/pages/growth/index' }
 ]);
 
 const toolMenus = ref([

@@ -68,8 +68,12 @@
               <text class="resource-desc">{{ item.description }}</text>
               <view class="resource-footer">
                 <view :class="['resource-type', item.type]">{{ item.typeName }}</view>
-                <text class="resource-time">{{ item.time }}</text>
+                <text class="resource-time">匹配度{{ item.matchRate }}%</text>
               </view>
+              <view class="resource-actions">
+                <Button text="一键开始" type="primary" size="small" @click.stop="startResource(item)" />
+              </view>
+              <text v-if="item.reason" class="resource-reason">推荐理由：{{ item.reason }}</text>
             </view>
           </view>
         </Card>
@@ -107,6 +111,7 @@
 import { ref, onMounted } from 'vue';
 import { useAppStore } from '@/stores/app';
 import Card from '@/components/common/Card.vue';
+import achievementsJson from '@/mock/achievements.json';
 
 const appStore = useAppStore();
 const currentTab = ref(0);
@@ -157,35 +162,17 @@ const discussions = ref([
   }
 ]);
 
-const resources = ref([
-  {
-    id: 'r001',
-    cover: '/static/resource/video.png',
-    title: '高等数学精讲 - 函数与极限',
-    description: '详细讲解函数定义域、值域以及极限运算',
-    type: 'video',
-    typeName: '视频',
-    time: '1天前'
-  },
-  {
-    id: 'r002',
-    cover: '/static/resource/doc.png',
-    title: '物理公式汇总PDF',
-    description: '高中物理所有重要公式整理，便于复习',
-    type: 'document',
-    typeName: '文档',
-    time: '3天前'
-  },
-  {
-    id: 'r003',
-    cover: '/static/resource/audio.png',
-    title: '英语听力训练材料',
-    description: 'CET-4级别听力练习，含原文和解析',
-    type: 'audio',
-    typeName: '音频',
-    time: '5天前'
-  }
-]);
+const resources = ref((achievementsJson.resources||[]).map((r:any)=>({
+  id: r.id,
+  cover: r.cover || '/static/resource/doc.png',
+  title: r.title,
+  description: r.description,
+  type: r.type,
+  typeName: r.type==='video'? '视频' : r.type==='audio'? '音频' : '文档',
+  time: r.duration? `${r.duration}分钟` : '推荐',
+  matchRate: r.matchRate,
+  reason: r.reason
+})));
 
 const knowledgeBase = ref([
   {
@@ -222,6 +209,10 @@ const goToDiscussionDetail = (item: any) => {
 const viewResource = (item: any) => {
   appStore.showToast('资源详情功能开发中', 'none');
 };
+const startResource = (item: any) => {
+  appStore.recordStudySession(15);
+  currentTab.value = 1;
+};
 
 // 查看知识
 const viewKnowledge = (item: any) => {
@@ -238,6 +229,8 @@ onMounted(() => {
   uni.$on('switchTab', (data: any) => {
     if (data.tab === 'discussion') {
       currentTab.value = 0;
+    } else if (data.tab === 'resource') {
+      currentTab.value = 1;
     }
   });
 });
@@ -459,6 +452,8 @@ onMounted(() => {
   font-size: $font-size-xs;
   color: $text-placeholder;
 }
+.resource-actions { margin-top: 8rpx; }
+.resource-reason { display: block; margin-top: 8rpx; font-size: $font-size-xs; color: $primary-color; }
 
 // 知识库列表
 .knowledge-item {

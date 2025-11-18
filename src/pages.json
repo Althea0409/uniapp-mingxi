@@ -87,12 +87,18 @@
 				"navigationBarTitleText": "学习指标评估"
 			}
 		},
-		{
-			"path": "pages/achievement/index",
-			"style": {
-				"navigationBarTitleText": "成就与积分"
-			}
-		},
+    {
+      "path": "pages/achievement/index",
+      "style": {
+        "navigationBarTitleText": "成就与积分"
+      }
+    },
+    {
+      "path": "pages/growth/index",
+      "style": {
+        "navigationBarTitleText": "成长档案"
+      }
+    },
 		{
 			"path": "pages/discover/discussion-detail",
 			"style": {
