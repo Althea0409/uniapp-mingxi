@@ -3,7 +3,7 @@
     <!-- 自定义导航栏 -->
     <view class="custom-navbar">
       <view class="navbar-content">
-        <text class="navbar-title">明蹊智慧学习</text>
+        <text class="navbar-title">明蹊智能助学</text>
         <view class="navbar-actions">
           <view class="action-icon" @tap="goToMessages">
             <text class="icon">📬</text>
@@ -259,12 +259,6 @@ const quickActions = ref([
     label: '学习路径',
     badge: 1,
     url: '/pages/plan/index'
-  },
-  {
-    icon: '💬',
-    label: '课堂讨论',
-    badge: 8,
-    url: '/pages/discover/index?tab=discussion'
   }
 ]);
 
