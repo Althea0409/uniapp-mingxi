@@ -174,7 +174,7 @@ const handleMenuClick = (item: any) => {
   } else if (item.action === 'about') {
     uni.showModal({
       title: '关于我们',
-      content: '明溪智慧学习平台 v1.0.0\n\n致力于为学生提供智能化学习体验',
+      content: '明蹊智慧学习平台 v1.0.0\n\n致力于为学生提供智能化学习体验',
       showCancel: false
     });
   }
@@ -327,7 +327,8 @@ const handleLogout = async () => {
 // 内容滚动区域
 .content-scroll {
   flex: 1;
-  padding: 24rpx 32rpx calc(24rpx + var(--window-bottom));
+  padding: 24rpx 32rpx calc(24rpx + var(--window-bottom)) 32rpx;
+  box-sizing: border-box;
 }
 
 // 菜单区域

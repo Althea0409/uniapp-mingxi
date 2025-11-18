@@ -16,7 +16,7 @@
 		{
 			"path": "pages/home/index",
 			"style": {
-				"navigationBarTitleText": "明溪智慧学习",
+				"navigationBarTitleText": "明蹊智慧学习",
 				"navigationBarBackgroundColor": "#2B46FE",
 				"navigationBarTextStyle": "white"
 			}
@@ -96,7 +96,7 @@
 	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "明溪智慧学习",
+		"navigationBarTitleText": "明蹊智慧学习",
 		"navigationBarBackgroundColor": "#FFFFFF",
 		"backgroundColor": "#F7F8FC"
 	},

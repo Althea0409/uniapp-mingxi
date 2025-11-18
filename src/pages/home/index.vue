@@ -3,7 +3,7 @@
     <!-- 自定义导航栏 -->
     <view class="custom-navbar">
       <view class="navbar-content">
-        <text class="navbar-title">明溪智慧学习</text>
+        <text class="navbar-title">明蹊智慧学习</text>
         <view class="navbar-actions">
           <view class="action-icon" @tap="goToMessages">
             <text class="icon">📬</text>
@@ -472,7 +472,8 @@ onMounted(() => {
 .page-content {
   height: calc(100vh - 88rpx - var(--status-bar-height));
   margin-top: calc(88rpx + var(--status-bar-height));
-  padding: 24rpx 32rpx calc(24rpx + var(--window-bottom));
+  padding: 24rpx 32rpx calc(24rpx + var(--window-bottom)) 32rpx;
+  box-sizing: border-box;
 }
 
 // 用户信息卡片

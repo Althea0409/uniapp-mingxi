@@ -38,7 +38,7 @@ export const useUserStore = defineStore('user', () => {
         exp: 80,
         points: 1250,
         badges: 12,
-        school: '明溪中学',
+        school: '明蹊中学',
         grade: '高二',
         class: '3班',
       };

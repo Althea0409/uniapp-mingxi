@@ -50,4 +50,6 @@ const initRouteGuard = () => {
   }
 };
 </script>
-<style></style>
+<style lang="scss">
+@import './styles/common.scss';
+</style>

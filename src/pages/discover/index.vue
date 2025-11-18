@@ -297,7 +297,8 @@ onMounted(() => {
 // 内容区域
 .content-area {
   flex: 1;
-  padding: 24rpx 32rpx;
+  padding: 24rpx 32rpx 24rpx 32rpx;
+  box-sizing: border-box;
 }
 
 // 讨论列表

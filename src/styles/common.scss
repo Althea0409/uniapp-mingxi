@@ -9,6 +9,71 @@ page {
   line-height: 1.5;
 }
 
+// ==================== 隐藏所有滚动条 ====================
+// H5/各端根节点统一隐藏滚动条但不影响滚动
+html, body, .uni-app, .uni-page-wrapper, .uni-page-body {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.uni-app::-webkit-scrollbar,
+.uni-page-wrapper::-webkit-scrollbar,
+.uni-page-body::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
+// 隐藏页面滚动条
+page {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+// 隐藏scroll-view组件滚动条
+scroll-view {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+// 隐藏view元素滚动条
+view {
+  &::-webkit-scrollbar {
+    display: none;
+    width: 0;
+    height: 0;
+  }
+  
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+// 通用兜底：所有可滚动容器隐藏滚动条
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 // ==================== 布局类 ====================
 .container {
   width: 100%;
