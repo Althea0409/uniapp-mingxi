@@ -4,8 +4,10 @@
     <view class="login-header">
       <view class="header-wave"></view>
       <view class="header-content">
-        <image class="logo" src="/static/logo.png" mode="aspectFit" />
-        <text class="slogan">智慧陪伴，快乐成长</text>
+        <view class="logo-wrap">
+          <image class="logo" src="/static/logo.png" mode="aspectFit" />
+        </view>
+        <text class="slogan">明 蹊</text>
       </view>
     </view>
 
@@ -260,6 +262,7 @@ onMounted(() => {
     height: 60rpx;
     background-color: $bg-color;
     border-radius: 100% 100% 0 0 / 60rpx 60rpx 0 0;
+    z-index: 0;
   }
   
   .header-content {
@@ -269,11 +272,24 @@ onMounted(() => {
     justify-content: center;
     height: 100%;
     padding-bottom: 60rpx;
+    position: relative;
+    z-index: 1;
     
-    .logo {
+    .logo-wrap {
       width: 160rpx;
       height: 160rpx;
+      border-radius: 80rpx;
+      background-color: #FFFFFF;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
       margin-bottom: 32rpx;
+    }
+    
+    .logo {
+      width: 120rpx;
+      height: 120rpx;
     }
     
     .slogan {
@@ -287,7 +303,9 @@ onMounted(() => {
 // 登录表单
 .login-form {
   padding: 0 48rpx;
-  margin-top: -80rpx;
+  margin-top: -60rpx;
+  position: relative;
+  z-index: 2;
 }
 
 .form-item {

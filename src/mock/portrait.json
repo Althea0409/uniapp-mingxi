@@ -1,0 +1,122 @@
+{
+  "语文": {
+    "stats": { "dailyHours": 2.5, "weekHours": 18, "focusScore": 85 },
+    "habits": { "bestPeriod": "19:00-21:00", "continuity": { "level": "good", "text": "良好" }, "review": { "level": "warn", "text": "需提升" } },
+    "skills": { "advantage": 5, "toImprove": 2, "mastery": 85 },
+    "coreSkills": [
+      { "name": "文本理解", "value": 88 },
+      { "name": "中心论点概括", "value": 92 },
+      { "name": "修辞辨析", "value": 80 }
+    ],
+    "appliedSkills": [
+      { "name": "记叙文写作", "value": 90 },
+      { "name": "议论文表达", "value": 78 },
+      { "name": "语言运用", "value": 85 }
+    ],
+    "knowledge": { "mastered": 85, "learning": 23, "weak": 12, "overall": 78 },
+    "classicKnowledge": [
+      { "name": "文言实词", "value": 90 },
+      { "name": "虚词用法", "value": 82 },
+      { "name": "句式与断句", "value": 88 }
+    ],
+    "modernKnowledge": [
+      { "name": "记叙结构", "value": 90 },
+      { "name": "说明文逻辑", "value": 85 },
+      { "name": "议论文论证", "value": 72 }
+    ],
+    "resources": [
+      { "id": "r1", "icon": "📘", "title": "文言文实词专项训练", "desc": "练习与解析，提升文言词义识别", "match": 92, "type": "练习" },
+      { "id": "r2", "icon": "🎬", "title": "议论文论证视频讲解", "desc": "掌握论据与论证方式", "match": 88, "type": "视频" },
+      { "id": "r3", "icon": "📄", "title": "说明文阅读资料包", "desc": "经典篇目与题目整理", "match": 85, "type": "文档" }
+    ]
+  },
+  "数学": {
+    "stats": { "dailyHours": 2.0, "weekHours": 16, "focusScore": 82 },
+    "habits": { "bestPeriod": "20:00-22:00", "continuity": { "level": "good", "text": "良好" }, "review": { "level": "good", "text": "稳定" } },
+    "skills": { "advantage": 4, "toImprove": 3, "mastery": 80 },
+    "coreSkills": [
+      { "name": "函数与极限", "value": 76 },
+      { "name": "微分与应用", "value": 82 },
+      { "name": "线性代数基础", "value": 70 }
+    ],
+    "appliedSkills": [
+      { "name": "题型归纳", "value": 78 },
+      { "name": "计算规范", "value": 88 },
+      { "name": "错题复盘", "value": 92 }
+    ],
+    "knowledge": { "mastered": 72, "learning": 20, "weak": 15, "overall": 68 },
+    "classicKnowledge": [
+      { "name": "极限等价", "value": 68 },
+      { "name": "导数与单调性", "value": 74 },
+      { "name": "线性相关", "value": 70 }
+    ],
+    "modernKnowledge": [
+      { "name": "函数应用", "value": 76 },
+      { "name": "不等式证明", "value": 66 },
+      { "name": "概率统计", "value": 72 }
+    ],
+    "resources": [
+      { "id": "m1", "icon": "📐", "title": "极限计算训练10题", "desc": "经典等价与洛必达", "match": 90, "type": "练习" },
+      { "id": "m2", "icon": "🎬", "title": "线性代数基础视频", "desc": "矩阵与特征值入门", "match": 86, "type": "视频" }
+    ]
+  },
+  "英语": {
+    "stats": { "dailyHours": 1.5, "weekHours": 12, "focusScore": 78 },
+    "habits": { "bestPeriod": "18:30-19:30", "continuity": { "level": "warn", "text": "需提升" }, "review": { "level": "good", "text": "良好" } },
+    "skills": { "advantage": 3, "toImprove": 3, "mastery": 75 },
+    "coreSkills": [
+      { "name": "词汇记忆", "value": 70 },
+      { "name": "语法应用", "value": 76 },
+      { "name": "阅读理解", "value": 82 }
+    ],
+    "appliedSkills": [
+      { "name": "听力训练", "value": 68 },
+      { "name": "口语表达", "value": 64 },
+      { "name": "写作组织", "value": 72 }
+    ],
+    "knowledge": { "mastered": 65, "learning": 22, "weak": 18, "overall": 62 },
+    "classicKnowledge": [
+      { "name": "时态与语态", "value": 72 },
+      { "name": "从句结构", "value": 66 },
+      { "name": "固定搭配", "value": 70 }
+    ],
+    "modernKnowledge": [
+      { "name": "阅读策略", "value": 82 },
+      { "name": "写作套路", "value": 74 },
+      { "name": "词汇场景", "value": 70 }
+    ],
+    "resources": [
+      { "id": "e1", "icon": "📝", "title": "词根词缀记忆包", "desc": "高频词汇联想", "match": 88, "type": "文档" },
+      { "id": "e2", "icon": "🎧", "title": "听力训练材料", "desc": "含原文和解析", "match": 85, "type": "音频" }
+    ]
+  },
+  "物理": {
+    "stats": { "dailyHours": 2.2, "weekHours": 15, "focusScore": 84 },
+    "habits": { "bestPeriod": "20:00-21:30", "continuity": { "level": "good", "text": "良好" }, "review": { "level": "good", "text": "稳定" } },
+    "skills": { "advantage": 4, "toImprove": 2, "mastery": 82 },
+    "coreSkills": [
+      { "name": "受力分析", "value": 88 },
+      { "name": "能量法", "value": 80 },
+      { "name": "电磁基础", "value": 76 }
+    ],
+    "appliedSkills": [
+      { "name": "实验设计", "value": 86 },
+      { "name": "误差分析", "value": 78 },
+      { "name": "图像法", "value": 82 }
+    ],
+    "knowledge": { "mastered": 80, "learning": 18, "weak": 10, "overall": 76 },
+    "classicKnowledge": [
+      { "name": "力学模型", "value": 85 },
+      { "name": "电学基础", "value": 78 },
+      { "name": "波动与光学", "value": 74 }
+    ],
+    "modernKnowledge": [
+      { "name": "受力到运动", "value": 86 },
+      { "name": "能量守恒", "value": 82 },
+      { "name": "电磁感应", "value": 72 }
+    ],
+    "resources": [
+      { "id": "p1", "icon": "🔬", "title": "受力分析专项", "desc": "典型模型与题目", "match": 90, "type": "练习" }
+    ]
+  }
+}

@@ -2,6 +2,7 @@
 import { onLaunch, onShow, onHide } from "@dcloudio/uni-app";
 import { useUserStore } from '@/stores/user';
 import { useAppStore } from '@/stores/app';
+import PopupEncourage from '@/components/common/PopupEncourage.vue';
 
 onLaunch(() => {
   console.log("App Launch");
@@ -53,3 +54,10 @@ const initRouteGuard = () => {
 <style lang="scss">
 @import './styles/common.scss';
 </style>
+<template>
+  <PopupEncourage 
+    :visible="useAppStore().encourageVisible" 
+    :type="useAppStore().encourageType" 
+    :text="useAppStore().encouragement" 
+    @close="useAppStore().closeEncouragement()" />
+</template>

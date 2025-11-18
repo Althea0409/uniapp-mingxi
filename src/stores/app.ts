@@ -2,27 +2,19 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { storage, StorageKeys } from '@/utils/storage';
+import encouragementJson from '@/mock/encouragement.json';
 
 export const useAppStore = defineStore('app', () => {
   // 状态
   const loading = ref<boolean>(false);
   const tabBarIndex = ref<number>(0);
   const encouragement = ref<string>('');
+  const encourageVisible = ref<boolean>(false);
+  const encourageType = ref<'fatigue'|'encourage'|'celebration'|'daily'>('encourage');
   
   // 激励语列表（从本地存储或默认列表获取）
   const encouragementList = ref<string[]>(
-    storage.get(StorageKeys.ENCOURAGEMENT) || [
-      '每一次努力都在为梦想铺路！',
-      '今天的你比昨天更优秀！',
-      '坚持下去，你一定能成功！',
-      '相信自己，你可以做到！',
-      '学习使我快乐，进步让我成长！',
-      '不积跬步，无以至千里！',
-      '天道酬勤，你的努力不会白费！',
-      '成功就是把不可能变成可能！',
-      '每天进步一点点，成功就在眼前！',
-      '保持热爱，奔赴山海！',
-    ]
+    storage.get(StorageKeys.ENCOURAGEMENT) || encouragementJson.encouragement
   );
   
   // 方法
@@ -105,6 +97,16 @@ export const useAppStore = defineStore('app', () => {
       storage.set(StorageKeys.ENCOURAGEMENT, encouragementList.value);
     }
   }
+
+  function triggerEncouragement(type: 'fatigue'|'encourage'|'celebration'|'daily' = 'encourage') {
+    encourageType.value = type;
+    encouragement.value = getRandomEncouragement();
+    encourageVisible.value = true;
+  }
+
+  function closeEncouragement() {
+    encourageVisible.value = false;
+  }
   
   /**
    * 页面跳转
@@ -141,6 +143,8 @@ export const useAppStore = defineStore('app', () => {
     tabBarIndex,
     encouragement,
     encouragementList,
+    encourageVisible,
+    encourageType,
     // 方法
     showLoading,
     hideLoading,
@@ -149,6 +153,8 @@ export const useAppStore = defineStore('app', () => {
     setTabBarIndex,
     getRandomEncouragement,
     addEncouragement,
+    triggerEncouragement,
+    closeEncouragement,
     navigateTo,
     navigateBack,
   };

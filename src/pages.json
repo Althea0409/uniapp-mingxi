@@ -70,6 +70,18 @@
 			}
 		},
 		{
+			"path": "pages/plan/index",
+			"style": {
+				"navigationBarTitleText": "个性化学习路径"
+			}
+		},
+		{
+			"path": "pages/portrait/index",
+			"style": {
+				"navigationBarTitleText": "学生画像"
+			}
+		},
+		{
 			"path": "pages/evaluation/index",
 			"style": {
 				"navigationBarTitleText": "学习指标评估"
@@ -106,30 +118,36 @@
 		"backgroundColor": "#FFFFFF",
 		"borderStyle": "black",
 		"list": [
-			{
-				"pagePath": "pages/home/index",
-				"text": "首页",
-				"iconPath": "static/tabbar/home.png",
-				"selectedIconPath": "static/tabbar/home-active.png"
-			},
-			{
-				"pagePath": "pages/study/index",
-				"text": "学习",
-				"iconPath": "static/tabbar/study.png",
-				"selectedIconPath": "static/tabbar/study-active.png"
-			},
-			{
-				"pagePath": "pages/discover/index",
-				"text": "发现",
-				"iconPath": "static/tabbar/discover.png",
-				"selectedIconPath": "static/tabbar/discover-active.png"
-			},
-			{
-				"pagePath": "pages/profile/index",
-				"text": "我的",
-				"iconPath": "static/tabbar/profile.png",
-				"selectedIconPath": "static/tabbar/profile-active.png"
-			}
+            {
+                "pagePath": "pages/home/index",
+                "text": "首页",
+                "iconPath": "static/tabbar/home.svg",
+                "selectedIconPath": "static/tabbar/home-active.svg"
+            },
+            {
+                "pagePath": "pages/study/index",
+                "text": "学习",
+                "iconPath": "static/tabbar/study.svg",
+                "selectedIconPath": "static/tabbar/study-active.svg"
+            },
+            {
+                "pagePath": "pages/assistant/index",
+                "text": "明小蹊",
+                "iconPath": "static/tabbar/assistant.svg",
+                "selectedIconPath": "static/tabbar/assistant-active.svg"
+            },
+            {
+                "pagePath": "pages/discover/index",
+                "text": "发现",
+                "iconPath": "static/tabbar/discover.svg",
+                "selectedIconPath": "static/tabbar/discover-active.svg"
+            },
+            {
+                "pagePath": "pages/profile/index",
+                "text": "我的",
+                "iconPath": "static/tabbar/profile.svg",
+                "selectedIconPath": "static/tabbar/profile-active.svg"
+            }
 		]
 	}
 }

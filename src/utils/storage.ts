@@ -101,5 +101,8 @@ export const StorageKeys = {
   ENCOURAGEMENT: 'encouragement',
   ACHIEVEMENTS: 'achievements',
   STUDY_STATS: 'studyStats',
+  AI_API_KEY: 'aiApiKey',
+  AI_BASE_URL: 'aiBaseUrl',
+  AI_MODEL: 'aiModel',
 };
 

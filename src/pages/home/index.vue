@@ -255,6 +255,12 @@ const quickActions = ref([
     url: '/pages/study/index?tab=preview'
   },
   {
+    icon: '🧭',
+    label: '学习路径',
+    badge: 1,
+    url: '/pages/plan/index'
+  },
+  {
     icon: '💬',
     label: '课堂讨论',
     badge: 8,
@@ -848,7 +854,7 @@ onMounted(() => {
 }
 
 .course-swiper {
-  height: 400rpx;
+  height: 480rpx;
   margin-top: 16rpx;
 }
 
@@ -860,12 +866,14 @@ onMounted(() => {
   height: 100%;
   padding: 0 !important;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 .course-cover-wrap {
   position: relative;
   width: 100%;
-  height: 200rpx;
+  height: 220rpx;
   overflow: hidden;
 }
 
@@ -893,6 +901,8 @@ onMounted(() => {
 
 .course-info {
   padding: 24rpx;
+  flex: 1;
+  overflow: hidden;
 }
 
 .course-name {
