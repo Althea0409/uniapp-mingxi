@@ -38,7 +38,7 @@
           <Card 
             v-for="course in filteredCourses" 
             :key="course.id"
-            @click="goToCourseDetail(course)"
+            @tap="goToCourseDetail(course)"
           >
             <view class="course-item">
               <image class="course-cover" :src="course.cover" mode="aspectFill" />
@@ -191,13 +191,30 @@ function detectSubject(name: string): string {
   return '综合';
 }
 
+function getCoverBySubject(subject: string): string {
+  switch (subject) {
+    case '语文':
+      return '/static/course/chinese.svg';
+    case '数学':
+      return '/static/course/math.svg';
+    case '英语':
+      return '/static/course/english.svg';
+    case '科学':
+      return '/static/course/science.svg';
+    case '历史与社会':
+      return '/static/course/history.svg';
+    default:
+      return '/static/logo.png';
+  }
+}
+
 const courses = ref((coursesJson.courses || []).map((c:any)=>({
   id: c.id,
   name: c.name,
   teacher: c.teacher,
   department: c.department,
   subject: detectSubject(c.name),
-  cover: c.cover || '/static/logo.png',
+  cover: c.cover || getCoverBySubject(detectSubject(c.name)),
   progress: c.progress || 0,
   chapter: c.chapter || '',
   nextClass: c.nextClass || '',

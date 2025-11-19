@@ -177,7 +177,7 @@
                 <view class="course-cover-wrap">
                   <image 
                     class="course-cover" 
-                    :src="course.cover || '/static/course/default.png'" 
+                    :src="course.cover || '/static/logo.png'" 
                     mode="aspectFill"
                   />
                   <view class="course-tag">
@@ -290,7 +290,7 @@ function loadRecommendCourses() {
       name: c.name,
       teacher: c.teacher,
       department: c.department,
-      cover: c.cover || '/static/logo.png',
+      cover: c.cover || getCoverBySubject(detectSubject(c.name)),
       progress: c.progress || 0,
       chapter: c.chapter || '',
       nextClass: c.nextClass || '',
@@ -960,4 +960,31 @@ onMounted(() => {
   }
 }
 </style>
+
+function detectSubject(name: string): string {
+  if (!name) return '综合';
+  if (name.includes('语文')) return '语文';
+  if (name.includes('数学')) return '数学';
+  if (name.includes('英语')) return '英语';
+  if (name.includes('科学')) return '科学';
+  if (name.includes('历史与社会')) return '历史与社会';
+  return '综合';
+}
+
+function getCoverBySubject(subject: string): string {
+  switch (subject) {
+    case '语文':
+      return '/static/course/chinese.svg';
+    case '数学':
+      return '/static/course/math.svg';
+    case '英语':
+      return '/static/course/english.svg';
+    case '科学':
+      return '/static/course/science.svg';
+    case '历史与社会':
+      return '/static/course/history.svg';
+    default:
+      return '/static/logo.png';
+  }
+}
 

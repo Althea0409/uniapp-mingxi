@@ -1,90 +1,160 @@
 <template>
   <view class="course-detail-page">
-    <Card>
-      <view class="cover">
-        <view class="status-tag">{{ course.tag }}</view>
-      </view>
-      <view class="info">
-        <text class="title">{{ course.name }}</text>
-        <text class="sub">{{ course.teacher }} · {{ course.department }}</text>
-        <view class="progress-row">
-          <view class="progress-bar">
-            <view class="progress-fill" :style="{ width: course.progress + '%' }"></view>
-          </view>
-          <text class="progress-text">{{ course.progress }}%</text>
+    <Loading v-if="loading" text="正在加载课程..." />
+    <view v-else>
+      <Card>
+        <view class="cover">
+          <image class="cover-img" :src="cover" mode="aspectFill" />
+          <view class="status-tag">{{ course.tag }}</view>
         </view>
-        <view class="meta">
-          <text class="meta-item">📖 {{ course.chapter }}</text>
-          <text class="meta-item">⏰ {{ course.nextClass }}</text>
-        </view>
-        <view class="actions">
-          <Button text="继续学习" type="primary" size="large" @click="continueStudy" />
-        </view>
-      </view>
-    </Card>
-
-    <Card>
-      <view class="section">
-        <text class="section-title">课程资源</text>
-        <view class="resource-list">
-          <view class="resource-item" v-for="(r, i) in resources" :key="i">
-            <text class="resource-icon">{{ r.icon }}</text>
-            <view class="resource-content">
-              <text class="resource-title">{{ r.title }}</text>
-              <text class="resource-desc">{{ r.desc }}</text>
+        <view class="info">
+          <text class="title">{{ course.name }}</text>
+          <text class="sub">{{ course.teacher }} · {{ course.department }}</text>
+          <view class="progress-row">
+            <view class="progress-bar">
+              <view class="progress-fill" :style="{ width: course.progress + '%' }"></view>
             </view>
-            <Button text="查看" type="secondary" size="small" @click="viewResource(r)" />
+            <text class="progress-text">{{ course.progress }}%</text>
+          </view>
+          <view class="meta">
+            <text class="meta-item">📖 {{ course.chapter }}</text>
+            <text class="meta-item">⏰ {{ course.nextClass }}</text>
+          </view>
+          <view class="actions">
+            <Button text="继续学习" type="primary" size="large" @click="continueStudy" />
           </view>
         </view>
-      </view>
-    </Card>
+      </Card>
 
-    <Card>
-      <view class="section">
-        <text class="section-title">近期课程安排</text>
-        <view class="schedule-list">
-          <view class="schedule-item" v-for="(s, i) in schedule" :key="i">
-            <text class="time">{{ s.time }}</text>
-            <view class="schedule-content">
-              <text class="sch-title">{{ s.title }}</text>
-              <text class="sch-sub">{{ s.location }} · {{ s.teacher }}</text>
+      <Card>
+        <view class="section">
+          <text class="section-title">课程资源</text>
+          <view class="resource-list">
+            <view class="resource-item" v-for="(r, i) in resources" :key="i">
+              <text class="resource-icon">{{ r.icon }}</text>
+              <view class="resource-content">
+                <text class="resource-title">{{ r.title }}</text>
+                <text class="resource-desc">{{ r.desc }}</text>
+              </view>
+              <Button text="查看" type="secondary" size="small" @click="viewResource(r)" />
             </view>
           </view>
         </view>
-      </view>
-    </Card>
+      </Card>
+
+      <Card>
+        <view class="section">
+          <text class="section-title">近期课程安排</text>
+          <view class="schedule-list">
+            <view class="schedule-item" v-for="(s, i) in schedule" :key="i">
+              <text class="time">{{ s.time }}</text>
+              <view class="schedule-content">
+                <text class="sch-title">{{ s.title }}</text>
+                <text class="sch-sub">{{ s.location }} · {{ s.teacher }}</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </Card>
+    </view>
   </view>
   
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
 import Card from '@/components/common/Card.vue';
 import Button from '@/components/common/Button.vue';
+import Loading from '@/components/common/Loading.vue';
+import coursesJson from '@/mock/courses.json';
 import { useAppStore } from '@/stores/app';
 
 const appStore = useAppStore();
 
-const course = ref({
-  name: '高等数学（上）',
-  teacher: '张教授',
-  department: '数学学院',
-  progress: 78,
-  chapter: '第8章',
-  nextClass: '本周3节课',
+function detectSubject(name: string): string {
+  if (!name) return '综合';
+  if (name.includes('语文')) return '语文';
+  if (name.includes('数学')) return '数学';
+  if (name.includes('英语')) return '英语';
+  if (name.includes('科学')) return '科学';
+  if (name.includes('历史与社会')) return '历史与社会';
+  return '综合';
+}
+
+function getCoverBySubject(subject: string): string {
+  switch (subject) {
+    case '语文':
+      return '/static/course/chinese.svg';
+    case '数学':
+      return '/static/course/math.svg';
+    case '英语':
+      return '/static/course/english.svg';
+    case '科学':
+      return '/static/course/science.svg';
+    case '历史与社会':
+      return '/static/course/history.svg';
+    default:
+      return '/static/logo.png';
+  }
+}
+
+const loading = ref(true);
+const cover = ref('/static/logo.png');
+const course = ref<any>({
+  id: '',
+  name: '',
+  teacher: '',
+  department: '',
+  progress: 0,
+  chapter: '',
+  nextClass: '',
   tag: '进行中'
 });
 
 const resources = ref([
-  { icon: '🎬', title: '函数与极限精讲视频', desc: '时长 18 分钟' },
-  { icon: '📚', title: '极限运算练习题', desc: '10 题 · 含解析' },
-  { icon: '📄', title: '课堂PPT与笔记', desc: '第8章资料包' },
+  { icon: '🎬', title: '课堂视频', desc: '核心知识讲解' },
+  { icon: '📚', title: '配套练习', desc: '精选习题与解析' },
+  { icon: '📄', title: '课件与笔记', desc: '资料打包下载' },
 ]);
 
 const schedule = ref([
-  { time: '周二 10:00 - 11:40', title: '第8章：函数极限', location: '教学楼A-201', teacher: '张教授' },
-  { time: '周四 14:00 - 15:40', title: '第8章：连续性', location: '教学楼A-201', teacher: '张教授' },
+  { time: '周二 10:00 - 11:40', title: '课堂学习', location: '教学楼A-201', teacher: '' },
+  { time: '周四 14:00 - 15:40', title: '复习巩固', location: '教学楼A-201', teacher: '' },
 ]);
+
+function loadCourse(id: string) {
+  loading.value = true;
+  const list = (coursesJson as any).courses || [];
+  const c = list.find((x: any) => x.id === id);
+  if (!c) {
+    loading.value = false;
+    appStore.showToast('课程不存在', 'none');
+    return;
+  }
+  const subject = detectSubject(c.name);
+  cover.value = getCoverBySubject(subject);
+  course.value = {
+    id: c.id,
+    name: c.name,
+    teacher: c.teacher,
+    department: c.department,
+    progress: c.progress || 0,
+    chapter: c.chapter || '',
+    nextClass: c.nextClass || '',
+    tag: c.status === 'completed' ? '已完成' : '进行中'
+  };
+  schedule.value = [
+    { time: '周二 10:00 - 11:40', title: course.value.chapter || '课堂学习', location: '教学楼A-201', teacher: course.value.teacher },
+    { time: '周四 14:00 - 15:40', title: '复习巩固', location: '教学楼A-201', teacher: course.value.teacher },
+  ];
+  loading.value = false;
+}
+
+onLoad((options: any) => {
+  const id = options?.id || '';
+  loadCourse(id);
+});
 
 const continueStudy = () => {
   appStore.showToast('继续学习功能开发中', 'none');
@@ -107,6 +177,12 @@ const viewResource = (r: any) => {
   background-color: $divider-color;
   border-radius: $border-radius;
   position: relative;
+}
+
+.cover-img {
+  width: 100%;
+  height: 100%;
+  border-radius: $border-radius;
 }
 
 .status-tag {
