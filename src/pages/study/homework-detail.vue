@@ -1,5 +1,7 @@
 <template>
   <view class="homework-detail-page">
+    <Loading v-if="loading" text="正在加载作业..." />
+    <view v-else>
     <Card>
       <view class="header">
         <text class="title">{{ hw.title }}</text>
@@ -24,27 +26,32 @@
         <Button text="提交作业" type="primary" size="large" @click="submitHomework" />
       </view>
     </Card>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
 import Card from '@/components/common/Card.vue';
 import Button from '@/components/common/Button.vue';
 import { useAppStore } from '@/stores/app';
 import { useUserStore } from '@/stores/user';
+import homeworkJson from '@/mock/homework.json';
+import Loading from '@/components/common/Loading.vue';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
 
-const hw = ref({
-  id: 'h001',
-  courseId: 'c002',
-  courseName: '英语精读',
-  title: 'Unit 5 阅读与词汇练习',
-  deadline: '2025-11-20 23:59',
-  description: '阅读理解+词汇填空',
-  questionTypes: '选择题5道 + 填空题5道',
+const loading = ref(true);
+const hw = ref<any>({
+  id: '',
+  courseId: '',
+  courseName: '',
+  title: '',
+  deadline: '',
+  description: '',
+  questionTypes: '',
   status: 'pending'
 });
 
@@ -57,10 +64,38 @@ const statusText = computed(() => {
   }
 });
 
-const questions = ref([
-  { title: '阅读理解题（节选）', answer: '', key: 'A' },
-  { title: '词汇填空（5空）', answer: '', key: 'memory' },
-]);
+const questions = ref<any[]>([]);
+
+function loadHomework(id: string) {
+  loading.value = true;
+  const list = (homeworkJson as any).homework || [];
+  const data = list.find((x: any) => x.id === id);
+  if (!data) {
+    loading.value = false;
+    appStore.showToast('作业不存在', 'none');
+    return;
+  }
+  hw.value = {
+    id: data.id,
+    courseId: data.courseId,
+    courseName: data.courseName,
+    title: data.title,
+    deadline: data.deadline,
+    description: data.description,
+    questionTypes: data.questionTypes,
+    status: data.status
+  };
+  questions.value = [
+    { title: '题目1（占位）', answer: '', key: 'A' },
+    { title: '题目2（占位）', answer: '', key: 'B' }
+  ];
+  loading.value = false;
+}
+
+onLoad((options: any) => {
+  const id = options?.id || '';
+  loadHomework(id);
+});
 
 const submitHomework = async () => {
   const ok = await appStore.showConfirm('确认提交作业吗？');

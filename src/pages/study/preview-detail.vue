@@ -1,6 +1,7 @@
 <template>
   <view class="preview-detail-page">
-    <Card>
+    <Loading v-if="loading" text="正在加载预习..." />
+    <Card v-else>
       <text class="title">{{ pv.title }}</text>
       <text class="sub">课程：{{ pv.courseName }} · 建议预习时长：{{ pv.duration }}分钟 · 发布时间：{{ pv.publishTime }}</text>
     </Card>
@@ -27,25 +28,52 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
 import Card from '@/components/common/Card.vue';
 import Button from '@/components/common/Button.vue';
 import { useAppStore } from '@/stores/app';
+import homeworkJson from '@/mock/homework.json';
+import Loading from '@/components/common/Loading.vue';
 
 const appStore = useAppStore();
 
-const pv = ref({
-  id: 'p001',
-  courseId: 'c001',
-  courseName: '高等数学（上）',
-  title: '第8章 课前预习任务',
-  duration: 30,
-  publishTime: '今天 08:00',
-  content: [
-    '观看视频讲解（15分钟）',
-    '阅读教材 P125-P138',
-    '完成思考题 3 道'
-  ],
+const loading = ref(true);
+const pv = ref<any>({
+  id: '',
+  courseId: '',
+  courseName: '',
+  title: '',
+  duration: 0,
+  publishTime: '',
+  content: [],
   completed: false
+});
+
+function loadPreview(id: string) {
+  loading.value = true;
+  const list = (homeworkJson as any).preview || [];
+  const data = list.find((x: any) => x.id === id);
+  if (!data) {
+    loading.value = false;
+    appStore.showToast('预习任务不存在', 'none');
+    return;
+  }
+  pv.value = {
+    id: data.id,
+    courseId: data.courseId,
+    courseName: data.courseName,
+    title: data.title,
+    duration: data.duration,
+    publishTime: data.publishTime || '—',
+    content: data.content || [],
+    completed: !!data.completed
+  };
+  loading.value = false;
+}
+
+onLoad((options: any) => {
+  const id = options?.id || '';
+  loadPreview(id);
 });
 
 const toggleComplete = () => {

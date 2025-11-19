@@ -371,7 +371,9 @@ const goToStudyCenter = () => {
 // 跳转到课程详情
 const goToCourseDetail = (course: any) => {
   uni.navigateTo({
-    url: `/pages/study/course-detail?id=${course.id}`
+    url: `/pages/study/course-detail?id=${course.id}`,
+    animationType: 'slide-in-right',
+    animationDuration: 200
   });
 };
 

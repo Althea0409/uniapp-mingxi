@@ -319,20 +319,26 @@ const onStatusChange = (e: any) => {
 // 跳转详情
 const goToCourseDetail = (course: any) => {
   uni.navigateTo({
-    url: `/pages/study/course-detail?id=${course.id}`
+    url: `/pages/study/course-detail?id=${course.id}`,
+    animationType: 'slide-in-right',
+    animationDuration: 200
   });
 };
 
 const goToHomeworkDetail = (hw: any) => {
   uni.navigateTo({
-    url: `/pages/study/homework-detail?id=${hw.id}`
+    url: `/pages/study/homework-detail?id=${hw.id}`,
+    animationType: 'slide-in-right',
+    animationDuration: 200
   });
   appStore.recordStudySession(20);
 };
 
 const goToPreviewDetail = (pv: any) => {
   uni.navigateTo({
-    url: `/pages/study/preview-detail?id=${pv.id}`
+    url: `/pages/study/preview-detail?id=${pv.id}`,
+    animationType: 'slide-in-right',
+    animationDuration: 200
   });
   appStore.recordStudySession(15);
 };
