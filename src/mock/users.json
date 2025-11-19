@@ -6,12 +6,12 @@
       "password": "123456",
       "name": "小明同学",
       "avatar": "/static/avatar/default.png",
-      "level": 8,
-      "exp": 80,
-      "points": 1250,
-      "badges": 12,
+      "level": 3,
+      "exp": 45,
+      "points": 620,
+      "badges": 6,
       "school": "明蹊中学",
-      "grade": "高二",
+      "grade": "初一",
       "class": "3班"
     },
     {
@@ -20,12 +20,12 @@
       "password": "123456",
       "name": "小红同学",
       "avatar": "/static/avatar/default.png",
-      "level": 6,
-      "exp": 45,
-      "points": 980,
-      "badges": 8,
+      "level": 3,
+      "exp": 40,
+      "points": 580,
+      "badges": 5,
       "school": "明蹊中学",
-      "grade": "高二",
+      "grade": "初一",
       "class": "3班"
     }
   ]

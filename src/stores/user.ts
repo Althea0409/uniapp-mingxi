@@ -39,8 +39,8 @@ export const useUserStore = defineStore('user', () => {
         points: 1250,
         badges: 12,
         school: '明蹊中学',
-        grade: '高二',
-        class: '3班',
+        grade: '初一',
+        class: '2班',
       };
       
       // 保存到状态和本地存储

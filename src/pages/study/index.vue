@@ -170,8 +170,8 @@ const tabs = ref([
 
 const currentTab = ref(0);
 
-// 筛选选项
-const subjects = ['全部学科', '数学', '物理', '英语', '化学', '语文'];
+// 筛选选项（初一学科）
+const subjects = ['全部学科', '语文', '数学', '英语', '科学', '历史与社会'];
 const statuses = ['全部状态', '进行中', '已完成', '未开始'];
 
 const selectedSubject = ref('');
@@ -180,17 +180,28 @@ const showSubjectPicker = ref(false);
 const showStatusPicker = ref(false);
 
 const appStore = useAppStore();
+
+function detectSubject(name: string): string {
+  if (!name) return '综合';
+  if (name.includes('语文')) return '语文';
+  if (name.includes('数学')) return '数学';
+  if (name.includes('英语')) return '英语';
+  if (name.includes('科学')) return '科学';
+  if (name.includes('历史与社会')) return '历史与社会';
+  return '综合';
+}
+
 const courses = ref((coursesJson.courses || []).map((c:any)=>({
   id: c.id,
   name: c.name,
   teacher: c.teacher,
   department: c.department,
-  subject: c.department.includes('数学')?'数学':c.department.includes('物理')?'物理':c.department.includes('外语')?'英语':'综合',
-  cover: c.cover,
-  progress: c.progress,
-  chapter: c.chapter,
-  nextClass: c.nextClass,
-  status: c.status
+  subject: detectSubject(c.name),
+  cover: c.cover || '/static/logo.png',
+  progress: c.progress || 0,
+  chapter: c.chapter || '',
+  nextClass: c.nextClass || '',
+  status: c.status || 'ongoing'
 })));
 
 function statusText(s:string){ return s==='pending'?'待完成': s==='completed'?'已完成': s==='graded'?'已批改':'进行中'; }
@@ -220,6 +231,22 @@ const filteredCourses = computed(() => {
   if (selectedSubject.value && selectedSubject.value !== '全部学科') {
     result = result.filter(c => c.subject === selectedSubject.value);
   }
+  if (selectedStatus.value && selectedStatus.value !== '全部状态') {
+    const statusMap: Record<string, string> = {
+      '进行中': 'ongoing',
+      '已完成': 'completed',
+      '未开始': 'pending'
+    };
+    result = result.filter(c => c.status === statusMap[selectedStatus.value]);
+  }
+  // 排序规则：进行中优先，其次未开始，最后已完成；同状态按进度降序
+  const order = { ongoing: 0, pending: 1, completed: 2 } as Record<string, number>;
+  result = [...result].sort((a, b) => {
+    const oa = order[a.status] ?? 9;
+    const ob = order[b.status] ?? 9;
+    if (oa !== ob) return oa - ob;
+    return (b.progress || 0) - (a.progress || 0);
+  });
   return result;
 });
 

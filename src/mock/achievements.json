@@ -53,13 +53,13 @@
       "authorId": "1002",
       "authorName": "小红",
       "authorAvatar": "/static/avatar/default.png",
-      "group": "高数讨论组",
-      "title": "关于极限的一个困惑",
-      "content": "在学习ε-δ语言时，遇到了这样的问题...",
+      "group": "科学探究社",
+      "title": "关于水的沸腾实验的观察记录",
+      "content": "温度达到100℃时产生大量气泡，是否还与气压有关？",
       "images": [],
-      "replies": 15,
-      "likes": 32,
-      "heat": 98,
+      "replies": 12,
+      "likes": 30,
+      "heat": 90,
       "createTime": "2小时前"
     },
     {
@@ -68,12 +68,12 @@
       "authorName": "张明",
       "authorAvatar": "/static/avatar/default.png",
       "group": "英语角",
-      "title": "分享一个背单词的好方法",
-      "content": "最近发现了艾宾浩斯遗忘曲线...",
-      "images": ["/static/discussion/method.png"],
-      "replies": 8,
-      "likes": 25,
-      "heat": 75,
+      "title": "Unit 3 高频短语分享",
+      "content": "be good at, take a photo, make friends 这些短语如何记忆？",
+      "images": [],
+      "replies": 9,
+      "likes": 22,
+      "heat": 72,
       "createTime": "5小时前"
     }
   ],
@@ -81,22 +81,22 @@
     {
       "id": "r001",
       "type": "document",
-      "title": "线性代数经典习题集",
-      "cover": "/static/resource/math-book.png",
-      "description": "包含线性代数所有章节的经典习题",
-      "matchRate": 95,
-      "reason": "你在这个章节的正确率较低，建议加强练习"
+      "title": "一元一次方程应用题精选",
+      "cover": "/static/logo.png",
+      "description": "涵盖常见应用场景：速度、利润、比例等",
+      "matchRate": 93,
+      "reason": "近期方程应用题正确率偏低，建议针对性练习"
     },
     {
       "id": "r002",
       "type": "video",
-      "title": "三角函数解题技巧",
-      "cover": "/static/resource/video-thumb.png",
-      "description": "详细讲解三角函数的各类解题方法",
-      "matchRate": 88,
-      "reason": "你收藏的同类视频评分很高",
-      "duration": 18,
-      "rating": 4.9
+      "title": "科学·观察与实验操作要点",
+      "cover": "/static/logo.png",
+      "description": "如何规范记录、控制变量与分析数据",
+      "matchRate": 90,
+      "reason": "实验报告评分中记录不完整，建议观看此视频",
+      "duration": 15,
+      "rating": 4.8
     }
   ]
 }

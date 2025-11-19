@@ -225,6 +225,7 @@ import { ref, computed, onMounted } from 'vue';
 import { useUserStore } from '@/stores/user';
 import { useAppStore } from '@/stores/app';
 import Card from '@/components/common/Card.vue';
+import coursesJson from '@/mock/courses.json';
 
 const userStore = useUserStore();
 const appStore = useAppStore();
@@ -275,42 +276,31 @@ const progressGradient = computed(() => {
   return 'linear-gradient(135deg, #2B46FE, #7B61FF)';
 });
 
-// 推荐课程数据
-const recommendCourses = ref([
-  {
-    id: 'c001',
-    name: '高等数学（上）',
-    teacher: '张教授',
-    department: '数学学院',
-    cover: '/static/course/math.png',
-    progress: 78,
-    chapter: '第8章',
-    nextClass: '本周3节课',
-    tag: '进行中'
-  },
-  {
-    id: 'c002',
-    name: '大学物理',
-    teacher: '李老师',
-    department: '物理学院',
-    cover: '/static/course/physics.png',
-    progress: 45,
-    chapter: '第5章',
-    nextClass: '本周2节课',
-    tag: '进行中'
-  },
-  {
-    id: 'c003',
-    name: '英语精读',
-    teacher: '王老师',
-    department: '外语学院',
-    cover: '/static/course/english.png',
-    progress: 92,
-    chapter: '第12章',
-    nextClass: '本周2节课',
-    tag: '即将完成'
+// 推荐课程数据（动态从 mock 读取）
+const recommendCourses = ref<any[]>([]);
+
+function loadRecommendCourses() {
+  try {
+    const list = (coursesJson as any).courses || [];
+    const ongoing = list.filter((c: any) => c.status === 'ongoing');
+    const sorted = ongoing.sort((a: any, b: any) => (b.progress || 0) - (a.progress || 0));
+    const top3 = sorted.slice(0, 3);
+    recommendCourses.value = top3.map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      teacher: c.teacher,
+      department: c.department,
+      cover: c.cover || '/static/logo.png',
+      progress: c.progress || 0,
+      chapter: c.chapter || '',
+      nextClass: c.nextClass || '',
+      tag: c.status === 'completed' ? '已完成' : '进行中'
+    }));
+  } catch (e) {
+    console.warn('加载推荐课程失败', e);
+    recommendCourses.value = [];
   }
-]);
+}
 
 // 刷新激励语
 const refreshEncouragement = () => {
@@ -389,6 +379,8 @@ const goToCourseDetail = (course: any) => {
 onMounted(() => {
   // 获取激励语
   encouragement.value = appStore.getRandomEncouragement();
+  // 加载推荐课程
+  loadRecommendCourses();
   
   // 检查用户信息
   if (!userStore.isLogin) {
