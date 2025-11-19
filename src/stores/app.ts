@@ -117,6 +117,11 @@ export const useAppStore = defineStore('app', () => {
     storage.set(StorageKeys.STUDY_STATS, { todayStudyMinutes: todayStudyMinutes.value, consecutiveWrong: consecutiveWrong.value });
     if (minutes >= 60 || todayStudyMinutes.value >= 120) triggerEncouragement('fatigue');
   }
+  function logTask(title: string, subject: string, duration: number, reason?: string) {
+    const logs = (storage.get(StorageKeys.GROWTH_LOG) as any) || [];
+    logs.push({ type: 'task', title, subject, duration, reason, finishedAt: Date.now() });
+    storage.set(StorageKeys.GROWTH_LOG, logs);
+  }
   function recordWrongAnswer(count: number = 1) {
     consecutiveWrong.value += count;
     storage.set(StorageKeys.STUDY_STATS, { todayStudyMinutes: todayStudyMinutes.value, consecutiveWrong: consecutiveWrong.value });
@@ -186,6 +191,7 @@ export const useAppStore = defineStore('app', () => {
     triggerEncouragement,
     closeEncouragement,
     recordStudySession,
+    logTask,
     recordWrongAnswer,
     resetWrongAnswer,
     recordDailyCheckin,

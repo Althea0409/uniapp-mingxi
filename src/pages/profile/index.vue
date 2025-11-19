@@ -40,6 +40,35 @@
       </view>
     </view>
 
+    <Card class="edit-card" v-if="editing">
+      <view class="form">
+        <view class="row">
+          <text class="label">姓名</text>
+          <input class="input" v-model="form.name" placeholder="请输入姓名" />
+        </view>
+        <view class="row">
+          <text class="label">学校</text>
+          <input class="input" v-model="form.school" placeholder="请输入学校" />
+        </view>
+        <view class="row">
+          <text class="label">年级</text>
+          <input class="input" v-model="form.grade" placeholder="如 七年级" />
+        </view>
+        <view class="row">
+          <text class="label">班级</text>
+          <input class="input" v-model="form.class" placeholder="如 2班" />
+        </view>
+        <view class="row">
+          <text class="label">头像URL</text>
+          <input class="input" v-model="form.avatar" placeholder="图片链接" />
+        </view>
+        <view class="actions">
+          <Button text="取消" size="small" @click="toggleEdit" />
+          <Button text="保存" size="small" type="primary" @click="save" />
+        </view>
+      </view>
+    </Card>
+
     <!-- 功能入口 -->
     <scroll-view class="content-scroll" scroll-y>
       <!-- 学习相关 -->
@@ -147,8 +176,24 @@ const settingMenus = ref([
 ]);
 
 // 跳转到个人资料
+const editing = ref(false);
+const form = ref<any>({ name: userStore.userName, school: userInfo.value?.school, grade: userInfo.value?.grade, class: userInfo.value?.class, avatar: userStore.userAvatar });
+
 const goToProfile = () => {
-  appStore.showToast('个人资料编辑功能开发中', 'none');
+  toggleEdit();
+};
+
+const toggleEdit = () => {
+  editing.value = !editing.value;
+  if (editing.value) {
+    form.value = { name: userStore.userName, school: userInfo.value?.school, grade: userInfo.value?.grade, class: userInfo.value?.class, avatar: userStore.userAvatar };
+  }
+};
+
+const save = async () => {
+  await userStore.updateUserInfo({ name: form.value.name, school: form.value.school, grade: form.value.grade, class: form.value.class, avatar: form.value.avatar });
+  editing.value = false;
+  appStore.showToast('已保存个人信息', 'success');
 };
 
 // 跳转到成就页
@@ -332,6 +377,13 @@ const handleLogout = async () => {
   padding: 24rpx 32rpx calc(24rpx + var(--window-bottom)) 32rpx;
   box-sizing: border-box;
 }
+
+.edit-card { margin: 24rpx 32rpx; }
+.form { display: flex; flex-direction: column; gap: 12rpx; }
+.row { display: flex; align-items: center; gap: 12rpx; }
+.label { width: 160rpx; font-size: $font-size-sm; color: $text-secondary; }
+.input { flex: 1; background: $bg-color; border-radius: $border-radius; padding: 12rpx 16rpx; }
+.actions { display: flex; justify-content: flex-end; gap: 12rpx; }
 
 // 菜单区域
 .menu-section {

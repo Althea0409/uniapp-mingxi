@@ -201,6 +201,7 @@ onLoad((options: any) => {
 
 const start = () => {
   appStore.recordStudySession(20);
+  appStore.logTask(res.value.title, res.value.subject || '综合', 20, res.value.reason || '资源学习');
   appStore.showToast('已开始学习该资源', 'success');
 };
 </script>

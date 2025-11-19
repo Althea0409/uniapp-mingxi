@@ -64,6 +64,17 @@
         </Card>
       </view>
 
+      <!-- 激励弹窗 -->
+      <view v-if="appStore.encourageVisible" class="encourage-modal">
+        <view class="encourage-box">
+          <text class="encourage-type">{{ encourageTypeText }}</text>
+          <text class="encourage-text-large">{{ encouragement }}</text>
+          <view class="encourage-actions">
+            <Button text="收到" type="primary" size="small" @click="closeEncourage" />
+          </view>
+        </view>
+      </view>
+
       <!-- 快捷功能宫格 -->
       <view class="quick-actions-section">
         <view class="section-header">
@@ -233,6 +244,10 @@ const appStore = useAppStore();
 // 状态
 const unreadCount = ref(3); // Mock未读消息数
 const encouragement = ref('');
+const encourageTypeText = computed(()=>{
+  const t = appStore.encourageType;
+  return t==='fatigue'?'休息提醒': t==='celebration'?'庆祝时刻': t==='daily'?'每日激励':'加油打气';
+});
 const userInfo = computed(() => userStore.userInfo);
 
 // 快捷功能配置
@@ -402,6 +417,10 @@ const goToCourseDetail = (course: any) => {
     animationType: 'slide-in-right',
     animationDuration: 200
   });
+};
+
+const closeEncourage = () => {
+  appStore.closeEncouragement();
 };
 
 // 页面加载
@@ -1016,4 +1035,10 @@ function getCoverBySubject(subject: string): string {
       return '/static/logo.png';
   }
 }
+
+.encourage-modal { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: $z-index-modal; }
+.encourage-box { background: $card-bg; border-radius: $border-radius; padding: 32rpx; width: 80%; box-shadow: $shadow-card; display: flex; flex-direction: column; gap: 16rpx; }
+.encourage-type { font-size: $font-size-sm; color: $text-secondary; }
+.encourage-text-large { font-size: $font-size-lg; color: $text-primary; font-weight: bold; }
+.encourage-actions { display: flex; justify-content: flex-end; }
 
