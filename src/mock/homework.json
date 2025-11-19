@@ -7,8 +7,40 @@
       "title": "一元一次方程巩固练习",
       "deadline": "2025-11-21 22:00",
       "description": "完成第4章对应练习册第1-3页，含方程的建立与解题",
-      "questionTypes": "选择题6道 + 填空题6道 + 应用题3道",
-      "status": "pending"
+      "questionTypes": "选择题1道 + 填空题1道 + 应用题1道",
+      "status": "pending",
+      "questions": [
+        {
+          "id": "q001",
+          "type": "choice",
+          "stem": "下列方程中，是一元一次方程的是？",
+          "score": 5,
+          "options": [
+            { "label": "A", "text": "x² - 4x = 3" },
+            { "label": "B", "text": "3x - 1 = 2y" },
+            { "label": "C", "text": "2x + 5 = 10" },
+            { "label": "D", "text": "x + 1/x = 2" }
+          ],
+          "answer": "C",
+          "explanation": "一元一次方程的定义是只含有一个未知数，且未知数的最高次数为1的整式方程。"
+        },
+        {
+          "id": "q002",
+          "type": "fill-blank",
+          "stem": "如果 x=2 是方程 2x + a = 7 的解，那么 a 的值是 ____。",
+          "score": 5,
+          "answer": ["3"],
+          "explanation": "将 x=2 代入方程得 2*2 + a = 7，即 4 + a = 7，解得 a = 3。"
+        },
+        {
+          "id": "q003",
+          "type": "essay",
+          "stem": "篮球比赛中，每个2分球得分是2分，每个3分球得分是3分。小明在一场比赛中投进了5个球，共得到12分，请问他投进了几个2分球和几个3分球？",
+          "score": 10,
+          "answer": "解：设小明投进了x个2分球，则投进了(5-x)个3分球。根据题意可列方程：2x + 3(5-x) = 12。解得x=3。所以，小明投进了3个2分球和2个3分球。",
+          "explanation": "本题考查一元一次方程的实际应用。关键是根据总得分建立等量关系式。"
+        }
+      ]
     },
     {
       "id": "h002",
@@ -33,7 +65,27 @@
       "score": 90,
       "totalScore": 100,
       "timeSpent": 26,
-      "teacherComment": "词汇掌握较好，语法小错需注意标点与大小写"
+      "teacherComment": "词汇掌握较好，语法小错需注意标点与大小写",
+      "questions": [
+        {
+          "id": "q004",
+          "type": "choice",
+          "stem": "___ is your name?",
+          "score": 10,
+          "options": [
+            { "label": "A", "text": "What" },
+            { "label": "B", "text": "How" },
+            { "label": "C", "text": "Where" }
+          ],
+          "answer": "A"
+        }
+      ],
+      "studentAnswers": {
+        "q004": "B"
+      },
+      "gradedDetails": {
+        "q004": { "isCorrect": false, "studentAnswer": "B" }
+      }
     },
     {
       "id": "h004",
