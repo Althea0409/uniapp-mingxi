@@ -33,6 +33,12 @@
 				"navigationBarTitleText": "发现"
 			}
 		},
+    {
+      "path": "pages/discover/resource-detail",
+      "style": {
+        "navigationBarTitleText": "资源详情"
+      }
+    },
 		{
 			"path": "pages/profile/index",
 			"style": {

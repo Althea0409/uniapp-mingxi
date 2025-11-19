@@ -55,12 +55,12 @@
       </view>
 
       <!-- 资源推荐 -->
-      <view v-if="currentTab === 1" class="resource-list">
-        <Card 
-          v-for="item in resources" 
-          :key="item.id"
-          @click="viewResource(item)"
-        >
+  <view v-if="currentTab === 1" class="resource-list">
+    <Card 
+      v-for="item in resources" 
+      :key="item.id"
+      @click="viewResource(item)"
+    >
           <view class="resource-item">
             <image class="resource-cover" :src="item.cover" mode="aspectFill" />
             <view class="resource-content">
@@ -108,10 +108,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { useAppStore } from '@/stores/app';
+import { useCourseStore } from '@/stores/course';
 import Card from '@/components/common/Card.vue';
 import achievementsJson from '@/mock/achievements.json';
+import portraitData from '@/mock/portrait.json';
 
 const appStore = useAppStore();
 const currentTab = ref(0);
@@ -162,17 +164,149 @@ const discussions = ref([
   }
 ]);
 
-const resources = ref((achievementsJson.resources||[]).map((r:any)=>({
-  id: r.id,
-  cover: r.cover || '/static/resource/doc.png',
-  title: r.title,
-  description: r.description,
-  type: r.type,
-  typeName: r.type==='video'? '视频' : r.type==='audio'? '音频' : '文档',
-  time: r.duration? `${r.duration}分钟` : '推荐',
-  matchRate: r.matchRate,
-  reason: r.reason
-})));
+const courseStore = useCourseStore();
+
+function detectSubject(name: string): string {
+  if (!name) return '综合';
+  if (name.includes('语文')) return '语文';
+  if (name.includes('数学')) return '数学';
+  if (name.includes('英语')) return '英语';
+  if (name.includes('科学')) return '科学';
+  if (name.includes('历史')) return '历史与社会';
+  return '综合';
+}
+
+function mapTypeName(t: string): { type: string; typeName: string } {
+  if (t === 'video' || t === '视频') return { type: 'video', typeName: '视频' };
+  if (t === 'audio' || t === '音频') return { type: 'audio', typeName: '音频' };
+  if (t === 'exercise' || t === '练习') return { type: 'exercise', typeName: '练习' };
+  return { type: 'document', typeName: '文档' };
+}
+
+function getCoverByType(t: string): string {
+  if (t === 'video') return '/static/resource/video.svg';
+  if (t === 'audio') return '/static/resource/audio.svg';
+  if (t === 'exercise') return '/static/resource/exercise.svg';
+  return '/static/resource/doc.svg';
+}
+
+function getSubjectCover(subject: string): string {
+  switch (subject) {
+    case '语文': return '/static/resource/subject-chinese.svg';
+    case '数学': return '/static/resource/subject-math.svg';
+    case '英语': return '/static/resource/subject-english.svg';
+    case '科学': return '/static/resource/subject-science.svg';
+    case '历史与社会': return '/static/resource/subject-history.svg';
+    default: return '/static/resource/doc.svg';
+  }
+}
+
+function detectSubjectFromTitle(title: string): string {
+  const t = title || '';
+  if (/(语文|古诗|文言|作文)/.test(t)) return '语文';
+  if (/(数学|方程|几何|函数|比例)/.test(t)) return '数学';
+  if (/(英语|词汇|语法|Unit|阅读)/i.test(t)) return '英语';
+  if (/(科学|实验|观察|物理|化学|生物)/.test(t)) return '科学';
+  if (/(历史|地理|社会|地图|家乡)/.test(t)) return '历史与社会';
+  return '综合';
+}
+
+function genRecommendedResources() {
+  const base = (achievementsJson as any).resources || [];
+  const ongoing = courseStore.ongoingCourses || [];
+  const wrong = (appStore as any).consecutiveWrong || 0;
+  const byCourse: any[] = [];
+  const fallback: any[] = [];
+  const subjects = ongoing.map((c: any) => ({
+    id: c.id,
+    name: c.name,
+    subject: detectSubject(c.name),
+    progress: c.progress || 0,
+  }));
+
+  for (const s of subjects) {
+    const pd: any = (portraitData as any)[s.subject];
+    if (!pd) continue;
+    const lows = [...(pd.classicKnowledge||[]), ...(pd.modernKnowledge||[])]
+      .filter((x: any) => typeof x.value === 'number' && x.value <= 75)
+      .slice(0, 2);
+    const resList = (pd.resources||[]).slice(0, 2);
+    for (const r of resList) {
+      const { type, typeName } = mapTypeName(r.type);
+      let match = (r.match || r.matchRate || 80);
+      if (s.progress >= 60 && lows.length > 0) match = Math.min(98, match + 8);
+      if (s.progress < 40) match = Math.max(60, match - 6);
+      if (wrong >= 3) match = Math.min(99, match + 5);
+      const reasonParts = [] as string[];
+      if (lows[0]) reasonParts.push(`“${lows[0].name}”掌握度${lows[0].value}%偏弱`);
+      if (s.progress) reasonParts.push(`当前课程进度${s.progress}%`);
+      if (wrong >= 3) reasonParts.push('近期错题较多，建议巩固');
+      byCourse.push({
+        id: `${s.id}-${r.id}`,
+        cover: getSubjectCover(s.subject),
+        title: r.title,
+        description: r.desc || r.description || '',
+        type,
+        typeName,
+        subject: s.subject,
+        time: r.duration ? `${r.duration}分钟` : '推荐',
+        matchRate: match,
+        reason: reasonParts.join('；')
+      });
+    }
+  }
+
+  const mappedBase = (base as any[]).map((r: any) => {
+    const { type, typeName } = mapTypeName(r.type);
+    const subject = detectSubjectFromTitle(r.title || r.description || '');
+    return {
+      id: r.id,
+      cover: (r.cover && r.cover !== '/static/logo.png') 
+        ? r.cover 
+        : (subject==='综合' ? getCoverByType(type) : getSubjectCover(subject)),
+      title: r.title,
+      description: r.description,
+      type,
+      typeName,
+      subject,
+      time: r.duration ? `${r.duration}分钟` : '推荐',
+      matchRate: r.matchRate || 85,
+      reason: r.reason || '结合学习画像为你推荐'
+    };
+  });
+
+  const subjectKeys = Object.keys(portraitData || {});
+  for (const key of subjectKeys) {
+    const pd: any = (portraitData as any)[key];
+    const lows = [...(pd.classicKnowledge||[]), ...(pd.modernKnowledge||[])]
+      .filter((x: any) => typeof x.value === 'number' && x.value <= 75)
+      .slice(0, 2);
+    const resList = (pd.resources||[]).slice(0, 2);
+    for (const r of resList) {
+      const { type, typeName } = mapTypeName(r.type);
+      const baseMatch = (pd.knowledge?.overall || pd.skills?.mastery || 75);
+      const match = Math.min(99, Math.max(60, baseMatch + (lows.length>0 ? 8 : 0)));
+      fallback.push({
+        id: `pf-${key}-${r.id}`,
+        cover: getSubjectCover(key),
+        title: r.title,
+        description: r.desc || r.description || '',
+        type,
+        typeName,
+        subject: key,
+        time: r.duration ? `${r.duration}分钟` : '推荐',
+        matchRate: match,
+        reason: lows[0] ? `“${lows[0].name}”掌握度${lows[0].value}%偏弱` : `画像整体掌握度${baseMatch}%`
+      });
+    }
+  }
+
+  const merged = [...byCourse, ...mappedBase, ...fallback];
+  merged.sort((a, b) => (b.matchRate || 0) - (a.matchRate || 0));
+  return merged.slice(0, 12);
+}
+
+const resources = ref<any[]>(genRecommendedResources());
 
 const knowledgeBase = ref([
   {
@@ -207,7 +341,8 @@ const goToDiscussionDetail = (item: any) => {
 
 // 查看资源
 const viewResource = (item: any) => {
-  appStore.showToast('资源详情功能开发中', 'none');
+  const q = encodeURIComponent(item.id);
+  appStore.navigateTo(`/pages/discover/resource-detail?id=${q}`);
 };
 const startResource = (item: any) => {
   appStore.recordStudySession(15);
@@ -225,7 +360,7 @@ const createPost = () => {
 };
 
 // 监听全局事件
-onMounted(() => {
+onMounted(async () => {
   uni.$on('switchTab', (data: any) => {
     if (data.tab === 'discussion') {
       currentTab.value = 0;
@@ -233,6 +368,8 @@ onMounted(() => {
       currentTab.value = 1;
     }
   });
+  try { await (courseStore as any).getCourseList?.(); } catch {}
+  resources.value = genRecommendedResources();
 });
 </script>
 

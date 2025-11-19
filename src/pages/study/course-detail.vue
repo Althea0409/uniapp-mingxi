@@ -69,6 +69,7 @@ import Button from '@/components/common/Button.vue';
 import Loading from '@/components/common/Loading.vue';
 import coursesJson from '@/mock/courses.json';
 import { useAppStore } from '@/stores/app';
+import portraitData from '@/mock/portrait.json';
 
 const appStore = useAppStore();
 
@@ -112,11 +113,7 @@ const course = ref<any>({
   tag: '进行中'
 });
 
-const resources = ref([
-  { icon: '🎬', title: '课堂视频', desc: '核心知识讲解' },
-  { icon: '📚', title: '配套练习', desc: '精选习题与解析' },
-  { icon: '📄', title: '课件与笔记', desc: '资料打包下载' },
-]);
+const resources = ref<any[]>([]);
 
 const schedule = ref([
   { time: '周二 10:00 - 11:40', title: '课堂学习', location: '教学楼A-201', teacher: '' },
@@ -144,6 +141,26 @@ function loadCourse(id: string) {
     nextClass: c.nextClass || '',
     tag: c.status === 'completed' ? '已完成' : '进行中'
   };
+  const pd: any = (portraitData as any)[subject];
+  if (pd) {
+    const lows = [...(pd.classicKnowledge||[]), ...(pd.modernKnowledge||[])]
+      .filter((x: any) => typeof x.value === 'number' && x.value <= 75)
+      .slice(0, 2);
+    const resList = (pd.resources||[]).slice(0, 3);
+    resources.value = resList.map((r: any) => ({
+      icon: r.icon || '📚',
+      title: r.title,
+      desc: r.desc || '',
+      match: r.match || 85,
+      reason: lows[0] ? `针对“${lows[0].name}”巩固（掌握度${lows[0].value}%）` : '结合课程进度推荐',
+    }));
+  } else {
+    resources.value = [
+      { icon: '🎬', title: '课堂视频', desc: '核心知识讲解' },
+      { icon: '📚', title: '配套练习', desc: '精选习题与解析' },
+      { icon: '📄', title: '课件与笔记', desc: '资料打包下载' },
+    ];
+  }
   schedule.value = [
     { time: '周二 10:00 - 11:40', title: course.value.chapter || '课堂学习', location: '教学楼A-201', teacher: course.value.teacher },
     { time: '周四 14:00 - 15:40', title: '复习巩固', location: '教学楼A-201', teacher: course.value.teacher },
@@ -161,7 +178,8 @@ const continueStudy = () => {
 };
 
 const viewResource = (r: any) => {
-  appStore.showToast(`查看资源：${r.title}`, 'none');
+  const id = encodeURIComponent(`${course.value.id}-${r.title}`);
+  appStore.navigateTo(`/pages/discover/resource-detail?id=${id}`);
 };
 </script>
 
