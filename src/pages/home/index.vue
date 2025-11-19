@@ -279,6 +279,33 @@ const progressGradient = computed(() => {
 // 推荐课程数据（动态从 mock 读取）
 const recommendCourses = ref<any[]>([]);
 
+function detectSubject(name: string): string {
+  if (!name) return '综合';
+  if (name.includes('语文')) return '语文';
+  if (name.includes('数学')) return '数学';
+  if (name.includes('英语')) return '英语';
+  if (name.includes('科学')) return '科学';
+  if (name.includes('历史与社会')) return '历史与社会';
+  return '综合';
+}
+
+function getCoverBySubject(subject: string): string {
+  switch (subject) {
+    case '语文':
+      return '/static/course/chinese.svg';
+    case '数学':
+      return '/static/course/math.svg';
+    case '英语':
+      return '/static/course/english.svg';
+    case '科学':
+      return '/static/course/science.svg';
+    case '历史与社会':
+      return '/static/course/history.svg';
+    default:
+      return '/static/logo.png';
+  }
+}
+
 function loadRecommendCourses() {
   try {
     const list = (coursesJson as any).courses || [];

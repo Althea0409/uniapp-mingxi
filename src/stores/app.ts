@@ -136,13 +136,21 @@ export const useAppStore = defineStore('app', () => {
    * @param type 跳转类型
    */
   function navigateTo(url: string, type: 'navigateTo' | 'redirectTo' | 'switchTab' | 'reLaunch' = 'navigateTo') {
-    uni[type]({
-      url,
-      fail: (err) => {
+    const common = {
+      fail: (err: any) => {
         console.error('页面跳转失败:', err);
         showToast('页面跳转失败', 'error');
       },
-    });
+    } as any;
+    if (type === 'navigateTo') {
+      uni.navigateTo({ url, ...common });
+    } else if (type === 'redirectTo') {
+      uni.redirectTo({ url, ...common });
+    } else if (type === 'switchTab') {
+      uni.switchTab({ url });
+    } else {
+      uni.reLaunch({ url, ...common });
+    }
   }
   
   /**

@@ -48,7 +48,18 @@ const userStore = useUserStore();
 const subjects = ['语文','数学','英语','物理'];
 const subject = ref('语文');
 
-function genTasksFromPortrait(s: string) {
+type TaskItem = {
+  id: string;
+  icon: string;
+  title: string;
+  subject: string;
+  duration: number;
+  level: string;
+  resources: string[];
+  reason?: string;
+};
+
+function genTasksFromPortrait(s: string): TaskItem[] {
   const d: any = (portraitData as any)[s];
   if (!d) return planData.tasks;
   const lows = [...(d.classicKnowledge||[]), ...(d.modernKnowledge||[])].filter((x: any) => x.value <= 75).slice(0,3);
@@ -62,10 +73,10 @@ function genTasksFromPortrait(s: string) {
     resources: ['练习题','讲解视频'],
     reason: `由于你在“${k.name}”的掌握度为${k.value}%，建议进行专项巩固`
   }));
-  return [...base, ...planData.tasks.filter(t=>t.subject===s)].slice(0,5);
+  return ([...base, ...((planData as any).tasks.filter((t: any)=>t.subject===s))] as TaskItem[]).slice(0,5);
 }
 
-const tasks = ref(genTasksFromPortrait(subject.value));
+const tasks = ref<TaskItem[]>(genTasksFromPortrait(subject.value));
 
 const switchSubject = (s: string) => {
   subject.value = s;

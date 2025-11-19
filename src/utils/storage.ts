@@ -76,7 +76,7 @@ class Storage {
    * 获取存储信息
    * @returns 返回存储信息
    */
-  getInfo(): UniApp.GetStorageInfoSuccessCallbackResult | null {
+  getInfo(): any | null {
     try {
       return uni.getStorageInfoSync();
     } catch (error) {

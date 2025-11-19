@@ -14,15 +14,16 @@ export interface AIConfig {
 
 export const getAIConfig = (): AIConfig => {
   return {
-    apiKey: storage.get(StorageKeys.AI_API_KEY),
-    baseUrl: storage.get(StorageKeys.AI_BASE_URL) || 'https://api.openai.com/v1',
-    model: storage.get(StorageKeys.AI_MODEL) || 'gpt-4o-mini',
+    apiKey: undefined,
+    baseUrl: (storage.get<string>(StorageKeys.AI_BASE_URL) || '/api'),
+    model: (storage.get<string>(StorageKeys.AI_MODEL) || 'qwen-plus'),
   };
 };
 
 export async function* streamChat(messages: ChatMessage[], cfg?: AIConfig): AsyncGenerator<string> {
   const config = { ...getAIConfig(), ...(cfg || {}) };
-  if (!config.apiKey) {
+  const isProxy = !!config.baseUrl && config.baseUrl.includes('/api');
+  if (!config.apiKey && !isProxy) {
     const q = messages[messages.length - 1]?.content || '';
     const mock = buildMockResponse(q);
     for (const token of chunkTextTokens(mock)) {
@@ -32,7 +33,8 @@ export async function* streamChat(messages: ChatMessage[], cfg?: AIConfig): Asyn
     return;
   }
 
-  const url = `${config.baseUrl.replace(/\/$/, '')}/chat/completions`;
+  const base = (config.baseUrl || 'https://api.openai.com/v1');
+  const url = `${base.replace(/\/$/, '')}/chat/completions`;
   const body = {
     model: config.model,
     messages,
@@ -41,10 +43,11 @@ export async function* streamChat(messages: ChatMessage[], cfg?: AIConfig): Asyn
 
   const res = await fetch(url, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${config.apiKey}`,
-    },
+    headers: (() => {
+      const h: Record<string, string> = { 'Content-Type': 'application/json' };
+      if (config.apiKey) h['Authorization'] = `Bearer ${config.apiKey}`;
+      return h;
+    })(),
     body: JSON.stringify(body),
   });
 
