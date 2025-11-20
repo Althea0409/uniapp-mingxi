@@ -19,8 +19,9 @@
           <view v-for="(m, i) in messages" :key="i" :class="['msg', m.role]">
             <text class="avatar">{{ m.role === 'user' ? '👤' : '🤖' }}</text>
             <view class="bubble">
-              <text class="text">{{ m.text }}</text>
-              <view v-if="m.role==='assistant'" class="feedback">
+              <text v-if="m.role === 'user'" class="text">{{ m.text }}</text>
+              <rich-text v-else class="md" :nodes="mdToHtml(m.text)" />
+              <view v-if="m.role === 'assistant'" class="feedback">
                 <text class="fb" @tap="feedback(true)">👍 有帮助</text>
                 <text class="fb" @tap="feedback(false)">👎 没帮助</text>
               </view>
@@ -36,7 +37,8 @@
         <view class="actions">
           <text class="icon">📷</text>
           <text class="icon">📁</text>
-          <Button :text="sending ? '发送中' : '发送'" :type="sending ? 'secondary' : 'primary'" size="small" :disabled="sending" @click="send" />
+          <Button :text="sending ? '发送中' : '发送'" :type="sending ? 'secondary' : 'primary'" size="small"
+            :disabled="sending" @click="send" />
         </view>
       </view>
     </view>
@@ -55,7 +57,7 @@ const appStore = useAppStore();
 const userStore = useUserStore();
 
 const quickTags = ['如何学好高数', '背单词技巧', '作业怎么写', '这道题怎么解'];
-const messages = ref<{ role: 'user'|'assistant'; text: string }[]>([
+const messages = ref<{ role: 'user' | 'assistant'; text: string }[]>([
   { role: 'assistant', text: '你好！我是AI学习助手，有什么可以帮助你？' }
 ]);
 const input = ref('');
@@ -107,6 +109,47 @@ const startStreamReply = async (q: string) => {
   }
 };
 
+function escapeHtml(str: string) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function mdToHtml(md: string): string {
+  if (!md) return '';
+  let s = md;
+  s = s.replace(/```([\s\S]*?)```/g, (_, code) => `<pre class="code"><code>${escapeHtml(code)}</code></pre>`);
+  s = s.replace(/^######\s?(.*)$/gm, '<h6>$1</h6>')
+    .replace(/^#####\s?(.*)$/gm, '<h5>$1</h5>')
+    .replace(/^####\s?(.*)$/gm, '<h4>$1</h4>')
+    .replace(/^###\s?(.*)$/gm, '<h3>$1</h3>')
+    .replace(/^##\s?(.*)$/gm, '<h2>$1</h2>')
+    .replace(/^#\s?(.*)$/gm, '<h1>$1</h1>');
+  s = s.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+  s = s.replace(/\*(.*?)\*/g, '<em>$1</em>');
+  s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
+  const lines = s.split(/\r?\n/);
+  let out = '';
+  let inUl = false, inOl = false;
+  for (const line of lines) {
+    if (/^\s*-\s+/.test(line)) {
+      if (!inUl) { out += '<ul>'; inUl = true; }
+      out += `<li>${line.replace(/^\s*-\s+/, '')}</li>`;
+      continue;
+    }
+    if (/^\s*\d+\.\s+/.test(line)) {
+      if (!inOl) { out += '<ol>'; inOl = true; }
+      out += `<li>${line.replace(/^\s*\d+\.\s+/, '')}</li>`;
+      continue;
+    }
+    if (inUl) { out += '</ul>'; inUl = false; }
+    if (inOl) { out += '</ol>'; inOl = false; }
+    if (line.trim().length === 0) { out += '<br/>'; continue; }
+    out += `<p>${line}</p>`;
+  }
+  if (inUl) out += '</ul>';
+  if (inOl) out += '</ol>';
+  return out;
+}
+
 const scrollBottom = async () => {
   scrollIntoView.value = '' as any;
   await nextTick();
@@ -117,31 +160,166 @@ const scrollBottom = async () => {
 <style lang="scss" scoped>
 @import '@/styles/variables.scss';
 
-.content { padding: 24rpx 32rpx 24rpx 32rpx; box-sizing: border-box; width: 100%; padding-bottom: 160rpx; }
+.content {
+  padding: 24rpx 32rpx 24rpx 32rpx;
+  box-sizing: border-box;
+  width: 100%;
+  padding-bottom: 160rpx;
+}
 
-.assistant-hero { display: flex; align-items: center; gap: 16rpx; }
-.hero-avatar { font-size: 64rpx; }
-.hero-text { display: flex; flex-direction: column; }
-.hero-title { font-size: $font-size-lg; color: $text-primary; font-weight: bold; }
-.hero-sub { font-size: $font-size-sm; color: $text-secondary; }
+.assistant-hero {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
 
-.quick-tags { display: flex; flex-wrap: wrap; gap: 12rpx; margin-top: 12rpx; }
-.tag { padding: 8rpx 16rpx; background: $bg-color; border-radius: 24rpx; font-size: $font-size-sm; color: $primary-color; }
+.hero-avatar {
+  font-size: 64rpx;
+}
 
-.chat-list { display: flex; flex-direction: column; gap: 16rpx; }
-.msg { display: flex; gap: 12rpx; }
-.msg.user { flex-direction: row-reverse; }
-.avatar { font-size: 40rpx; }
-.bubble { max-width: 80%; background: $card-bg; border-radius: $border-radius; padding: 16rpx; box-shadow: 0 4rpx 12rpx rgba(0,0,0,0.05); }
-.text { white-space: pre-line; font-size: $font-size-base; color: $text-primary; }
-.feedback { display: flex; gap: 16rpx; margin-top: 8rpx; }
-.fb { font-size: $font-size-xs; color: $text-secondary; }
+.hero-text {
+  display: flex;
+  flex-direction: column;
+}
 
-.chat-spacer { height: 1rpx; }
-.input-fixed { position: fixed; left: 0; right: 0; bottom: calc(var(--window-bottom) + 32rpx); padding: 16rpx 32rpx; background: transparent; }
-.input-bar { display: flex; align-items: center; gap: 12rpx; background: #FFFFFF; border-radius: 24rpx; box-shadow: 0 8rpx 24rpx rgba(0,0,0,0.08); padding: 12rpx; }
-.input { flex: 1; background: $bg-color; border-radius: $border-radius; padding: 16rpx; }
-.actions { display: flex; align-items: center; gap: 12rpx; }
-.icon { font-size: 32rpx; color: $text-secondary; }
+.hero-title {
+  font-size: $font-size-lg;
+  color: $text-primary;
+  font-weight: bold;
+}
+
+.hero-sub {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.quick-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 12rpx;
+}
+
+.tag {
+  padding: 8rpx 16rpx;
+  background: $bg-color;
+  border-radius: 24rpx;
+  font-size: $font-size-sm;
+  color: $primary-color;
+}
+
+.chat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.msg {
+  display: flex;
+  gap: 12rpx;
+}
+
+.msg.user {
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  font-size: 40rpx;
+}
+
+.bubble {
+  max-width: 80%;
+  background: $card-bg;
+  border-radius: $border-radius;
+  padding: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.05);
+}
+
+.text {
+  white-space: pre-line;
+  font-size: $font-size-base;
+  color: $text-primary;
+}
+
+.md {
+  font-size: $font-size-base;
+  color: $text-primary;
+}
+
+.md h1,
+.md h2,
+.md h3 {
+  margin: 8rpx 0;
+  font-weight: bold;
+}
+
+.md ul,
+.md ol {
+  padding-left: 32rpx;
+}
+
+.md code {
+  background: $bg-color;
+  padding: 2rpx 6rpx;
+  border-radius: 6rpx;
+}
+
+.md pre.code {
+  background: $bg-color;
+  padding: 12rpx;
+  border-radius: $border-radius;
+  overflow: auto;
+}
+
+.feedback {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 8rpx;
+}
+
+.fb {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+}
+
+.chat-spacer {
+  height: 1rpx;
+}
+
+.input-fixed {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--window-bottom) + 32rpx);
+  padding: 16rpx 32rpx;
+  background: transparent;
+}
+
+.input-bar {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
+  padding: 12rpx;
+}
+
+.input {
+  flex: 1;
+  background: $bg-color;
+  border-radius: $border-radius;
+  padding: 16rpx;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.icon {
+  font-size: 32rpx;
+  color: $text-secondary;
+}
 </style>
-
