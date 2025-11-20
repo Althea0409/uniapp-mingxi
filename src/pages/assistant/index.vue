@@ -169,14 +169,15 @@ function mdToHtmlAdvanced(md: string): string {
   let codeFence = false;
   let codeBuf: string[] = [];
   let bqDepth = 0;
-  const listStack: { type: 'ul' | 'ol'; indent: number }[] = [];
+  const listStack: { type: 'ul' | 'ol'; indent: number; count?: number }[] = [];
   let tableMode = false;
   let tableRows: string[][] = [];
   let tableHasHeader = false;
 
   const closeLists = (toIndent: number) => {
     while (listStack.length && listStack[listStack.length - 1].indent >= toIndent) {
-      html += `</${listStack.pop()!.type}>`;
+      const top = listStack.pop()!;
+      html += top.type === 'ol' ? '</div>' : '</ul>';
     }
   };
 
@@ -259,14 +260,22 @@ function mdToHtmlAdvanced(md: string): string {
       const type = liOrdered ? 'ol' : 'ul';
       const content = liOrdered ? liOrdered[3] : liBullet![3];
       while (listStack.length && indent < listStack[listStack.length - 1].indent) {
-        html += `</${listStack.pop()!.type}>`;
+        const popped = listStack.pop()!;
+        html += popped.type === 'ol' ? '</div>' : '</ul>';
       }
-      const top = listStack[listStack.length - 1];
+      let top = listStack[listStack.length - 1];
       if (!top || top.type !== type || indent > top.indent) {
-        listStack.push({ type, indent });
-        html += `<${type}>`;
+        const node = { type, indent, count: 0 } as { type: 'ul' | 'ol'; indent: number; count?: number };
+        listStack.push(node);
+        html += type === 'ol' ? '<div class="ol">' : '<ul>';
+        top = node;
       }
-      html += `<li>${applyInline(content)}</li>`;
+      if (type === 'ol') {
+        top!.count = (top!.count || 0) + 1;
+        html += `<div class="li"><span class="num">${top!.count}.</span><span>${applyInline(content)}</span></div>`;
+      } else {
+        html += `<li>${applyInline(content)}</li>`;
+      }
       continue;
     }
 
@@ -278,7 +287,7 @@ function mdToHtmlAdvanced(md: string): string {
     html += `<pre class="code"><code>${escapeHtml(codeBuf.join('\n'))}</code></pre>`;
   }
   flushTable();
-  while (listStack.length) { html += `</${listStack.pop()!.type}>`; }
+  while (listStack.length) { const t = listStack.pop()!; html += t.type === 'ol' ? '</div>' : '</ul>'; }
   setBlockquoteDepth(0);
   return html;
 }
@@ -389,6 +398,20 @@ const scrollBottom = async () => {
 .md ul,
 .md ol {
   padding-left: 32rpx;
+}
+
+.md .ol {
+  padding-left: 32rpx;
+}
+
+.md .ol .li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8rpx;
+}
+
+.md .ol .num {
+  font-weight: bold;
 }
 
 .md ol {
