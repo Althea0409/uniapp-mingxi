@@ -102,6 +102,7 @@ export const StorageKeys = {
   ACHIEVEMENTS: 'achievements',
   STUDY_STATS: 'studyStats',
   GROWTH_LOG: 'growthLog',
+  TEACHING_FEEDBACK: 'teachingFeedback',
   AI_API_KEY: 'aiApiKey',
   AI_BASE_URL: 'aiBaseUrl',
   AI_MODEL: 'aiModel',

@@ -56,13 +56,47 @@
           </view>
         </view>
       </Card>
+
+      <Card>
+        <view class="section">
+          <text class="section-title">教学反馈</text>
+          <view class="feedback-block">
+            <view class="rate-row">
+              <text
+                v-for="n in 5"
+                :key="n"
+                :class="['star', { active: rating >= n }]"
+                @tap="rating = n"
+              >⭐</text>
+              <text class="rate-text">{{ rateText }}</text>
+            </view>
+            <view class="tag-list">
+              <text
+                v-for="t in tags"
+                :key="t"
+                :class="['tag', { selected: selectedTags.includes(t) }]"
+                @tap="toggleTag(t)"
+              >{{ t }}</text>
+            </view>
+            <textarea class="fb-input" v-model="comment" maxlength="140" placeholder="说说课堂的亮点或建议（最多140字）" />
+            <view class="fb-actions">
+              <label class="checkbox-label" @tap="anonymous = !anonymous">
+                <text class="checkbox">{{ anonymous ? '☑' : '☐' }}</text>
+                <text class="option-text">匿名提交</text>
+              </label>
+              <Button :text="submitting ? '提交中' : '提交反馈'" :type="submitting ? 'secondary' : 'primary'" size="small" :disabled="submitting" @click="submitFeedback" />
+            </view>
+            <text v-if="leftChars <= 20" class="char-tip">还可输入 {{ leftChars }} 字</text>
+          </view>
+        </view>
+      </Card>
     </view>
   </view>
   
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { onLoad } from '@dcloudio/uni-app';
 import Card from '@/components/common/Card.vue';
 import Button from '@/components/common/Button.vue';
@@ -70,8 +104,11 @@ import Loading from '@/components/common/Loading.vue';
 import coursesJson from '@/mock/courses.json';
 import { useAppStore } from '@/stores/app';
 import portraitData from '@/mock/portrait.json';
+import { storage, StorageKeys } from '@/utils/storage';
+import { useUserStore } from '@/stores/user';
 
 const appStore = useAppStore();
+const userStore = useUserStore();
 
 function detectSubject(name: string): string {
   if (!name) return '综合';
@@ -119,6 +156,15 @@ const schedule = ref([
   { time: '周二 10:00 - 11:40', title: '课堂学习', location: '教学楼A-201', teacher: '' },
   { time: '周四 14:00 - 15:40', title: '复习巩固', location: '教学楼A-201', teacher: '' },
 ]);
+
+const rating = ref(0);
+const tags = ['讲解清晰','互动性强','节奏适中','作业有帮助','答疑及时','课堂有趣'];
+const selectedTags = ref<string[]>([]);
+const anonymous = ref(false);
+const comment = ref('');
+const submitting = ref(false);
+const leftChars = computed(()=> Math.max(0, 140 - (comment.value?.length || 0)));
+const rateText = computed(()=> ({0:'请为本次教学打分',1:'需要改进',2:'一般',3:'良好',4:'很棒',5:'非常棒'} as any)[rating.value]);
 
 function loadCourse(id: string) {
   loading.value = true;
@@ -180,6 +226,42 @@ const continueStudy = () => {
 const viewResource = (r: any) => {
   const id = encodeURIComponent(`${course.value.id}-${r.title}`);
   appStore.navigateTo(`/pages/discover/resource-detail?id=${id}`);
+};
+
+const toggleTag = (t: string) => {
+  const i = selectedTags.value.indexOf(t);
+  if (i >= 0) selectedTags.value.splice(i, 1);
+  else selectedTags.value.push(t);
+};
+
+const submitFeedback = async () => {
+  if (!rating.value) { appStore.showToast('请先选择评分', 'none'); return; }
+  submitting.value = true;
+  try {
+    const item = {
+      courseId: course.value.id,
+      courseName: course.value.name,
+      teacher: course.value.teacher,
+      rating: rating.value,
+      tags: [...selectedTags.value],
+      comment: comment.value?.trim() || '',
+      anonymous: anonymous.value,
+      at: Date.now(),
+    };
+    const list = (storage.get(StorageKeys.TEACHING_FEEDBACK) as any) || [];
+    list.push(item);
+    storage.set(StorageKeys.TEACHING_FEEDBACK, list);
+    const logs = (storage.get(StorageKeys.GROWTH_LOG) as any) || [];
+    logs.push({ type: 'feedback', courseId: item.courseId, courseName: item.courseName, rating: item.rating, at: item.at });
+    storage.set(StorageKeys.GROWTH_LOG, logs);
+    userStore.addPoints(5);
+    appStore.showToast('已提交反馈，积分+5', 'success');
+    rating.value = 0; selectedTags.value = []; comment.value = ''; anonymous.value = false;
+  } catch (e) {
+    appStore.showToast('提交失败，请稍后再试', 'error');
+  } finally {
+    submitting.value = false;
+  }
 };
 </script>
 
@@ -280,5 +362,19 @@ const viewResource = (r: any) => {
 .schedule-content { flex: 1; }
 .sch-title { display: block; font-size: $font-size-base; color: $text-primary; font-weight: 500; }
 .sch-sub { display: block; font-size: $font-size-sm; color: $text-secondary; }
-</style>
 
+.feedback-block { display:flex; flex-direction:column; gap:12rpx; }
+.rate-row { display:flex; align-items:center; gap:8rpx; }
+.star { font-size:40rpx; opacity:0.3; }
+.star.active { opacity:1; }
+.rate-text { font-size:$font-size-sm; color:$text-secondary; margin-left:8rpx; }
+.tag-list { display:flex; flex-wrap:wrap; gap:8rpx; }
+.tag { padding:6rpx 14rpx; border-radius:24rpx; background:$bg-color; font-size:$font-size-xs; color:$text-secondary; }
+.tag.selected { background: rgba(43,70,254,0.1); color: $primary-color; font-weight:bold; }
+.fb-input { width:100%; min-height: 120rpx; background:$bg-color; border-radius:$border-radius; padding:12rpx; font-size:$font-size-base; color:$text-primary; }
+.fb-actions { display:flex; align-items:center; justify-content: space-between; }
+.checkbox-label { display:flex; align-items:center; gap:8rpx; }
+.checkbox { font-size:$font-size-base; }
+.option-text { font-size:$font-size-sm; color:$text-secondary; }
+.char-tip { font-size:$font-size-xs; color:$accent-color; text-align:right; }
+</style>

@@ -58,7 +58,7 @@ const userStore = useUserStore();
 
 const quickTags = ['初一学习计划怎么做', '遇到挫折如何调整心态', '语文记叙文阅读要点', '数学分式与方程练习'];
 const messages = ref<{ role: 'user' | 'assistant'; text: string }[]>([
-  { role: 'assistant', text: '你好！我是AI学习助手，浙江版初一同学的学习伙伴～需要学习方法或情感支持，尽管告诉我。' }
+  { role: 'assistant', text: '你好！我是明小蹊，你的AI学习伙伴～需要学习方法或情感支持，请尽管告诉我。' }
 ]);
 const input = ref('');
 const sending = ref(false);
