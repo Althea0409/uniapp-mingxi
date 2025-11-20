@@ -20,7 +20,7 @@
             <text class="avatar">{{ m.role === 'user' ? '👤' : '🤖' }}</text>
             <view class="bubble">
               <text v-if="m.role === 'user'" class="text">{{ m.text }}</text>
-              <rich-text v-else class="md" :nodes="mdToHtml(m.text)" />
+              <rich-text v-else class="md" :nodes="mdToHtmlAdvanced(m.text)" />
               <view v-if="m.role === 'assistant'" class="feedback">
                 <text class="fb" @tap="feedback(true)">👍 有帮助</text>
                 <text class="fb" @tap="feedback(false)">👎 没帮助</text>
@@ -128,26 +128,159 @@ function mdToHtml(md: string): string {
   s = s.replace(/`([^`]+)`/g, '<code>$1</code>');
   const lines = s.split(/\r?\n/);
   let out = '';
-  let inUl = false, inOl = false;
+  let inUl = false;
   for (const line of lines) {
-    if (/^\s*-\s+/.test(line)) {
-      if (!inUl) { out += '<ul>'; inUl = true; }
-      out += `<li>${line.replace(/^\s*-\s+/, '')}</li>`;
+    const ordered = line.match(/^\s*(\d+)\.\s+(.*)$/);
+    if (ordered) {
+      const n = ordered[1];
+      const content = ordered[2];
+      if (inUl) { out += '</ul>'; inUl = false; }
+      out += `<ol start="${n}"><li>${content}</li></ol>`;
       continue;
     }
-    if (/^\s*\d+\.\s+/.test(line)) {
-      if (!inOl) { out += '<ol>'; inOl = true; }
-      out += `<li>${line.replace(/^\s*\d+\.\s+/, '')}</li>`;
+    if (/^\s*(\-|\*|•|·)\s+/.test(line)) {
+      if (!inUl) { out += '<ul>'; inUl = true; }
+      out += `<li>${line.replace(/^\s*(\-|\*|•|·)\s+/, '')}</li>`;
       continue;
     }
     if (inUl) { out += '</ul>'; inUl = false; }
-    if (inOl) { out += '</ol>'; inOl = false; }
     if (line.trim().length === 0) { out += '<br/>'; continue; }
     out += `<p>${line}</p>`;
   }
   if (inUl) out += '</ul>';
-  if (inOl) out += '</ol>';
   return out;
+}
+
+function mdToHtmlAdvanced(md: string): string {
+  if (!md) return '';
+  const applyInline = (s: string): string => {
+    let x = escapeHtml(s);
+    x = x.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1" />');
+    x = x.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>');
+    x = x.replace(/(https?:\/\/[^\s)]+)/g, '<a href="$1" target="_blank">$1</a>');
+    x = x.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+    x = x.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+    x = x.replace(/`([^`]+)`/g, '<code>$1</code>');
+    return x;
+  };
+
+  const lines = md.split(/\r?\n/);
+  let html = '';
+  let codeFence = false;
+  let codeBuf: string[] = [];
+  let bqDepth = 0;
+  const listStack: { type: 'ul' | 'ol'; indent: number }[] = [];
+  let tableMode = false;
+  let tableRows: string[][] = [];
+  let tableHasHeader = false;
+
+  const closeLists = (toIndent: number) => {
+    while (listStack.length && listStack[listStack.length - 1].indent >= toIndent) {
+      html += `</${listStack.pop()!.type}>`;
+    }
+  };
+
+  const setBlockquoteDepth = (depth: number) => {
+    while (bqDepth < depth) { html += '<blockquote>'; bqDepth++; }
+    while (bqDepth > depth) { html += '</blockquote>'; bqDepth--; }
+  };
+
+  const flushTable = () => {
+    if (!tableMode) return;
+    if (tableRows.length) {
+      const header = tableHasHeader ? tableRows.shift() : undefined;
+      html += '<table>';
+      if (header) {
+        html += '<thead><tr>' + header.map(c => `<th>${applyInline(c)}</th>`).join('') + '</tr></thead>';
+      }
+      html += '<tbody>' + tableRows.map(row => '<tr>' + row.map(c => `<td>${applyInline(c)}</td>`).join('') + '</tr>').join('') + '</tbody>';
+      html += '</table>';
+    }
+    tableMode = false;
+    tableRows = [];
+    tableHasHeader = false;
+  };
+
+  for (let raw of lines) {
+    const line = raw.replace(/\s+$/, '');
+    if (codeFence) {
+      if (/^```\s*$/.test(line)) {
+        html += `<pre class="code"><code>${escapeHtml(codeBuf.join('\n'))}</code></pre>`;
+        codeFence = false;
+        codeBuf = [];
+        continue;
+      }
+      codeBuf.push(raw);
+      continue;
+    }
+
+    const fenceStart = line.match(/^```(\w+)?\s*$/);
+    if (fenceStart) { flushTable(); closeLists(-1); setBlockquoteDepth(0); codeFence = true; continue; }
+
+    const bqMatch = line.match(/^(>+)\s?(.*)$/);
+    if (bqMatch) {
+      flushTable();
+      const depth = bqMatch[1].length;
+      setBlockquoteDepth(depth);
+      const content = bqMatch[2];
+      if (content.trim().length) html += `<p>${applyInline(content)}</p>`;
+      continue;
+    } else {
+      setBlockquoteDepth(0);
+    }
+
+    const heading = line.match(/^(#{1,6})\s+(.*)$/);
+    if (heading) {
+      flushTable(); closeLists(-1);
+      const lvl = heading[1].length; const text = heading[2];
+      html += `<h${lvl}>${applyInline(text)}</h${lvl}>`;
+      continue;
+    }
+
+    if (/^\s*$/.test(line)) { flushTable(); closeLists(-1); continue; }
+
+    const tableSep = /^\s*\|?\s*(:?-{3,}:?)(\s*\|\s*:?-{3,}:?)*\s*\|?\s*$/.test(line);
+    const isTableRow = !tableSep && /\|/.test(line) && !/^\s*(\d+\.|[\-\*\+•·])\s+/.test(line);
+    if (isTableRow || tableSep) {
+      closeLists(-1);
+      if (!tableMode) { tableMode = true; tableRows = []; tableHasHeader = false; }
+      if (tableSep) { tableHasHeader = true; continue; }
+      const cells = line.replace(/^\|/, '').replace(/\|$/, '').split(/\s*\|\s*/);
+      tableRows.push(cells);
+      continue;
+    }
+
+    if (tableMode) { flushTable(); }
+
+    const liOrdered = line.match(/^(\s*)(\d+)\.\s+(.*)$/);
+    const liBullet = line.match(/^(\s*)([\-\*\+•·])\s+(.*)$/);
+    if (liOrdered || liBullet) {
+      const indent = (liOrdered ? liOrdered[1] : liBullet![1]).length;
+      const type = liOrdered ? 'ol' : 'ul';
+      const content = liOrdered ? liOrdered[3] : liBullet![3];
+      while (listStack.length && indent < listStack[listStack.length - 1].indent) {
+        html += `</${listStack.pop()!.type}>`;
+      }
+      const top = listStack[listStack.length - 1];
+      if (!top || top.type !== type || indent > top.indent) {
+        listStack.push({ type, indent });
+        html += `<${type}>`;
+      }
+      html += `<li>${applyInline(content)}</li>`;
+      continue;
+    }
+
+    closeLists(-1);
+    html += `<p>${applyInline(line)}</p>`;
+  }
+
+  if (codeFence) {
+    html += `<pre class="code"><code>${escapeHtml(codeBuf.join('\n'))}</code></pre>`;
+  }
+  flushTable();
+  while (listStack.length) { html += `</${listStack.pop()!.type}>`; }
+  setBlockquoteDepth(0);
+  return html;
 }
 
 const scrollBottom = async () => {
@@ -258,6 +391,10 @@ const scrollBottom = async () => {
   padding-left: 32rpx;
 }
 
+.md ol {
+  list-style: decimal;
+}
+
 .md code {
   background: $bg-color;
   padding: 2rpx 6rpx;
@@ -269,6 +406,31 @@ const scrollBottom = async () => {
   padding: 12rpx;
   border-radius: $border-radius;
   overflow: auto;
+}
+
+.md blockquote {
+  border-left: 6rpx solid $divider-color;
+  margin: 8rpx 0;
+  padding-left: 16rpx;
+  color: $text-secondary;
+}
+
+.md table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 8rpx 0;
+}
+
+.md th,
+.md td {
+  border: 1rpx solid $divider-color;
+  padding: 8rpx;
+  text-align: left;
+}
+
+.md a {
+  color: $primary-color;
+  text-decoration: underline;
 }
 
 .feedback {
