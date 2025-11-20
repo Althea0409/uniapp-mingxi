@@ -52,6 +52,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { onLoad } from '@dcloudio/uni-app';
 import Card from '@/components/common/Card.vue';
 import { storage, StorageKeys } from '@/utils/storage';
 
@@ -70,6 +71,13 @@ const taskCount = computed(()=> logs.value.filter(x=>x.type==='task').length);
 const totalMinutes = computed(()=> logs.value.filter(x=>x.type==='task').reduce((s,x)=> s + (x.duration||0), 0));
 const pointsDelta = computed(()=> logs.value.filter(x=>x.type==='points').reduce((s,x)=> s + (x.delta||0), 0));
 const encourageCount = computed(()=> logs.value.filter(x=>x.type==='encourage').length);
+
+onLoad((options: any) => {
+  const tab = (options?.tab || '').toString();
+  if (tab === 'task' || tab === 'points' || tab === 'encourage') {
+    current.value = tab as any;
+  }
+});
 
 </script>
 
