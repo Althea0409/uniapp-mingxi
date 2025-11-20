@@ -2,12 +2,8 @@
   <view class="discover-page">
     <!-- Tab栏 -->
     <view class="tab-bar">
-      <view 
-        v-for="(tab, index) in tabs" 
-        :key="index"
-        :class="['tab-item', { active: currentTab === index }]"
-        @tap="currentTab = index"
-      >
+      <view v-for="(tab, index) in tabs" :key="index" :class="['tab-item', { active: currentTab === index }]"
+        @tap="currentTab = index">
         <text class="tab-text">{{ tab.label }}</text>
       </view>
       <view class="tab-indicator" :style="{ left: `${currentTab * 33.33}%` }"></view>
@@ -16,11 +12,7 @@
     <scroll-view class="content-area" scroll-y>
       <!-- 课堂讨论 -->
       <view v-if="currentTab === 0" class="discussion-list">
-        <Card 
-          v-for="item in discussions" 
-          :key="item.id"
-          @click="goToDiscussionDetail(item)"
-        >
+        <Card v-for="item in discussions" :key="item.id" @click="goToDiscussionDetail(item)">
           <view class="discussion-item">
             <view class="discussion-header">
               <image class="avatar" :src="item.avatar" mode="aspectFill" />
@@ -32,10 +24,10 @@
                 🔥热门
               </view>
             </view>
-            
+
             <text class="discussion-title">{{ item.title }}</text>
             <text class="discussion-content">{{ item.content }}</text>
-            
+
             <view class="discussion-footer">
               <view class="footer-item">
                 <text class="icon">👁️</text>
@@ -55,12 +47,8 @@
       </view>
 
       <!-- 资源推荐 -->
-  <view v-if="currentTab === 1" class="resource-list">
-    <Card 
-      v-for="item in resources" 
-      :key="item.id"
-      @click="viewResource(item)"
-    >
+      <view v-if="currentTab === 1" class="resource-list">
+        <Card v-for="item in resources" :key="item.id" @click="viewResource(item)">
           <view class="resource-item">
             <image class="resource-cover" :src="item.cover" mode="aspectFill" />
             <view class="resource-content">
@@ -81,11 +69,7 @@
 
       <!-- 知识库 -->
       <view v-if="currentTab === 2" class="knowledge-list">
-        <Card 
-          v-for="item in knowledgeBase" 
-          :key="item.id"
-          @click="viewKnowledge(item)"
-        >
+        <Card v-for="item in knowledgeBase" :key="item.id" @click="viewKnowledge(item)">
           <view class="knowledge-item">
             <text class="knowledge-icon">{{ item.icon }}</text>
             <view class="knowledge-content">
@@ -128,7 +112,7 @@ const tabs = ref([
 const discussions = ref([
   {
     id: 'd001',
-    avatar: '/static/avatar/default.png',
+    avatar: '/static/avatar/default.svg',
     username: '小王同学',
     time: '2小时前',
     isHot: true,
@@ -140,7 +124,7 @@ const discussions = ref([
   },
   {
     id: 'd002',
-    avatar: '/static/avatar/default.png',
+    avatar: '/static/avatar/default.svg',
     username: '学习小组长',
     time: '5小时前',
     isHot: false,
@@ -152,7 +136,7 @@ const discussions = ref([
   },
   {
     id: 'd003',
-    avatar: '/static/avatar/default.png',
+    avatar: '/static/avatar/default.svg',
     username: '英语达人',
     time: '昨天',
     isHot: true,
@@ -227,10 +211,10 @@ function genRecommendedResources() {
   for (const s of subjects) {
     const pd: any = (portraitData as any)[s.subject];
     if (!pd) continue;
-    const lows = [...(pd.classicKnowledge||[]), ...(pd.modernKnowledge||[])]
+    const lows = [...(pd.classicKnowledge || []), ...(pd.modernKnowledge || [])]
       .filter((x: any) => typeof x.value === 'number' && x.value <= 75)
       .slice(0, 2);
-    const resList = (pd.resources||[]).slice(0, 2);
+    const resList = (pd.resources || []).slice(0, 2);
     for (const r of resList) {
       const { type, typeName } = mapTypeName(r.type);
       let match = (r.match || r.matchRate || 80);
@@ -261,9 +245,9 @@ function genRecommendedResources() {
     const subject = detectSubjectFromTitle(r.title || r.description || '');
     return {
       id: r.id,
-      cover: (r.cover && r.cover !== '/static/logo.png') 
-        ? r.cover 
-        : (subject==='综合' ? getCoverByType(type) : getSubjectCover(subject)),
+      cover: (r.cover && r.cover !== '/static/logo.png')
+        ? r.cover
+        : (subject === '综合' ? getCoverByType(type) : getSubjectCover(subject)),
       title: r.title,
       description: r.description,
       type,
@@ -278,14 +262,14 @@ function genRecommendedResources() {
   const subjectKeys = Object.keys(portraitData || {});
   for (const key of subjectKeys) {
     const pd: any = (portraitData as any)[key];
-    const lows = [...(pd.classicKnowledge||[]), ...(pd.modernKnowledge||[])]
+    const lows = [...(pd.classicKnowledge || []), ...(pd.modernKnowledge || [])]
       .filter((x: any) => typeof x.value === 'number' && x.value <= 75)
       .slice(0, 2);
-    const resList = (pd.resources||[]).slice(0, 2);
+    const resList = (pd.resources || []).slice(0, 2);
     for (const r of resList) {
       const { type, typeName } = mapTypeName(r.type);
       const baseMatch = (pd.knowledge?.overall || pd.skills?.mastery || 75);
-      const match = Math.min(99, Math.max(60, baseMatch + (lows.length>0 ? 8 : 0)));
+      const match = Math.min(99, Math.max(60, baseMatch + (lows.length > 0 ? 8 : 0)));
       fallback.push({
         id: `pf-${key}-${r.id}`,
         cover: getSubjectCover(key),
@@ -368,7 +352,7 @@ onMounted(async () => {
       currentTab.value = 1;
     }
   });
-  try { await (courseStore as any).getCourseList?.(); } catch {}
+  try { await (courseStore as any).getCourseList?.(); } catch { }
   resources.value = genRecommendedResources();
 });
 </script>
@@ -399,14 +383,14 @@ onMounted(async () => {
   align-items: center;
   justify-content: center;
   height: 88rpx;
-  
+
   .tab-text {
     font-size: $font-size-base;
     color: $text-secondary;
     font-weight: 500;
     transition: $transition-fast;
   }
-  
+
   &.active .tab-text {
     color: $primary-color;
     font-weight: bold;
@@ -438,32 +422,32 @@ onMounted(async () => {
     align-items: center;
     margin-bottom: 16rpx;
   }
-  
+
   .avatar {
     width: 64rpx;
     height: 64rpx;
     border-radius: 32rpx;
     margin-right: 16rpx;
   }
-  
+
   .user-info {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 4rpx;
-    
+
     .username {
       font-size: $font-size-base;
       font-weight: bold;
       color: $text-primary;
     }
-    
+
     .time {
       font-size: $font-size-xs;
       color: $text-placeholder;
     }
   }
-  
+
   .hot-badge {
     padding: 8rpx 16rpx;
     background-color: rgba(245, 34, 45, 0.1);
@@ -472,7 +456,7 @@ onMounted(async () => {
     font-size: $font-size-xs;
     font-weight: bold;
   }
-  
+
   .discussion-title {
     display: block;
     font-size: $font-size-lg;
@@ -480,7 +464,7 @@ onMounted(async () => {
     color: $text-primary;
     margin-bottom: 12rpx;
   }
-  
+
   .discussion-content {
     display: block;
     font-size: $font-size-sm;
@@ -493,23 +477,23 @@ onMounted(async () => {
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-  
+
   .discussion-footer {
     display: flex;
     gap: 32rpx;
     padding-top: 16rpx;
     border-top: 1rpx solid $divider-color;
   }
-  
+
   .footer-item {
     display: flex;
     align-items: center;
     gap: 8rpx;
-    
+
     .icon {
       font-size: 28rpx;
     }
-    
+
     .text {
       font-size: $font-size-sm;
       color: $text-placeholder;
@@ -568,17 +552,17 @@ onMounted(async () => {
   border-radius: 24rpx;
   font-size: $font-size-xs;
   font-weight: bold;
-  
+
   &.video {
     background-color: rgba(123, 97, 255, 0.1);
     color: $secondary-color;
   }
-  
+
   &.document {
     background-color: rgba(43, 70, 254, 0.1);
     color: $primary-color;
   }
-  
+
   &.audio {
     background-color: rgba(255, 184, 77, 0.1);
     color: $accent-color;
@@ -589,8 +573,17 @@ onMounted(async () => {
   font-size: $font-size-xs;
   color: $text-placeholder;
 }
-.resource-actions { margin-top: 8rpx; }
-.resource-reason { display: block; margin-top: 8rpx; font-size: $font-size-xs; color: $primary-color; }
+
+.resource-actions {
+  margin-top: 8rpx;
+}
+
+.resource-reason {
+  display: block;
+  margin-top: 8rpx;
+  font-size: $font-size-xs;
+  color: $primary-color;
+}
 
 // 知识库列表
 .knowledge-item {
@@ -651,14 +644,13 @@ onMounted(async () => {
   justify-content: center;
   box-shadow: 0 8rpx 24rpx rgba(43, 70, 254, 0.4);
   z-index: 100;
-  
+
   .fab-icon {
     font-size: 48rpx;
   }
-  
+
   &:active {
     transform: scale(0.95);
   }
 }
 </style>
-

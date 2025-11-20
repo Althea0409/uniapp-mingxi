@@ -5,7 +5,7 @@
         <view class="assistant-hero">
           <text class="hero-avatar">🤖</text>
           <view class="hero-text">
-            <text class="hero-title">我是你的专属学习助手</text>
+            <text class="hero-title">明小蹊</text>
             <text class="hero-sub">学习方法与情感问题都可问我~</text>
           </view>
         </view>
@@ -17,7 +17,8 @@
       <Card>
         <view class="chat-list">
           <view v-for="(m, i) in messages" :key="i" :class="['msg', m.role]">
-            <text class="avatar">{{ m.role === 'user' ? '👤' : '🤖' }}</text>
+            <image class="avatar-img" :src="m.role === 'user' ? userStore.userAvatar : '/static/avatar/assistant.svg'"
+              mode="aspectFill" />
             <view class="bubble">
               <text v-if="m.role === 'user'" class="text">{{ m.text }}</text>
               <rich-text v-else class="md" :nodes="mdToHtmlAdvanced(m.text)" />
@@ -391,8 +392,10 @@ const scrollBottom = async () => {
   flex-direction: row-reverse;
 }
 
-.avatar {
-  font-size: 40rpx;
+.avatar-img {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
 }
 
 .bubble {

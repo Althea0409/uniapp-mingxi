@@ -539,7 +539,7 @@ onMounted(() => {
     width: 120rpx;
     height: 120rpx;
     border-radius: 60rpx;
-    border: 4rpx solid rgba(255, 255, 255, 0.3);
+    border: none;
   }
   
   .level-badge {

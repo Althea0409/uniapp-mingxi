@@ -52,7 +52,7 @@
       "id": "d001",
       "authorId": "1002",
       "authorName": "小红",
-      "authorAvatar": "/static/avatar/default.png",
+      "authorAvatar": "/static/avatar/default.svg",
       "group": "科学探究社",
       "title": "关于水的沸腾实验的观察记录",
       "content": "温度达到100℃时产生大量气泡，是否还与气压有关？",
@@ -66,7 +66,7 @@
       "id": "d002",
       "authorId": "1003",
       "authorName": "张明",
-      "authorAvatar": "/static/avatar/default.png",
+      "authorAvatar": "/static/avatar/default.svg",
       "group": "英语角",
       "title": "Unit 3 高频短语分享",
       "content": "be good at, take a photo, make friends 这些短语如何记忆？",
@@ -100,4 +100,3 @@
     }
   ]
 }
-

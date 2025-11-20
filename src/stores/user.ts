@@ -13,7 +13,7 @@ export const useUserStore = defineStore('user', () => {
   const isLogin = computed(() => !!token.value && !!userInfo.value);
   const userId = computed(() => userInfo.value?.id || '');
   const userName = computed(() => userInfo.value?.name || '');
-  const userAvatar = computed(() => userInfo.value?.avatar || '/static/avatar/default.png');
+  const userAvatar = computed(() => userInfo.value?.avatar || '/static/avatar/default.svg');
   const userLevel = computed(() => userInfo.value?.level || 0);
   const userExp = computed(() => userInfo.value?.exp || 0);
   const userPoints = computed(() => userInfo.value?.points || 0);
@@ -33,7 +33,7 @@ export const useUserStore = defineStore('user', () => {
         id: '1001',
         phone: phone,
         name: '小明同学',
-        avatar: '/static/avatar/default.png',
+        avatar: '/static/avatar/default.svg',
         level: 8,
         exp: 80,
         points: 1250,
