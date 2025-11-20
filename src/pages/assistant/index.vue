@@ -6,7 +6,7 @@
           <text class="hero-avatar">🤖</text>
           <view class="hero-text">
             <text class="hero-title">我是你的专属学习助手</text>
-            <text class="hero-sub">有问题尽管问我吧！</text>
+            <text class="hero-sub">学习方法与情感问题都可问我~</text>
           </view>
         </view>
         <view class="quick-tags">
@@ -56,9 +56,9 @@ import { useUserStore } from '@/stores/user';
 const appStore = useAppStore();
 const userStore = useUserStore();
 
-const quickTags = ['如何学好高数', '背单词技巧', '作业怎么写', '这道题怎么解'];
+const quickTags = ['初一学习计划怎么做', '遇到挫折如何调整心态', '语文记叙文阅读要点', '数学分式与方程练习'];
 const messages = ref<{ role: 'user' | 'assistant'; text: string }[]>([
-  { role: 'assistant', text: '你好！我是AI学习助手，有什么可以帮助你？' }
+  { role: 'assistant', text: '你好！我是AI学习助手，浙江版初一同学的学习伙伴～需要学习方法或情感支持，尽管告诉我。' }
 ]);
 const input = ref('');
 const sending = ref(false);
@@ -94,7 +94,7 @@ const startStreamReply = async (q: string) => {
   await scrollBottom();
   try {
     const gen = streamChat([
-      { role: 'system', content: '你是友好的学习助手，回答简洁、有条理、分点说明。' },
+      { role: 'system', content: '你是友好的学习助手，面向浙江版初一学生。先简短共情与鼓励，再给可执行方法，分点说明，语言积极真诚，适度使用鼓励语。' },
       { role: 'user', content: q }
     ] as any);
     for await (const chunk of gen) {
