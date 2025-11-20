@@ -238,7 +238,7 @@ function mdToHtmlAdvanced(md: string): string {
       continue;
     }
 
-    if (/^\s*$/.test(line)) { flushTable(); closeLists(-1); continue; }
+    if (/^\s*$/.test(line)) { flushTable(); html += '<br/>'; continue; }
 
     const tableSep = /^\s*\|?\s*(:?-{3,}:?)(\s*\|\s*:?-{3,}:?)*\s*\|?\s*$/.test(line);
     const isTableRow = !tableSep && /\|/.test(line) && !/^\s*(\d+\.|[\-\*\+•·])\s+/.test(line);
@@ -256,14 +256,31 @@ function mdToHtmlAdvanced(md: string): string {
     const liOrdered = line.match(/^(\s*)(\d+)\.\s+(.*)$/);
     const liBullet = line.match(/^(\s*)([\-\*\+•·])\s+(.*)$/);
     if (liOrdered || liBullet) {
-      const indent = (liOrdered ? liOrdered[1] : liBullet![1]).length;
+      let indent = (liOrdered ? liOrdered[1] : liBullet![1]).length;
       const type = liOrdered ? 'ol' : 'ul';
       const content = liOrdered ? liOrdered[3] : liBullet![3];
+      let top = listStack[listStack.length - 1];
+
+      // Auto-nest bullets under current ordered list when indent equal
+      if (!liOrdered && top && top.type === 'ol' && indent === top.indent) {
+        indent = top.indent + 2;
+      }
+
+      // When returning to ordered items at same indent while inside a sublist, close sublists
+      if (liOrdered) {
+        while (top && top.type !== 'ol' && indent <= top.indent) {
+          const popped = listStack.pop()!;
+          html += popped.type === 'ol' ? '</div>' : '</ul>';
+          top = listStack[listStack.length - 1];
+        }
+      }
+
       while (listStack.length && indent < listStack[listStack.length - 1].indent) {
         const popped = listStack.pop()!;
         html += popped.type === 'ol' ? '</div>' : '</ul>';
       }
-      let top = listStack[listStack.length - 1];
+      top = listStack[listStack.length - 1];
+
       if (!top || top.type !== type || indent > top.indent) {
         const node = { type, indent, count: 0 } as { type: 'ul' | 'ol'; indent: number; count?: number };
         listStack.push(node);
@@ -279,6 +296,15 @@ function mdToHtmlAdvanced(md: string): string {
       continue;
     }
 
+    if (listStack.length) {
+      const topCtx = listStack[listStack.length - 1];
+      if (topCtx.type === 'ol') {
+        html += `<div class="li-sub">${applyInline(line)}</div>`;
+      } else {
+        html += `<li class="li-sub">${applyInline(line)}</li>`;
+      }
+      continue;
+    }
     closeLists(-1);
     html += `<p>${applyInline(line)}</p>`;
   }
@@ -412,6 +438,11 @@ const scrollBottom = async () => {
 
 .md .ol .num {
   font-weight: bold;
+}
+
+.md .li-sub {
+  padding-left: 40rpx;
+  color: $text-secondary;
 }
 
 .md ol {
