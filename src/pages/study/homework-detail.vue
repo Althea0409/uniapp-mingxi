@@ -29,7 +29,7 @@
             <block v-if="q.type === 'choice'">
               <view class="choice-options">
                 <view v-for="opt in q.options" :key="opt.label" :class="['option', {
-                  'selected': (hw.studentAnswers || {})[q.id] === opt.label,
+                  'selected': answers[q.id] === opt.label,
                   'correct': hw.status === 'graded' && q.type === 'choice' && opt.label === q.answer,
                   'wrong': hw.status === 'graded' && q.type === 'choice' && (hw.studentAnswers || {})[q.id] === opt.label && opt.label !== q.answer,
                   'disabled': !editable
@@ -42,14 +42,14 @@
 
             <!-- 填空题 -->
             <block v-if="q.type === 'fill-blank'">
-              <input class="q-input" :value="(hw.studentAnswers || {})[q.id]" :disabled="!editable"
-                @input="onInput(q.id, $event)" placeholder="在此填写答案" />
+              <textarea class="q-textarea" v-model="answers[q.id]" :disabled="!editable" placeholder="在此填写答案"
+                auto-height />
             </block>
 
             <!-- 问答题 -->
             <block v-if="q.type === 'essay'">
-              <textarea class="q-textarea" :value="(hw.studentAnswers || {})[q.id]" :disabled="!editable"
-                @input="onInput(q.id, $event)" placeholder="在此填写答案" auto-height />
+              <textarea class="q-textarea" v-model="answers[q.id]" :disabled="!editable" placeholder="在此填写答案"
+                auto-height />
             </block>
 
             <view v-if="hw.status === 'graded'" class="q-review">
@@ -89,6 +89,7 @@ const loading = ref(true);
 const hw = ref<Homework>({} as Homework);
 const editable = computed(() => hw.value.status === 'pending');
 const submitting = ref(false);
+const answers = ref<Record<string, any>>({});
 
 const statusText = computed(() => {
   switch (hw.value.status) {
@@ -113,21 +114,23 @@ function loadHomework(id: string) {
     ...data,
     studentAnswers: data.studentAnswers || {},
   };
+  answers.value = { ...(hw.value.studentAnswers || {}) };
   loading.value = false;
 }
 
 function selectAnswer(questionId: string, answer: string) {
-  if (hw.value.studentAnswers) {
-    hw.value.studentAnswers[questionId] = answer;
-    saveDraft();
+  const curr = answers.value[questionId];
+  if (curr === answer) {
+    delete answers.value[questionId];
+  } else {
+    answers.value[questionId] = answer;
   }
+  saveDraft();
 }
 
 function recordAnswer(questionId: string, answer: string) {
-  if (hw.value.studentAnswers) {
-    hw.value.studentAnswers[questionId] = answer;
-    saveDraft();
-  }
+  answers.value[questionId] = answer;
+  saveDraft();
 }
 
 onLoad((options: any) => {
@@ -144,11 +147,12 @@ const submitHomework = async () => {
   let wrong = 0;
   let score = 0;
   const questions = hw.value.questions || [];
-  const answers = hw.value.studentAnswers || {};
+  hw.value.studentAnswers = { ...(answers.value || {}) } as any;
+  const sa = hw.value.studentAnswers || {};
 
   const gradedDetails: Record<string, any> = {};
   for (const q of questions) {
-    const studentAnswer = answers[q.id];
+    const studentAnswer = sa[q.id];
     if (!studentAnswer) {
       wrong++;
       continue;
@@ -245,7 +249,7 @@ const gradingMode = 'auto';
 function persistHomework() {
   const list = (storage.get(StorageKeys.HOMEWORK) as any) || (homeworkJson as any).homework || [];
   const idx = list.findIndex((x: any) => x.id === hw.value.id);
-  const item = { ...hw.value } as any;
+  const item = { ...hw.value, studentAnswers: { ...(answers.value || {}) } } as any;
   if (idx >= 0) list[idx] = item; else list.push(item);
   storage.set(StorageKeys.HOMEWORK, list);
 }
