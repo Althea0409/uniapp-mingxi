@@ -25,6 +25,7 @@
             <text>自主学习</text>
           </view>
           <text class="score">综合得分：{{ totalScore }}/100 · 超越 {{ surpass }}%</text>
+          <text class="summary">评价记录：{{ evalError ? ('错误：' + evalError) : (evalCount===null ? '加载中...' : (evalCount + ' 条')) }}</text>
         </view>
       </Card>
 
@@ -80,11 +81,14 @@ import portraitJson from '@/mock/portrait.json';
 import homeworkJson from '@/mock/homework.json';
 import achievementsJson from '@/mock/achievements.json';
 import { storage, StorageKeys } from '@/utils/storage';
+import { listEvaluations } from '@/services/evaluation';
 
 const appStore = useAppStore();
 const periods = ['本周', '本月', '本学期'];
 const period = ref('本周');
 const canvasSupported = ref(true);
+const evalCount = ref<number | null>(null);
+const evalError = ref<string | null>(null);
 
 function levelToScore(lvl: string) { return lvl==='good' ? 85 : 70; }
 function clamp(n:number,min:number,max:number){ return Math.max(min, Math.min(max, n)); }
@@ -313,6 +317,14 @@ onMounted(() => {
       canvasSupported.value = false;
     }
   }, 500); // 增加延迟确保DOM完全加载
+  setTimeout(async () => {
+    try {
+      const rows = await listEvaluations({ limit: 5, scenario: 'ok' });
+      evalCount.value = Array.isArray(rows) ? rows.length : 0;
+    } catch (e: any) {
+      evalError.value = String(e?.message || '接口错误');
+    }
+  }, 300);
 });
 
 watch(period, () => {
@@ -365,6 +377,7 @@ const genPlan = () => {
 .fallback-label { font-size: 24rpx; opacity: 0.9; }
 .labels { display: grid; grid-template-columns: repeat(3, auto); gap: 8rpx 16rpx; color: $text-secondary; font-size: $font-size-xs; }
 .score { margin-top: 8rpx; font-size: $font-size-sm; color: $text-primary; }
+.summary { margin-top: 8rpx; font-size: $font-size-xs; color: $text-secondary; }
 
 .metric { display: flex; flex-direction: column; gap: 8rpx; }
 .metric-title { font-size: $font-size-base; color: $text-primary; font-weight: 600; }

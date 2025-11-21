@@ -20,14 +20,20 @@ class Request {
    * @returns Promise<ApiResponse>
    */
   async get<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
-    await delay();
-    console.log('[Mock GET]', url, data);
-    
-    return {
-      code: 200,
-      message: '请求成功',
-      data: {} as T,
-    };
+    const isH5 = typeof window !== 'undefined';
+    if (isH5) {
+      const u = new URL(url, window.location.origin);
+      if (data) Object.entries(data).forEach(([k, v]) => { if (v !== undefined && v !== null) u.searchParams.set(k, String(v)); });
+      const res = await fetch(u.toString());
+      const txt = await res.text();
+      const parsed = txt ? JSON.parse(txt) : ({} as T);
+      return { code: res.status, message: res.ok ? '请求成功' : '请求失败', data: parsed };
+    }
+    const [err, resp] = await new Promise<[any, any]>((resolve) => {
+      uni.request({ url, method: 'GET', data, success: (r) => resolve([null, r]), fail: (e) => resolve([e, null]) });
+    });
+    if (err) return { code: 500, message: '网络错误', data: null as any };
+    return { code: resp.statusCode, message: resp.statusCode === 200 ? '请求成功' : '请求失败', data: resp.data as T };
   }
 
   /**
@@ -37,14 +43,18 @@ class Request {
    * @returns Promise<ApiResponse>
    */
   async post<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
-    await delay();
-    console.log('[Mock POST]', url, data);
-    
-    return {
-      code: 200,
-      message: '请求成功',
-      data: {} as T,
-    };
+    const isH5 = typeof window !== 'undefined';
+    if (isH5) {
+      const res = await fetch(url, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data || {}) });
+      const txt = await res.text();
+      const parsed = txt ? JSON.parse(txt) : ({} as T);
+      return { code: res.status, message: res.ok ? '请求成功' : '请求失败', data: parsed };
+    }
+    const [err, resp] = await new Promise<[any, any]>((resolve) => {
+      uni.request({ url, method: 'POST', data, header: { 'content-type': 'application/json' }, success: (r) => resolve([null, r]), fail: (e) => resolve([e, null]) });
+    });
+    if (err) return { code: 500, message: '网络错误', data: null as any };
+    return { code: resp.statusCode, message: resp.statusCode === 200 || resp.statusCode === 201 ? '请求成功' : '请求失败', data: resp.data as T };
   }
 
   /**
@@ -54,14 +64,18 @@ class Request {
    * @returns Promise<ApiResponse>
    */
   async put<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
-    await delay();
-    console.log('[Mock PUT]', url, data);
-    
-    return {
-      code: 200,
-      message: '请求成功',
-      data: {} as T,
-    };
+    const isH5 = typeof window !== 'undefined';
+    if (isH5) {
+      const res = await fetch(url, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(data || {}) });
+      const txt = await res.text();
+      const parsed = txt ? JSON.parse(txt) : ({} as T);
+      return { code: res.status, message: res.ok ? '请求成功' : '请求失败', data: parsed };
+    }
+    const [err, resp] = await new Promise<[any, any]>((resolve) => {
+      uni.request({ url, method: 'PUT', data, header: { 'content-type': 'application/json' }, success: (r) => resolve([null, r]), fail: (e) => resolve([e, null]) });
+    });
+    if (err) return { code: 500, message: '网络错误', data: null as any };
+    return { code: resp.statusCode, message: resp.statusCode === 200 ? '请求成功' : '请求失败', data: resp.data as T };
   }
 
   /**
@@ -71,14 +85,20 @@ class Request {
    * @returns Promise<ApiResponse>
    */
   async delete<T = any>(url: string, data?: any): Promise<ApiResponse<T>> {
-    await delay();
-    console.log('[Mock DELETE]', url, data);
-    
-    return {
-      code: 200,
-      message: '请求成功',
-      data: {} as T,
-    };
+    const isH5 = typeof window !== 'undefined';
+    if (isH5) {
+      const u = new URL(url, window.location.origin);
+      if (data) Object.entries(data).forEach(([k, v]) => { if (v !== undefined && v !== null) u.searchParams.set(k, String(v)); });
+      const res = await fetch(u.toString(), { method: 'DELETE' });
+      const txt = await res.text();
+      const parsed = txt ? JSON.parse(txt) : ({} as T);
+      return { code: res.status, message: res.ok ? '请求成功' : '请求失败', data: parsed };
+    }
+    const [err, resp] = await new Promise<[any, any]>((resolve) => {
+      uni.request({ url, method: 'DELETE', data, success: (r) => resolve([null, r]), fail: (e) => resolve([e, null]) });
+    });
+    if (err) return { code: 500, message: '网络错误', data: null as any };
+    return { code: resp.statusCode, message: resp.statusCode === 200 ? '请求成功' : '请求失败', data: resp.data as T };
   }
 
   /**

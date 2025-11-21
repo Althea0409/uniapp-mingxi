@@ -17,8 +17,8 @@
       <Card>
         <view class="chat-list">
           <view v-for="(m, i) in messages" :key="i" :class="['msg', m.role]">
-            <image class="avatar-img" :src="m.role === 'user' ? userStore.userAvatar : '/static/avatar/assistant.svg'"
-              mode="aspectFill" />
+            <image v-if="m.role === 'user'" class="avatar-img" :src="userStore.userAvatar" mode="aspectFill" />
+            <text v-else class="avatar">🤖</text>
             <view class="bubble">
               <text v-if="m.role === 'user'" class="text">{{ m.text }}</text>
               <rich-text v-else class="md" :nodes="mdToHtmlAdvanced(m.text)" />
@@ -396,6 +396,16 @@ const scrollBottom = async () => {
   width: 48rpx;
   height: 48rpx;
   border-radius: 24rpx;
+}
+
+.avatar {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 24rpx;
+  font-size: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .bubble {

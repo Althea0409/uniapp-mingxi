@@ -1,0 +1,48 @@
+export type Evaluation = {
+  id: number;
+  course_id: number;
+  clazz_id: number | null;
+  student_id: string;
+  score_content: number | null;
+  score_method: number | null;
+  score_attitude: number | null;
+  score_effect: number | null;
+  score_homework: number | null;
+  comment: string | null;
+  created_at: string;
+};
+
+export async function listEvaluations(params: {
+  course_id?: number;
+  clazz_id?: number;
+  student_id?: string;
+  limit?: number;
+  offset?: number;
+  scenario?: 'ok' | 'empty' | 'error';
+} = {}): Promise<Evaluation[]> {
+  const usp = new URLSearchParams();
+  Object.entries(params).forEach(([k, v]) => {
+    if (v !== undefined && v !== null) usp.set(k, String(v));
+  });
+  const res = await fetch(`/api/evaluation${usp.toString() ? `?${usp.toString()}` : ''}`);
+  return res.json();
+}
+
+export async function createEvaluation(payload: {
+  course_id: number;
+  clazz_id?: number | null;
+  student_id: string;
+  score_content?: number | null;
+  score_method?: number | null;
+  score_attitude?: number | null;
+  score_effect?: number | null;
+  score_homework?: number | null;
+  comment?: string | null;
+}): Promise<{ id: number }> {
+  const res = await fetch('/api/evaluation', {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify(payload),
+  });
+  return res.json();
+}
