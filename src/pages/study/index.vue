@@ -171,7 +171,7 @@ const tabs = ref([
 const currentTab = ref(0);
 
 // 筛选选项（初一学科）
-const subjects = ['全部学科', '语文', '数学', '英语', '科学', '历史与社会'];
+const subjects = ['全部学科', '语文', '数学', '英语', '科学', '社政'];
 const statuses = ['全部状态', '进行中', '已完成', '未开始'];
 
 const selectedSubject = ref('');
@@ -187,7 +187,7 @@ function detectSubject(name: string): string {
   if (name.includes('数学')) return '数学';
   if (name.includes('英语')) return '英语';
   if (name.includes('科学')) return '科学';
-  if (name.includes('历史与社会')) return '历史与社会';
+  if (name.includes('社政') || name.includes('历史与社会')) return '社政';
   return '综合';
 }
 
@@ -201,7 +201,7 @@ function getCoverBySubject(subject: string): string {
       return '/static/course/english.svg';
     case '科学':
       return '/static/course/science.svg';
-    case '历史与社会':
+    case '社政':
       return '/static/course/history.svg';
     default:
       return '/static/logo.png';

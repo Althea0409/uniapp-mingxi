@@ -62,21 +62,12 @@
           <text class="section-title">教学反馈</text>
           <view class="feedback-block">
             <view class="rate-row">
-              <text
-                v-for="n in 5"
-                :key="n"
-                :class="['star', { active: rating >= n }]"
-                @tap="rating = n"
-              >⭐</text>
+              <text v-for="n in 5" :key="n" :class="['star', { active: rating >= n }]" @tap="rating = n">⭐</text>
               <text class="rate-text">{{ rateText }}</text>
             </view>
             <view class="tag-list">
-              <text
-                v-for="t in tags"
-                :key="t"
-                :class="['tag', { selected: selectedTags.includes(t) }]"
-                @tap="toggleTag(t)"
-              >{{ t }}</text>
+              <text v-for="t in tags" :key="t" :class="['tag', { selected: selectedTags.includes(t) }]"
+                @tap="toggleTag(t)">{{ t }}</text>
             </view>
             <textarea class="fb-input" v-model="comment" maxlength="140" placeholder="说说课堂的亮点或建议（最多140字）" />
             <view class="fb-actions">
@@ -84,7 +75,8 @@
                 <text class="checkbox">{{ anonymous ? '☑' : '☐' }}</text>
                 <text class="option-text">匿名提交</text>
               </label>
-              <Button :text="submitting ? '提交中' : '提交反馈'" :type="submitting ? 'secondary' : 'primary'" size="small" :disabled="submitting" @click="submitFeedback" />
+              <Button :text="submitting ? '提交中' : '提交反馈'" :type="submitting ? 'secondary' : 'primary'" size="small"
+                :disabled="submitting" @click="submitFeedback" />
             </view>
             <text v-if="leftChars <= 20" class="char-tip">还可输入 {{ leftChars }} 字</text>
           </view>
@@ -92,7 +84,7 @@
       </Card>
     </view>
   </view>
-  
+
 </template>
 
 <script setup lang="ts">
@@ -116,7 +108,7 @@ function detectSubject(name: string): string {
   if (name.includes('数学')) return '数学';
   if (name.includes('英语')) return '英语';
   if (name.includes('科学')) return '科学';
-  if (name.includes('历史与社会')) return '历史与社会';
+  if (name.includes('社政') || name.includes('历史与社会')) return '社政';
   return '综合';
 }
 
@@ -130,7 +122,7 @@ function getCoverBySubject(subject: string): string {
       return '/static/course/english.svg';
     case '科学':
       return '/static/course/science.svg';
-    case '历史与社会':
+    case '社政':
       return '/static/course/history.svg';
     default:
       return '/static/logo.png';
@@ -158,13 +150,13 @@ const schedule = ref([
 ]);
 
 const rating = ref(0);
-const tags = ['讲解清晰','互动性强','节奏适中','作业有帮助','答疑及时','课堂有趣'];
+const tags = ['讲解清晰', '互动性强', '节奏适中', '作业有帮助', '答疑及时', '课堂有趣'];
 const selectedTags = ref<string[]>([]);
 const anonymous = ref(false);
 const comment = ref('');
 const submitting = ref(false);
-const leftChars = computed(()=> Math.max(0, 140 - (comment.value?.length || 0)));
-const rateText = computed(()=> ({0:'请为本次教学打分',1:'需要改进',2:'一般',3:'良好',4:'很棒',5:'非常棒'} as any)[rating.value]);
+const leftChars = computed(() => Math.max(0, 140 - (comment.value?.length || 0)));
+const rateText = computed(() => ({ 0: '请为本次教学打分', 1: '需要改进', 2: '一般', 3: '良好', 4: '很棒', 5: '非常棒' } as any)[rating.value]);
 
 function loadCourse(id: string) {
   loading.value = true;
@@ -189,11 +181,12 @@ function loadCourse(id: string) {
   };
   const pd: any = (portraitData as any)[subject];
   if (pd) {
-    const lows = [...(pd.classicKnowledge||[]), ...(pd.modernKnowledge||[])]
+    const lows = [...(pd.classicKnowledge || []), ...(pd.modernKnowledge || [])]
       .filter((x: any) => typeof x.value === 'number' && x.value <= 75)
       .slice(0, 2);
-    const resList = (pd.resources||[]).slice(0, 3);
+    const resList = (pd.resources || []).slice(0, 3);
     resources.value = resList.map((r: any) => ({
+      id: r.id,
       icon: r.icon || '📚',
       title: r.title,
       desc: r.desc || '',
@@ -224,7 +217,7 @@ const continueStudy = () => {
 };
 
 const viewResource = (r: any) => {
-  const id = encodeURIComponent(`${course.value.id}-${r.title}`);
+  const id = encodeURIComponent(`${course.value.id}-${r.id}`);
   appStore.navigateTo(`/pages/discover/resource-detail?id=${id}`);
 };
 
@@ -341,40 +334,180 @@ const submitFeedback = async () => {
   font-weight: bold;
 }
 
-.meta { display: flex; gap: 24rpx; margin-bottom: 16rpx; }
-.meta-item { font-size: $font-size-sm; color: $text-secondary; }
+.meta {
+  display: flex;
+  gap: 24rpx;
+  margin-bottom: 16rpx;
+}
 
-.actions { margin-top: 8rpx; }
+.meta-item {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
 
-.section { padding: 8rpx; }
-.section-title { font-size: $font-size-lg; font-weight: bold; color: $text-primary; margin-bottom: 16rpx; }
+.actions {
+  margin-top: 8rpx;
+}
 
-.resource-list { display: flex; flex-direction: column; gap: 16rpx; }
-.resource-item { display: flex; align-items: center; gap: 16rpx; }
-.resource-icon { font-size: 40rpx; }
-.resource-content { flex: 1; display: flex; flex-direction: column; gap: 4rpx; }
-.resource-title { font-size: $font-size-base; color: $text-primary; }
-.resource-desc { font-size: $font-size-sm; color: $text-secondary; }
+.section {
+  padding: 8rpx;
+}
 
-.schedule-list { display: flex; flex-direction: column; gap: 16rpx; }
-.schedule-item { display: flex; gap: 16rpx; }
-.time { width: 280rpx; font-size: $font-size-sm; color: $text-secondary; }
-.schedule-content { flex: 1; }
-.sch-title { display: block; font-size: $font-size-base; color: $text-primary; font-weight: 500; }
-.sch-sub { display: block; font-size: $font-size-sm; color: $text-secondary; }
+.section-title {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  color: $text-primary;
+  margin-bottom: 16rpx;
+}
 
-.feedback-block { display:flex; flex-direction:column; gap:12rpx; }
-.rate-row { display:flex; align-items:center; gap:8rpx; }
-.star { font-size:40rpx; opacity:0.3; }
-.star.active { opacity:1; }
-.rate-text { font-size:$font-size-sm; color:$text-secondary; margin-left:8rpx; }
-.tag-list { display:flex; flex-wrap:wrap; gap:8rpx; }
-.tag { padding:6rpx 14rpx; border-radius:24rpx; background:$bg-color; font-size:$font-size-xs; color:$text-secondary; }
-.tag.selected { background: rgba(43,70,254,0.1); color: $primary-color; font-weight:bold; }
-.fb-input { width:100%; min-height: 120rpx; background:$bg-color; border-radius:$border-radius; padding:12rpx; font-size:$font-size-base; color:$text-primary; }
-.fb-actions { display:flex; align-items:center; justify-content: space-between; }
-.checkbox-label { display:flex; align-items:center; gap:8rpx; }
-.checkbox { font-size:$font-size-base; }
-.option-text { font-size:$font-size-sm; color:$text-secondary; }
-.char-tip { font-size:$font-size-xs; color:$accent-color; text-align:right; }
+.resource-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+}
+
+.resource-icon {
+  font-size: 40rpx;
+}
+
+.resource-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.resource-title {
+  font-size: $font-size-base;
+  color: $text-primary;
+}
+
+.resource-desc {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.schedule-item {
+  display: flex;
+  gap: 16rpx;
+}
+
+.time {
+  width: 280rpx;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.schedule-content {
+  flex: 1;
+}
+
+.sch-title {
+  display: block;
+  font-size: $font-size-base;
+  color: $text-primary;
+  font-weight: 500;
+}
+
+.sch-sub {
+  display: block;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.feedback-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.rate-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.star {
+  font-size: 40rpx;
+  opacity: 0.3;
+}
+
+.star.active {
+  opacity: 1;
+}
+
+.rate-text {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  margin-left: 8rpx;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.tag {
+  padding: 6rpx 14rpx;
+  border-radius: 24rpx;
+  background: $bg-color;
+  font-size: $font-size-xs;
+  color: $text-secondary;
+}
+
+.tag.selected {
+  background: rgba(43, 70, 254, 0.1);
+  color: $primary-color;
+  font-weight: bold;
+}
+
+.fb-input {
+  width: 100%;
+  min-height: 120rpx;
+  background: $bg-color;
+  border-radius: $border-radius;
+  padding: 12rpx;
+  font-size: $font-size-base;
+  color: $text-primary;
+}
+
+.fb-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+}
+
+.checkbox {
+  font-size: $font-size-base;
+}
+
+.option-text {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.char-tip {
+  font-size: $font-size-xs;
+  color: $accent-color;
+  text-align: right;
+}
 </style>

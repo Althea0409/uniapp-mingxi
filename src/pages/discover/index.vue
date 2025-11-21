@@ -167,7 +167,7 @@ function detectSubject(name: string): string {
   if (name.includes('数学')) return '数学';
   if (name.includes('英语')) return '英语';
   if (name.includes('科学')) return '科学';
-  if (name.includes('历史')) return '历史与社会';
+  if (name.includes('社政') || name.includes('历史') || name.includes('社会')) return '社政';
   return '综合';
 }
 
@@ -191,7 +191,7 @@ function getSubjectCover(subject: string): string {
     case '数学': return '/static/resource/subject-math.svg';
     case '英语': return '/static/resource/subject-english.svg';
     case '科学': return '/static/resource/subject-science.svg';
-    case '历史与社会': return '/static/resource/subject-history.svg';
+    case '社政': return '/static/resource/subject-history.svg';
     default: return '/static/resource/doc.svg';
   }
 }
@@ -202,7 +202,7 @@ function detectSubjectFromTitle(title: string): string {
   if (/(数学|方程|几何|函数|比例)/.test(t)) return '数学';
   if (/(英语|词汇|语法|Unit|阅读)/i.test(t)) return '英语';
   if (/(科学|实验|观察|物理|化学|生物)/.test(t)) return '科学';
-  if (/(历史|地理|社会|地图|家乡)/.test(t)) return '历史与社会';
+  if (/(历史|地理|社会|地图|家乡|社政)/.test(t)) return '社政';
   return '综合';
 }
 

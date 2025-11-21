@@ -77,7 +77,7 @@ function getSubjectCover(subject: string): string {
     case '数学': return '/static/resource/subject-math.svg';
     case '英语': return '/static/resource/subject-english.svg';
     case '科学': return '/static/resource/subject-science.svg';
-    case '历史与社会': return '/static/resource/subject-history.svg';
+    case '社政': return '/static/resource/subject-history.svg';
     default: return '/static/resource/doc.svg';
   }
 }
@@ -88,7 +88,7 @@ function detectSubject(name: string): string {
   if (name.includes('数学')) return '数学';
   if (name.includes('英语')) return '英语';
   if (name.includes('科学')) return '科学';
-  if (name.includes('历史')) return '历史与社会';
+  if (name.includes('社政') || name.includes('历史') || name.includes('社会')) return '社政';
   return '综合';
 }
 

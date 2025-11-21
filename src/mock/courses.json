@@ -46,7 +46,7 @@
     },
     {
       "id": "c005",
-      "name": "历史与社会·七年级上（浙教版）",
+      "name": "社政·七年级上（浙教版）",
       "teacher": "周老师",
       "department": "初一（七年级）",
       "cover": "/static/course/history.svg",
@@ -57,4 +57,3 @@
     }
   ]
 }
-
