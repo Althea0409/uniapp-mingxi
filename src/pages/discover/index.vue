@@ -100,11 +100,11 @@ const appStore = useAppStore();
 const currentTab = ref(0);
 
 const baseUrl = import.meta.env.BASE_URL || '/';
-const defaultAvatarUrl = '/static/avatar/default.svg';
+const defaultAvatarUrl = new URL('../../static/avatar/default.svg', import.meta.url).href;
 function resolveAvatar(src?: string) {
   if (!src) return defaultAvatarUrl;
   if (/^(https?:)?\/\//.test(src) || src.startsWith('data:')) return src;
-  if (src.startsWith('/static/')) return src;
+  if (src.includes('static/avatar/default.svg')) return defaultAvatarUrl;
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
   if (src.startsWith('/')) return cleanBase.replace(/\/$/, '') + src;
   return cleanBase + src.replace(/^\.?\//, '');
@@ -120,7 +120,7 @@ const tabs = ref([
 const discussions = ref([
   {
     id: 'd001',
-    avatar: '/static/avatar/default.svg',
+    avatar: 'static/avatar/default.svg',
     username: '小王同学',
     time: '2小时前',
     isHot: true,
@@ -132,7 +132,7 @@ const discussions = ref([
   },
   {
     id: 'd002',
-    avatar: '/static/avatar/default.svg',
+    avatar: 'static/avatar/default.svg',
     username: '学习小组长',
     time: '5小时前',
     isHot: false,
@@ -144,7 +144,7 @@ const discussions = ref([
   },
   {
     id: 'd003',
-    avatar: '/static/avatar/default.svg',
+    avatar: 'static/avatar/default.svg',
     username: '英语达人',
     time: '昨天',
     isHot: true,
