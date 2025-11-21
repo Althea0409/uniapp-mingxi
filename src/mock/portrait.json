@@ -1,150 +1,763 @@
 {
   "语文": {
-    "stats": { "dailyHours": 1.8, "weekHours": 12, "focusScore": 82 },
-    "habits": { "bestPeriod": "19:00-20:30", "continuity": { "level": "good", "text": "良好" }, "review": { "level": "warn", "text": "需提升" } },
-    "skills": { "advantage": 4, "toImprove": 2, "mastery": 80 },
+    "stats": {
+      "dailyHours": 1.8,
+      "weekHours": 12,
+      "focusScore": 82
+    },
+    "habits": {
+      "bestPeriod": "19:00-20:30",
+      "continuity": {
+        "level": "good",
+        "text": "良好"
+      },
+      "review": {
+        "level": "warn",
+        "text": "需提升"
+      }
+    },
+    "skills": {
+      "advantage": 4,
+      "toImprove": 2,
+      "mastery": 80
+    },
     "coreSkills": [
-      { "name": "古诗词积累", "value": 86 },
-      { "name": "阅读理解", "value": 82 },
-      { "name": "写作表达", "value": 78 }
+      {
+        "name": "古诗词积累",
+        "value": 86
+      },
+      {
+        "name": "阅读理解",
+        "value": 82
+      },
+      {
+        "name": "写作表达",
+        "value": 78
+      }
     ],
     "appliedSkills": [
-      { "name": "默写能力", "value": 88 },
-      { "name": "文意概括", "value": 80 },
-      { "name": "修辞运用", "value": 76 }
+      {
+        "name": "默写能力",
+        "value": 88
+      },
+      {
+        "name": "文意概括",
+        "value": 80
+      },
+      {
+        "name": "修辞运用",
+        "value": 76
+      }
     ],
-    "knowledge": { "mastered": 78, "learning": 20, "weak": 12, "overall": 78 },
+    "knowledge": {
+      "mastered": 78,
+      "learning": 20,
+      "weak": 12,
+      "overall": 78
+    },
     "classicKnowledge": [
-      { "name": "古诗词背诵", "value": 90 },
-      { "name": "文言文常见实词", "value": 82 },
-      { "name": "关联词与句式", "value": 84 }
+      {
+        "name": "古诗词背诵",
+        "value": 90
+      },
+      {
+        "name": "文言文常见实词",
+        "value": 82
+      },
+      {
+        "name": "关联词与句式",
+        "value": 84
+      }
     ],
     "modernKnowledge": [
-      { "name": "说明文结构", "value": 80 },
-      { "name": "记叙文要素", "value": 85 },
-      { "name": "议论文入门", "value": 70 }
+      {
+        "name": "说明文结构",
+        "value": 80
+      },
+      {
+        "name": "记叙文要素",
+        "value": 85
+      },
+      {
+        "name": "议论文入门",
+        "value": 70
+      }
     ],
     "resources": [
-      { "id": "y1", "icon": "📘", "title": "古诗词默写册·七上", "desc": "重点篇目巩固练习", "match": 92, "type": "练习" },
-      { "id": "y2", "icon": "🎬", "title": "文言文入门视频", "desc": "重点实词与句式讲解", "match": 88, "type": "视频" }
+      {
+        "id": "y1",
+        "icon": "📘",
+        "title": "古诗词默写册·七上",
+        "desc": "重点篇目巩固练习",
+        "match": 92,
+        "type": "练习",
+        "duration": 25,
+        "difficulty": "中",
+        "skills": [
+          "默写能力",
+          "古诗词积累"
+        ]
+      },
+      {
+        "id": "y2",
+        "icon": "🎬",
+        "title": "文言文入门视频",
+        "desc": "重点实词与句式讲解",
+        "match": 88,
+        "type": "视频",
+        "duration": 18,
+        "difficulty": "易",
+        "skills": [
+          "文言文常见实词",
+          "句式理解"
+        ]
+      },
+      {
+        "id": "y3",
+        "icon": "📝",
+        "title": "阅读理解专项·信息提取",
+        "desc": "段落要点快速定位",
+        "match": 90,
+        "type": "练习",
+        "duration": 20,
+        "difficulty": "中",
+        "skills": [
+          "阅读理解"
+        ]
+      },
+      {
+        "id": "y4",
+        "icon": "📚",
+        "title": "修辞手法精讲讲义",
+        "desc": "比喻/拟人/夸张全解析",
+        "match": 86,
+        "type": "文档",
+        "duration": 15,
+        "difficulty": "易",
+        "skills": [
+          "修辞运用"
+        ]
+      },
+      {
+        "id": "y5",
+        "icon": "🎯",
+        "title": "作文素材速记·人物篇",
+        "desc": "高频素材与结构模板",
+        "match": 84,
+        "type": "文档",
+        "duration": 12,
+        "difficulty": "易",
+        "skills": [
+          "写作表达"
+        ]
+      },
+      {
+        "id": "y6",
+        "icon": "✅",
+        "title": "文言文小测·实词辨析",
+        "desc": "10题查漏补缺",
+        "match": 83,
+        "type": "测验",
+        "duration": 10,
+        "difficulty": "中",
+        "skills": [
+          "文言文常见实词"
+        ]
+      }
     ]
   },
   "数学": {
-    "stats": { "dailyHours": 1.9, "weekHours": 14, "focusScore": 80 },
-    "habits": { "bestPeriod": "20:00-21:30", "continuity": { "level": "good", "text": "稳定" }, "review": { "level": "good", "text": "稳定" } },
-    "skills": { "advantage": 4, "toImprove": 3, "mastery": 78 },
+    "stats": {
+      "dailyHours": 1.9,
+      "weekHours": 14,
+      "focusScore": 80
+    },
+    "habits": {
+      "bestPeriod": "20:00-21:30",
+      "continuity": {
+        "level": "good",
+        "text": "稳定"
+      },
+      "review": {
+        "level": "good",
+        "text": "稳定"
+      }
+    },
+    "skills": {
+      "advantage": 4,
+      "toImprove": 3,
+      "mastery": 78
+    },
     "coreSkills": [
-      { "name": "整数与因数", "value": 80 },
-      { "name": "一元一次方程", "value": 84 },
-      { "name": "几何初步", "value": 72 }
+      {
+        "name": "整数与因数",
+        "value": 80
+      },
+      {
+        "name": "一元一次方程",
+        "value": 84
+      },
+      {
+        "name": "几何初步",
+        "value": 72
+      }
     ],
     "appliedSkills": [
-      { "name": "题型归纳", "value": 78 },
-      { "name": "计算规范", "value": 86 },
-      { "name": "错题整理", "value": 88 }
+      {
+        "name": "题型归纳",
+        "value": 78
+      },
+      {
+        "name": "计算规范",
+        "value": 86
+      },
+      {
+        "name": "错题整理",
+        "value": 88
+      }
     ],
-    "knowledge": { "mastered": 72, "learning": 22, "weak": 14, "overall": 70 },
+    "knowledge": {
+      "mastered": 72,
+      "learning": 22,
+      "weak": 14,
+      "overall": 70
+    },
     "classicKnowledge": [
-      { "name": "解方程方法", "value": 82 },
-      { "name": "比例与百分数", "value": 76 },
-      { "name": "图形与角度", "value": 70 }
+      {
+        "name": "解方程方法",
+        "value": 82
+      },
+      {
+        "name": "比例与百分数",
+        "value": 76
+      },
+      {
+        "name": "图形与角度",
+        "value": 70
+      }
     ],
     "modernKnowledge": [
-      { "name": "应用题建模", "value": 74 },
-      { "name": "不等式基础", "value": 66 },
-      { "name": "统计与概率入门", "value": 72 }
+      {
+        "name": "应用题建模",
+        "value": 74
+      },
+      {
+        "name": "不等式基础",
+        "value": 66
+      },
+      {
+        "name": "统计与概率入门",
+        "value": 72
+      }
     ],
     "resources": [
-      { "id": "m1", "icon": "📐", "title": "方程应用题10道", "desc": "典型应用场景练习", "match": 90, "type": "练习" },
-      { "id": "m2", "icon": "🧮", "title": "计算规范清单", "desc": "易错点与规范整理", "match": 85, "type": "文档" }
+      {
+        "id": "m1",
+        "icon": "📐",
+        "title": "方程应用题10道",
+        "desc": "典型应用场景练习",
+        "match": 90,
+        "type": "练习",
+        "duration": 30,
+        "difficulty": "中",
+        "skills": [
+          "一元一次方程",
+          "题型归纳"
+        ]
+      },
+      {
+        "id": "m2",
+        "icon": "🧮",
+        "title": "计算规范清单",
+        "desc": "易错点与规范整理",
+        "match": 85,
+        "type": "文档",
+        "duration": 12,
+        "difficulty": "易",
+        "skills": [
+          "计算规范"
+        ]
+      },
+      {
+        "id": "m3",
+        "icon": "🎬",
+        "title": "图形与角度微课",
+        "desc": "几何初步可视化讲解",
+        "match": 82,
+        "type": "视频",
+        "duration": 16,
+        "difficulty": "易",
+        "skills": [
+          "几何初步"
+        ]
+      }
     ]
   },
   "英语": {
-    "stats": { "dailyHours": 1.2, "weekHours": 10, "focusScore": 76 },
-    "habits": { "bestPeriod": "18:30-19:30", "continuity": { "level": "warn", "text": "需提升" }, "review": { "level": "good", "text": "良好" } },
-    "skills": { "advantage": 3, "toImprove": 3, "mastery": 74 },
+    "stats": {
+      "dailyHours": 1.2,
+      "weekHours": 10,
+      "focusScore": 76
+    },
+    "habits": {
+      "bestPeriod": "18:30-19:30",
+      "continuity": {
+        "level": "warn",
+        "text": "需提升"
+      },
+      "review": {
+        "level": "good",
+        "text": "良好"
+      }
+    },
+    "skills": {
+      "advantage": 3,
+      "toImprove": 3,
+      "mastery": 74
+    },
     "coreSkills": [
-      { "name": "词汇记忆", "value": 72 },
-      { "name": "基础语法", "value": 76 },
-      { "name": "阅读理解", "value": 78 }
+      {
+        "name": "词汇记忆",
+        "value": 72
+      },
+      {
+        "name": "基础语法",
+        "value": 76
+      },
+      {
+        "name": "阅读理解",
+        "value": 78
+      }
     ],
     "appliedSkills": [
-      { "name": "听力训练", "value": 70 },
-      { "name": "口语表达", "value": 66 },
-      { "name": "写作入门", "value": 72 }
+      {
+        "name": "听力训练",
+        "value": 70
+      },
+      {
+        "name": "口语表达",
+        "value": 66
+      },
+      {
+        "name": "写作入门",
+        "value": 72
+      }
     ],
-    "knowledge": { "mastered": 66, "learning": 22, "weak": 16, "overall": 64 },
+    "knowledge": {
+      "mastered": 66,
+      "learning": 22,
+      "weak": 16,
+      "overall": 64
+    },
     "classicKnowledge": [
-      { "name": "be动词与人称代词", "value": 76 },
-      { "name": "一般现在时", "value": 72 },
-      { "name": "常用短语搭配", "value": 70 }
+      {
+        "name": "be动词与人称代词",
+        "value": 76
+      },
+      {
+        "name": "一般现在时",
+        "value": 72
+      },
+      {
+        "name": "常用短语搭配",
+        "value": 70
+      }
     ],
     "modernKnowledge": [
-      { "name": "阅读策略", "value": 80 },
-      { "name": "写作句型", "value": 74 },
-      { "name": "口语场景", "value": 68 }
+      {
+        "name": "阅读策略",
+        "value": 80
+      },
+      {
+        "name": "写作句型",
+        "value": 74
+      },
+      {
+        "name": "口语场景",
+        "value": 68
+      }
     ],
     "resources": [
-      { "id": "e1", "icon": "📝", "title": "Unit 3 高频词包", "desc": "词义联想与例句", "match": 88, "type": "文档" },
-      { "id": "e2", "icon": "🎧", "title": "听力材料·七上", "desc": "配字幕与慢速版", "match": 85, "type": "音频" }
+      {
+        "id": "e1",
+        "icon": "📝",
+        "title": "Unit 3 高频词包",
+        "desc": "词义联想与例句",
+        "match": 88,
+        "type": "文档",
+        "duration": 14,
+        "difficulty": "易",
+        "skills": [
+          "词汇记忆"
+        ]
+      },
+      {
+        "id": "e2",
+        "icon": "🎧",
+        "title": "听力材料·七上",
+        "desc": "配字幕与慢速版",
+        "match": 85,
+        "type": "音频",
+        "duration": 20,
+        "difficulty": "中",
+        "skills": [
+          "听力训练"
+        ]
+      },
+      {
+        "id": "e3",
+        "icon": "🎬",
+        "title": "一般现在时讲解",
+        "desc": "时态用法与常见错误",
+        "match": 84,
+        "type": "视频",
+        "duration": 12,
+        "difficulty": "易",
+        "skills": [
+          "基础语法"
+        ]
+      }
     ]
   },
   "科学": {
-    "stats": { "dailyHours": 1.6, "weekHours": 11, "focusScore": 80 },
-    "habits": { "bestPeriod": "20:00-21:00", "continuity": { "level": "good", "text": "良好" }, "review": { "level": "good", "text": "稳定" } },
-    "skills": { "advantage": 4, "toImprove": 2, "mastery": 79 },
+    "stats": {
+      "dailyHours": 1.6,
+      "weekHours": 11,
+      "focusScore": 80
+    },
+    "habits": {
+      "bestPeriod": "20:00-21:00",
+      "continuity": {
+        "level": "good",
+        "text": "良好"
+      },
+      "review": {
+        "level": "good",
+        "text": "稳定"
+      }
+    },
+    "skills": {
+      "advantage": 4,
+      "toImprove": 2,
+      "mastery": 79
+    },
     "coreSkills": [
-      { "name": "观察与记录", "value": 84 },
-      { "name": "实验与探究", "value": 80 },
-      { "name": "数据处理", "value": 76 }
+      {
+        "name": "观察与记录",
+        "value": 84
+      },
+      {
+        "name": "实验与探究",
+        "value": 80
+      },
+      {
+        "name": "数据处理",
+        "value": 76
+      }
     ],
     "appliedSkills": [
-      { "name": "实验设计", "value": 82 },
-      { "name": "误差识别", "value": 76 },
-      { "name": "图像分析", "value": 78 }
+      {
+        "name": "实验设计",
+        "value": 82
+      },
+      {
+        "name": "误差识别",
+        "value": 76
+      },
+      {
+        "name": "图像分析",
+        "value": 78
+      }
     ],
-    "knowledge": { "mastered": 78, "learning": 18, "weak": 12, "overall": 76 },
+    "knowledge": {
+      "mastered": 78,
+      "learning": 18,
+      "weak": 12,
+      "overall": 76
+    },
     "classicKnowledge": [
-      { "name": "物质与变化入门", "value": 78 },
-      { "name": "力与运动基础", "value": 76 },
-      { "name": "生物的基本结构", "value": 74 }
+      {
+        "name": "物质与变化入门",
+        "value": 78
+      },
+      {
+        "name": "力与运动基础",
+        "value": 76
+      },
+      {
+        "name": "生物的基本结构",
+        "value": 74
+      }
     ],
     "modernKnowledge": [
-      { "name": "实验报告规范", "value": 86 },
-      { "name": "温度与状态变化", "value": 80 },
-      { "name": "观察方法", "value": 82 }
+      {
+        "name": "实验报告规范",
+        "value": 86
+      },
+      {
+        "name": "温度与状态变化",
+        "value": 80
+      },
+      {
+        "name": "观察方法",
+        "value": 82
+      }
     ],
     "resources": [
-      { "id": "k1", "icon": "🔬", "title": "观察与实验·操作卡", "desc": "步骤要点与注意事项", "match": 90, "type": "文档" }
+      {
+        "id": "k1",
+        "icon": "🔬",
+        "title": "观察与实验·操作卡",
+        "desc": "步骤要点与注意事项",
+        "match": 90,
+        "type": "文档",
+        "duration": 10,
+        "difficulty": "易",
+        "skills": [
+          "实验设计",
+          "观察与记录"
+        ]
+      },
+      {
+        "id": "k2",
+        "icon": "🎬",
+        "title": "误差与数据处理视频",
+        "desc": "实验误差来源与处理",
+        "match": 82,
+        "type": "视频",
+        "duration": 15,
+        "difficulty": "中",
+        "skills": [
+          "数据处理",
+          "误差识别"
+        ]
+      }
     ]
   },
   "历史与社会": {
-    "stats": { "dailyHours": 1.0, "weekHours": 7, "focusScore": 74 },
-    "habits": { "bestPeriod": "17:30-18:30", "continuity": { "level": "warn", "text": "需提升" }, "review": { "level": "good", "text": "良好" } },
-    "skills": { "advantage": 2, "toImprove": 3, "mastery": 70 },
+    "stats": {
+      "dailyHours": 1.0,
+      "weekHours": 7,
+      "focusScore": 74
+    },
+    "habits": {
+      "bestPeriod": "17:30-18:30",
+      "continuity": {
+        "level": "warn",
+        "text": "需提升"
+      },
+      "review": {
+        "level": "good",
+        "text": "良好"
+      }
+    },
+    "skills": {
+      "advantage": 2,
+      "toImprove": 3,
+      "mastery": 70
+    },
     "coreSkills": [
-      { "name": "地图与方位", "value": 72 },
-      { "name": "资料阅读", "value": 74 },
-      { "name": "时序与事件", "value": 70 }
+      {
+        "name": "地图与方位",
+        "value": 72
+      },
+      {
+        "name": "资料阅读",
+        "value": 74
+      },
+      {
+        "name": "时序与事件",
+        "value": 70
+      }
     ],
     "appliedSkills": [
-      { "name": "家乡认知", "value": 76 },
-      { "name": "社会调查", "value": 72 },
-      { "name": "资料整合", "value": 70 }
+      {
+        "name": "家乡认知",
+        "value": 76
+      },
+      {
+        "name": "社会调查",
+        "value": 72
+      },
+      {
+        "name": "资料整合",
+        "value": 70
+      }
     ],
-    "knowledge": { "mastered": 68, "learning": 22, "weak": 16, "overall": 66 },
+    "knowledge": {
+      "mastered": 68,
+      "learning": 22,
+      "weak": 16,
+      "overall": 66
+    },
     "classicKnowledge": [
-      { "name": "自然环境要素", "value": 70 },
-      { "name": "人文地理入门", "value": 68 },
-      { "name": "家乡与社区", "value": 72 }
+      {
+        "name": "自然环境要素",
+        "value": 70
+      },
+      {
+        "name": "人文地理入门",
+        "value": 68
+      },
+      {
+        "name": "家乡与社区",
+        "value": 72
+      }
     ],
     "modernKnowledge": [
-      { "name": "区域认知方法", "value": 74 },
-      { "name": "资料分析技能", "value": 72 },
-      { "name": "口述与表达", "value": 70 }
+      {
+        "name": "区域认知方法",
+        "value": 74
+      },
+      {
+        "name": "资料分析技能",
+        "value": 72
+      },
+      {
+        "name": "口述与表达",
+        "value": 70
+      }
     ],
     "resources": [
-      { "id": "h1", "icon": "🗺️", "title": "家乡地图识读练习", "desc": "比例尺与方向", "match": 86, "type": "练习" }
+      {
+        "id": "h1",
+        "icon": "🗺️",
+        "title": "家乡地图识读练习",
+        "desc": "比例尺与方向",
+        "match": 86,
+        "type": "练习",
+        "duration": 18,
+        "difficulty": "易",
+        "skills": [
+          "地图与方位"
+        ]
+      },
+      {
+        "id": "h2",
+        "icon": "📚",
+        "title": "资料阅读方法讲义",
+        "desc": "如何快速提炼关键信息",
+        "match": 80,
+        "type": "文档",
+        "duration": 12,
+        "difficulty": "易",
+        "skills": [
+          "资料阅读"
+        ]
+      }
+    ]
+  },
+  "社政": {
+    "stats": {
+      "dailyHours": 1.0,
+      "weekHours": 7,
+      "focusScore": 75
+    },
+    "habits": {
+      "bestPeriod": "17:30-18:30",
+      "continuity": {
+        "level": "warn",
+        "text": "需提升"
+      },
+      "review": {
+        "level": "good",
+        "text": "良好"
+      }
+    },
+    "skills": {
+      "advantage": 2,
+      "toImprove": 3,
+      "mastery": 71
+    },
+    "coreSkills": [
+      {
+        "name": "法治基础",
+        "value": 72
+      },
+      {
+        "name": "公民素养",
+        "value": 74
+      },
+      {
+        "name": "社会认知",
+        "value": 70
+      }
+    ],
+    "appliedSkills": [
+      {
+        "name": "案例分析",
+        "value": 76
+      },
+      {
+        "name": "时事研读",
+        "value": 72
+      },
+      {
+        "name": "资料整合",
+        "value": 70
+      }
+    ],
+    "knowledge": {
+      "mastered": 68,
+      "learning": 22,
+      "weak": 16,
+      "overall": 66
+    },
+    "classicKnowledge": [
+      {
+        "name": "宪法与权利",
+        "value": 70
+      },
+      {
+        "name": "社会规则与秩序",
+        "value": 68
+      },
+      {
+        "name": "道德与法治基本概念",
+        "value": 72
+      }
+    ],
+    "modernKnowledge": [
+      {
+        "name": "时事评析方法",
+        "value": 74
+      },
+      {
+        "name": "资料分析技能",
+        "value": 72
+      },
+      {
+        "name": "表达与讨论",
+        "value": 70
+      }
+    ],
+    "resources": [
+      {
+        "id": "s1",
+        "icon": "⚖️",
+        "title": "宪法基础微课",
+        "desc": "核心概念与案例",
+        "match": 86,
+        "type": "视频",
+        "duration": 16,
+        "difficulty": "易",
+        "skills": [
+          "法治基础"
+        ]
+      },
+      {
+        "id": "s2",
+        "icon": "📚",
+        "title": "公民素养读本摘编",
+        "desc": "权利与责任",
+        "match": 82,
+        "type": "文档",
+        "duration": 12,
+        "difficulty": "易",
+        "skills": [
+          "公民素养"
+        ]
+      }
     ]
   }
 }

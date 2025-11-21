@@ -1,4 +1,5 @@
 import { getSeed } from './data/evaluation';
+import portraitData from '../mock/portrait.json';
 
 let installed = false;
 
@@ -100,6 +101,56 @@ export function setupMock() {
       if (!body?.name || !body?.phone || !body?.password) return toResponse({ error: '缺少必填项' }, 400);
       if (String(body?.phone).startsWith('000')) return toResponse({ error: '账号已存在' }, 409);
       return toResponse({ id: Math.floor(Math.random() * 10000) + 100 }, 201);
+    }
+    if (path.startsWith('/api/portrait/trend')) {
+      const subject = url.searchParams.get('subject') || '语文';
+      const base = (portraitData as any)[subject]?.stats?.dailyHours ?? 1.5;
+      const days = 30;
+      const start = new Date(); start.setDate(start.getDate() - (days - 1));
+      const list = Array.from({ length: days }, (_, i) => {
+        const d = new Date(start); d.setDate(start.getDate() + i);
+        const v = base + Math.sin(i / 6) * 0.5 + (Math.random() - 0.5) * 0.3;
+        return { date: d.toISOString().slice(0, 10), hours: Number(Math.max(0.2, Number(v.toFixed(2)))) };
+      });
+      return toResponse({ subject, series: list }, 200);
+    }
+    if (path.startsWith('/api/portrait/skills-graph')) {
+      const subject = url.searchParams.get('subject') || '语文';
+      const d = (portraitData as any)[subject] || {};
+      const base = [...(d.coreSkills || []), ...(d.appliedSkills || [])];
+      const tags = ['基础', '应用', '拓展'];
+      const nodes = base.flatMap((n: any) => {
+        const children = tags.map(t => ({ name: `${n.name}-${t}`, value: Math.max(40, Math.min(95, n.value + Math.round((Math.random() - 0.5) * 20))) }));
+        return [n, ...children];
+      });
+      const center = subject;
+      const edges: any[] = [];
+      base.forEach((n: any) => {
+        edges.push({ source: center, target: n.name, weight: Math.max(1, Math.floor(n.value / 20)) });
+        tags.forEach(t => {
+          edges.push({ source: n.name, target: `${n.name}-${t}`, weight: 1 });
+        });
+      });
+      return toResponse({ subject, nodes, edges }, 200);
+    }
+    if (path.startsWith('/api/portrait/knowledge-graph')) {
+      const subject = url.searchParams.get('subject') || '语文';
+      const d = (portraitData as any)[subject] || {};
+      const base = [...(d.classicKnowledge || []), ...(d.modernKnowledge || [])];
+      const tags = ['基础概念', '例题', '易错点'];
+      const nodes = base.flatMap((n: any) => {
+        const children = tags.map(t => ({ name: `${n.name}-${t}`, value: Math.max(40, Math.min(95, n.value + Math.round((Math.random() - 0.5) * 20))) }));
+        return [n, ...children];
+      });
+      const center = subject;
+      const edges: any[] = [];
+      base.forEach((n: any) => {
+        edges.push({ source: center, target: n.name, weight: Math.max(1, Math.floor(n.value / 20)) });
+        tags.forEach(t => {
+          edges.push({ source: n.name, target: `${n.name}-${t}`, weight: 1 });
+        });
+      });
+      return toResponse({ subject, nodes, edges }, 200);
     }
     return originalFetch(input as any, init as any);
   };

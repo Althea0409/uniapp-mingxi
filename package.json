@@ -54,11 +54,12 @@
     "@dcloudio/uni-mp-xhs": "3.0.0-4080420251103001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4080420251103001",
     "@dcloudio/uni-ui": "^1.5.11",
+    "bcryptjs": "^2.4.3",
+    "echarts": "^5.6.0",
+    "mysql2": "^3.9.7",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
-    "vue-i18n": "^9.1.9",
-    "mysql2": "^3.9.7",
-    "bcryptjs": "^2.4.3"
+    "vue-i18n": "^9.1.9"
   },
   "devDependencies": {
     "@dcloudio/types": "^3.4.8",
