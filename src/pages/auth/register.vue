@@ -1,20 +1,11 @@
 <template>
   <view class="register-page">
-    <!-- 顶部导航 -->
-    <view class="register-header">
-      <text class="back-icon" @tap="handleBack">←</text>
-      <text class="header-title">注册账号</text>
-      <text class="step-info">{{ currentStep }}/3</text>
-    </view>
 
     <!-- 进度指示器 -->
     <view class="progress-container">
       <view class="progress-steps">
-        <view
-          v-for="(step, index) in steps"
-          :key="index"
-          :class="['step-item', { active: currentStep > index, current: currentStep === index + 1 }]"
-        >
+        <view v-for="(step, index) in steps" :key="index"
+          :class="['step-item', { active: currentStep > index, current: currentStep === index + 1 }]">
           <view class="step-circle">
             <text v-if="currentStep > index + 1" class="step-icon">✓</text>
             <text v-else class="step-number">{{ index + 1 }}</text>
@@ -36,12 +27,8 @@
           <view class="form-item">
             <view class="form-label">
               <text class="icon">👤</text>
-              <input
-                v-model="formData.name"
-                placeholder="请输入真实姓名"
-                :class="['form-input', { 'input-error': errors.name }]"
-                @blur="validateField('name')"
-              />
+              <input v-model="formData.name" placeholder="请输入真实姓名"
+                :class="['form-input', { 'input-error': errors.name }]" @blur="validateField('name')" />
             </view>
             <text v-if="errors.name" class="error-text">{{ errors.name }}</text>
           </view>
@@ -50,14 +37,8 @@
           <view class="form-item">
             <view class="form-label">
               <text class="icon">📱</text>
-              <input
-                v-model="formData.phone"
-                type="number"
-                placeholder="请输入手机号"
-                maxlength="11"
-                :class="['form-input', { 'input-error': errors.phone }]"
-                @blur="validateField('phone')"
-              />
+              <input v-model="formData.phone" type="number" placeholder="请输入手机号" maxlength="11"
+                :class="['form-input', { 'input-error': errors.phone }]" @blur="validateField('phone')" />
             </view>
             <text v-if="errors.phone" class="error-text">{{ errors.phone }}</text>
           </view>
@@ -66,22 +47,10 @@
           <view class="form-item">
             <view class="form-label">
               <text class="icon">🔢</text>
-              <input
-                v-model="formData.code"
-                type="number"
-                placeholder="请输入验证码"
-                maxlength="6"
-                :class="['form-input code-input', { 'input-error': errors.code }]"
-                @blur="validateField('code')"
-              />
+              <input v-model="formData.code" type="number" placeholder="请输入验证码" maxlength="6"
+                :class="['form-input code-input', { 'input-error': errors.code }]" @blur="validateField('code')" />
               <view class="code-btn-wrapper">
-                <Button
-                  :text="codeText"
-                  type="text"
-                  size="small"
-                  :disabled="codeCountdown > 0"
-                  @click="sendCode"
-                />
+                <Button :text="codeText" type="text" size="small" :disabled="codeCountdown > 0" @click="sendCode" />
               </view>
             </view>
             <text v-if="errors.code" class="error-text">{{ errors.code }}</text>
@@ -91,14 +60,9 @@
           <view class="form-item">
             <view class="form-label">
               <text class="icon">🔒</text>
-              <input
-                v-model="formData.password"
-                :password="!showPassword"
-                placeholder="请设置密码（8-16位字母+数字）"
-                :class="['form-input', { 'input-error': errors.password }]"
-                @blur="validateField('password')"
-                @input="onPasswordInput"
-              />
+              <input v-model="formData.password" :password="!showPassword" placeholder="请设置密码（8-16位字母+数字）"
+                :class="['form-input', { 'input-error': errors.password }]" @blur="validateField('password')"
+                @input="onPasswordInput" />
               <text class="icon-btn" @tap="showPassword = !showPassword">
                 {{ showPassword ? '👁️' : '🙈' }}
               </text>
@@ -107,12 +71,8 @@
             <view v-if="formData.password && !errors.password" class="password-strength">
               <text class="strength-label">密码强度：</text>
               <view class="strength-bars">
-                <view
-                  v-for="i in 3"
-                  :key="i"
-                  :class="['strength-bar', { active: i <= strengthLevel }]"
-                  :style="{ backgroundColor: strengthColor }"
-                ></view>
+                <view v-for="i in 3" :key="i" :class="['strength-bar', { active: i <= strengthLevel }]"
+                  :style="{ backgroundColor: strengthColor }"></view>
               </view>
               <text class="strength-text" :style="{ color: strengthColor }">{{ strengthText }}</text>
             </view>
@@ -122,13 +82,9 @@
           <view class="form-item">
             <view class="form-label">
               <text class="icon">🔐</text>
-              <input
-                v-model="formData.confirmPassword"
-                password
-                placeholder="请再次输入密码"
+              <input v-model="formData.confirmPassword" password placeholder="请再次输入密码"
                 :class="['form-input', { 'input-error': errors.confirmPassword }]"
-                @blur="validateField('confirmPassword')"
-              />
+                @blur="validateField('confirmPassword')" />
             </view>
             <text v-if="errors.confirmPassword" class="error-text">{{ errors.confirmPassword }}</text>
           </view>
@@ -142,25 +98,23 @@
           <view class="form-item">
             <view class="form-label">
               <text class="icon">🏫</text>
-              <input
-                v-model="formData.school"
-                placeholder="请输入学校名称"
-                :class="['form-input', { 'input-error': errors.school }]"
-                @blur="validateField('school')"
-              />
+              <input v-model="formData.school" placeholder="请输入学校名称"
+                :class="['form-input', { 'input-error': errors.school }]" @blur="validateField('school')" />
             </view>
             <text v-if="errors.school" class="error-text">{{ errors.school }}</text>
           </view>
 
           <!-- 年级 -->
           <view class="form-item">
-            <view class="form-label" @tap="showGradePicker = true">
-              <text class="icon">📚</text>
-              <text :class="['form-input picker-input', { placeholder: !formData.grade }]">
-                {{ formData.grade || '请选择年级' }}
-              </text>
-              <text class="arrow-icon">▼</text>
-            </view>
+            <picker mode="selector" :range="gradeList" @change="onGradeChange">
+              <view class="form-label">
+                <text class="icon">📚</text>
+                <text :class="['form-input picker-input', { placeholder: !formData.grade }]">
+                  {{ formData.grade || '请选择年级' }}
+                </text>
+                <text class="arrow-icon">▼</text>
+              </view>
+            </picker>
             <text v-if="errors.grade" class="error-text">{{ errors.grade }}</text>
           </view>
 
@@ -168,12 +122,8 @@
           <view class="form-item">
             <view class="form-label">
               <text class="icon">🎓</text>
-              <input
-                v-model="formData.class"
-                placeholder="请输入班级（如：3班）"
-                :class="['form-input', { 'input-error': errors.class }]"
-                @blur="validateField('class')"
-              />
+              <input v-model="formData.class" type="text" placeholder="请输入班级（如：3班）"
+                :class="['form-input', { 'input-error': errors.class }]" @blur="validateField('class')" />
             </view>
             <text v-if="errors.class" class="error-text">{{ errors.class }}</text>
           </view>
@@ -223,28 +173,10 @@
 
         <!-- 按钮组 -->
         <view class="form-buttons">
-          <Button
-            v-if="currentStep > 1"
-            text="上一步"
-            type="secondary"
-            size="large"
-            @click="prevStep"
-          />
-          <Button
-            v-if="currentStep < 3"
-            text="下一步"
-            type="primary"
-            size="large"
-            @click="nextStep"
-          />
-          <Button
-            v-if="currentStep === 3"
-            text="完成注册"
-            type="primary"
-            size="large"
-            :loading="loading"
-            @click="handleRegister"
-          />
+          <Button v-if="currentStep > 1" text="上一步" type="secondary" size="large" @click="prevStep" />
+          <Button v-if="currentStep < 3" text="下一步" type="primary" size="large" @click="nextStep" />
+          <Button v-if="currentStep === 3" text="完成注册" type="primary" size="large" :loading="loading"
+            @click="handleRegister" />
         </view>
       </Card>
 
@@ -255,16 +187,7 @@
       </view>
     </view>
 
-    <!-- 年级选择器 -->
-    <picker
-      v-if="showGradePicker"
-      mode="selector"
-      :range="gradeList"
-      @change="onGradeChange"
-      @cancel="showGradePicker = false"
-    >
-      <view></view>
-    </picker>
+
   </view>
 </template>
 
@@ -321,7 +244,7 @@ const errors = reactive({
 const loading = ref(false);
 const showPassword = ref(false);
 const codeCountdown = ref(0);
-const showGradePicker = ref(false);
+
 
 // 年级列表
 const gradeList = ['高一', '高二', '高三', '初一', '初二', '初三'];
@@ -533,25 +456,31 @@ const handleRegister = async () => {
   if (!validateCurrentStep()) {
     return;
   }
-
   loading.value = true;
-
   try {
-    // Mock注册逻辑
-    // 模拟网络延迟
-    await new Promise((resolve) => setTimeout(resolve, 1000));
-
-    // Mock注册成功
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        name: formData.name,
+        phone: formData.phone,
+        password: formData.password,
+        school: formData.school,
+        grade: formData.grade,
+        class: formData.class,
+      }),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      appStore.showToast(data?.error || '注册失败', 'none');
+      return;
+    }
     appStore.showToast('注册成功', 'success');
-
-    // 延迟跳转到登录页
     setTimeout(() => {
-      uni.redirectTo({
-        url: '/pages/auth/login',
-      });
-    }, 1500);
+      uni.redirectTo({ url: '/pages/auth/login' });
+    }, 800);
   } catch (error: any) {
-    appStore.showToast(error.message || '注册失败', 'error');
+    appStore.showToast(error?.message || '注册失败', 'none');
   } finally {
     loading.value = false;
   }
@@ -586,31 +515,6 @@ const showAgreement = (type: 'user' | 'privacy') => {
   background-color: $bg-color;
 }
 
-// 顶部导航
-.register-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24rpx 32rpx;
-  background-color: $card-bg;
-  
-  .back-icon {
-    font-size: 48rpx;
-    color: $text-primary;
-    cursor: pointer;
-  }
-  
-  .header-title {
-    font-size: $font-size-lg;
-    font-weight: bold;
-    color: $text-primary;
-  }
-  
-  .step-info {
-    font-size: $font-size-sm;
-    color: $text-secondary;
-  }
-}
 
 // 进度指示器
 .progress-container {
@@ -630,7 +534,7 @@ const showAgreement = (type: 'user' | 'privacy') => {
   flex-direction: column;
   align-items: center;
   z-index: 1;
-  
+
   .step-circle {
     width: 64rpx;
     height: 64rpx;
@@ -643,33 +547,33 @@ const showAgreement = (type: 'user' | 'privacy') => {
     margin-bottom: 16rpx;
     transition: $transition-base;
   }
-  
+
   .step-number,
   .step-icon {
     font-size: $font-size-lg;
     color: $text-disabled;
     font-weight: bold;
   }
-  
+
   .step-label {
     font-size: $font-size-xs;
     color: $text-secondary;
   }
-  
+
   &.current .step-circle {
     background-color: $primary-color;
     border-color: $primary-color;
   }
-  
+
   &.current .step-number {
     color: $text-white;
   }
-  
+
   &.active .step-circle {
     background-color: $primary-color;
     border-color: $primary-color;
   }
-  
+
   &.active .step-icon {
     color: $text-white;
   }
@@ -712,41 +616,41 @@ const showAgreement = (type: 'user' | 'privacy') => {
   padding: 24rpx;
   background-color: $bg-color;
   border-radius: $border-radius;
-  
+
   .icon {
     font-size: 36rpx;
     margin-right: 16rpx;
   }
-  
+
   .form-input {
     flex: 1;
     font-size: $font-size-base;
     color: $text-primary;
-    
+
     &.placeholder {
       color: $text-placeholder;
     }
   }
-  
+
   .code-input {
     flex: 1;
     margin-right: 16rpx;
   }
-  
+
   .code-btn-wrapper {
     flex-shrink: 0;
   }
-  
+
   .picker-input {
     flex: 1;
   }
-  
+
   .arrow-icon {
     font-size: 24rpx;
     color: $text-placeholder;
     margin-left: 8rpx;
   }
-  
+
   .icon-btn {
     font-size: 32rpx;
     padding: 0 8rpx;
@@ -772,31 +676,31 @@ const showAgreement = (type: 'user' | 'privacy') => {
   align-items: center;
   margin-top: 16rpx;
   padding: 0 24rpx;
-  
+
   .strength-label {
     font-size: $font-size-xs;
     color: $text-secondary;
     margin-right: 16rpx;
   }
-  
+
   .strength-bars {
     display: flex;
     gap: 8rpx;
     margin-right: 16rpx;
   }
-  
+
   .strength-bar {
     width: 60rpx;
     height: 8rpx;
     background-color: $divider-color;
     border-radius: 4rpx;
     transition: $transition-fast;
-    
+
     &.active {
       background-color: currentColor;
     }
   }
-  
+
   .strength-text {
     font-size: $font-size-xs;
     font-weight: bold;
@@ -817,16 +721,16 @@ const showAgreement = (type: 'user' | 'privacy') => {
   align-items: center;
   padding: 16rpx 0;
   border-bottom: 1rpx solid $divider-color;
-  
+
   &:last-child {
     border-bottom: none;
   }
-  
+
   .preview-label {
     font-size: $font-size-base;
     color: $text-secondary;
   }
-  
+
   .preview-value {
     font-size: $font-size-base;
     color: $text-primary;
@@ -842,20 +746,20 @@ const showAgreement = (type: 'user' | 'privacy') => {
 .checkbox-label {
   display: flex;
   align-items: flex-start;
-  
+
   .checkbox {
     font-size: 32rpx;
     margin-right: 8rpx;
     color: $primary-color;
     flex-shrink: 0;
   }
-  
+
   .agreement-text {
     font-size: $font-size-sm;
     color: $text-secondary;
     line-height: 1.6;
   }
-  
+
   .link-text {
     color: $primary-color;
     cursor: pointer;
@@ -876,12 +780,12 @@ const showAgreement = (type: 'user' | 'privacy') => {
   align-items: center;
   margin-top: 48rpx;
   padding-bottom: 48rpx;
-  
+
   .footer-text {
     font-size: $font-size-base;
     color: $text-secondary;
   }
-  
+
   .link-text {
     font-size: $font-size-base;
     color: $primary-color;
@@ -890,4 +794,3 @@ const showAgreement = (type: 'user' | 'privacy') => {
   }
 }
 </style>
-

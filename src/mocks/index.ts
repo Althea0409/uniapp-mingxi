@@ -94,6 +94,13 @@ export function setupMock() {
       });
       return new Response(stream, { status: 200, headers: { 'content-type': 'text/event-stream' } });
     }
+    if (path.startsWith('/api/auth/register')) {
+      const bodyText = typeof init?.body === 'string' ? init?.body : (init?.body ? await new Response(init?.body).text() : '{}');
+      const body = JSON.parse(bodyText || '{}');
+      if (!body?.name || !body?.phone || !body?.password) return toResponse({ error: '缺少必填项' }, 400);
+      if (String(body?.phone).startsWith('000')) return toResponse({ error: '账号已存在' }, 409);
+      return toResponse({ id: Math.floor(Math.random() * 10000) + 100 }, 201);
+    }
     return originalFetch(input as any, init as any);
   };
   if (typeof window !== 'undefined') {
