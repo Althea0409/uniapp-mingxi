@@ -447,7 +447,6 @@ const prevStep = () => {
 // 年级选择
 const onGradeChange = (e: any) => {
   formData.grade = gradeList[e.detail.value];
-  showGradePicker.value = false;
   validateField('grade');
 };
 

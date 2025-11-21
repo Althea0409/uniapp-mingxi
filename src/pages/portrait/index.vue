@@ -393,7 +393,7 @@ function toGraphData(nodes: { name: string; value: number }[], centerName: strin
   const graphNodes = [{ name: centerName, value: 100, symbolSize: 36, itemStyle: { color: '#3B7CFF' }, label: { color: '#2B395B' } }];
   const links: any[] = [];
   nodes.forEach(n => {
-    graphNodes.push({ name: n.name, value: n.value, symbolSize: Math.max(16, Math.floor(n.value / 2)), itemStyle: { color: '#38C793' } });
+    graphNodes.push({ name: n.name, value: n.value, symbolSize: Math.max(16, Math.floor(n.value / 2)), itemStyle: { color: '#38C793' }, label: { color: '#2B395B' } });
     links.push({ source: centerName, target: n.name, value: n.value });
   });
   return { graphNodes, links };

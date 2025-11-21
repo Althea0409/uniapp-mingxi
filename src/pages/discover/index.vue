@@ -58,9 +58,6 @@
                 <view :class="['resource-type', item.type]">{{ item.typeName }}</view>
                 <text class="resource-time">匹配度{{ item.matchRate }}%</text>
               </view>
-              <view class="resource-actions">
-                <Button text="一键开始" type="primary" size="small" @click.stop="startResource(item)" />
-              </view>
               <text v-if="item.reason" class="resource-reason">推荐理由：{{ item.reason }}</text>
             </view>
           </view>
