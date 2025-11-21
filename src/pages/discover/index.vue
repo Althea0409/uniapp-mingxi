@@ -100,11 +100,11 @@ const appStore = useAppStore();
 const currentTab = ref(0);
 
 const baseUrl = import.meta.env.BASE_URL || '/';
-const defaultAvatarUrl = new URL('../../static/avatar/default.svg', import.meta.url).href;
+const defaultAvatarUrl = '/static/avatar/default.svg';
 function resolveAvatar(src?: string) {
   if (!src) return defaultAvatarUrl;
   if (/^(https?:)?\/\//.test(src) || src.startsWith('data:')) return src;
-  if (src.includes('static/avatar/default.svg')) return defaultAvatarUrl;
+  if (src.startsWith('/static/')) return src;
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
   if (src.startsWith('/')) return cleanBase.replace(/\/$/, '') + src;
   return cleanBase + src.replace(/^\.?\//, '');
