@@ -15,7 +15,7 @@
         <Card v-for="item in discussions" :key="item.id" @click="goToDiscussionDetail(item)">
           <view class="discussion-item">
             <view class="discussion-header">
-              <image class="avatar" :src="resolveAvatar(item.avatar)" mode="aspectFill" />
+              <image class="avatar" :src="resolveAvatar(item.avatar)" mode="aspectFill" @error="onAvatarError(item)" />
               <view class="user-info">
                 <text class="username">{{ item.username }}</text>
                 <text class="time">{{ item.time }}</text>
@@ -120,7 +120,7 @@ const tabs = ref([
 const discussions = ref([
   {
     id: 'd001',
-    avatar: 'static/avatar/default.svg',
+    avatar: defaultAvatarUrl,
     username: '小王同学',
     time: '2小时前',
     isHot: true,
@@ -132,7 +132,7 @@ const discussions = ref([
   },
   {
     id: 'd002',
-    avatar: 'static/avatar/default.svg',
+    avatar: defaultAvatarUrl,
     username: '学习小组长',
     time: '5小时前',
     isHot: false,
@@ -144,7 +144,7 @@ const discussions = ref([
   },
   {
     id: 'd003',
-    avatar: 'static/avatar/default.svg',
+    avatar: defaultAvatarUrl,
     username: '英语达人',
     time: '昨天',
     isHot: true,
@@ -349,6 +349,10 @@ const viewKnowledge = (item: any) => {
 // 发帖
 const createPost = () => {
   appStore.showToast('发帖功能开发中', 'none');
+};
+
+const onAvatarError = (item: any) => {
+  item.avatar = defaultAvatarUrl;
 };
 
 // 监听全局事件
@@ -662,3 +666,6 @@ onMounted(async () => {
   }
 }
 </style>
+function onAvatarError(item: any) {
+item.avatar = defaultAvatarUrl;
+}
