@@ -15,7 +15,7 @@
         <Card v-for="item in discussions" :key="item.id" @click="goToDiscussionDetail(item)">
           <view class="discussion-item">
             <view class="discussion-header">
-              <image class="avatar" :src="resolveAvatar(item.avatar)" mode="aspectFill" @error="onAvatarError(item)" />
+              <image class="avatar" :src="userStore.userAvatar" mode="aspectFill" />
               <view class="user-info">
                 <text class="username">{{ item.username }}</text>
                 <text class="time">{{ item.time }}</text>
@@ -92,11 +92,13 @@
 import { ref, onMounted, computed } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { useCourseStore } from '@/stores/course';
+import { useUserStore } from '@/stores/user';
 import Card from '@/components/common/Card.vue';
 import achievementsJson from '@/mock/achievements.json';
 import portraitData from '@/mock/portrait.json';
 
 const appStore = useAppStore();
+const userStore = useUserStore();
 const currentTab = ref(0);
 
 const baseUrl = import.meta.env.BASE_URL || '/';
@@ -104,6 +106,7 @@ const defaultAvatarUrl = new URL('../../static/avatar/default.svg', import.meta.
 function resolveAvatar(src?: string) {
   if (!src) return defaultAvatarUrl;
   if (/^(https?:)?\/\//.test(src) || src.startsWith('data:')) return src;
+  if (src.startsWith(baseUrl)) return src;
   if (src.includes('static/avatar/default.svg')) return defaultAvatarUrl;
   const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
   if (src.startsWith('/')) return cleanBase.replace(/\/$/, '') + src;
@@ -120,7 +123,7 @@ const tabs = ref([
 const discussions = ref([
   {
     id: 'd001',
-    avatar: defaultAvatarUrl,
+    avatar: 'static/avatar/default.svg',
     username: '小王同学',
     time: '2小时前',
     isHot: true,
@@ -132,7 +135,7 @@ const discussions = ref([
   },
   {
     id: 'd002',
-    avatar: defaultAvatarUrl,
+    avatar: 'static/avatar/default.svg',
     username: '学习小组长',
     time: '5小时前',
     isHot: false,
@@ -144,7 +147,7 @@ const discussions = ref([
   },
   {
     id: 'd003',
-    avatar: defaultAvatarUrl,
+    avatar: 'static/avatar/default.svg',
     username: '英语达人',
     time: '昨天',
     isHot: true,
@@ -352,7 +355,7 @@ const createPost = () => {
 };
 
 const onAvatarError = (item: any) => {
-  item.avatar = defaultAvatarUrl;
+  item.avatar = 'static/avatar/default.svg';
 };
 
 // 监听全局事件
