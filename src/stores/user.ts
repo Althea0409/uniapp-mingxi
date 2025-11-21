@@ -13,12 +13,15 @@ export const useUserStore = defineStore('user', () => {
   const isLogin = computed(() => !!token.value && !!userInfo.value);
   const userId = computed(() => userInfo.value?.id || '');
   const userName = computed(() => userInfo.value?.name || '');
+  const baseUrl = import.meta.env.BASE_URL || '/';
+  const defaultAvatarUrl = new URL('../../static/avatar/default.svg', import.meta.url).href;
   function resolveAvatar(src?: string) {
-    const defaultAvatar = '/static/avatar/default.svg';
-    if (!src) return defaultAvatar;
+    if (!src) return defaultAvatarUrl;
     if (/^(https?:)?\/\//.test(src) || src.startsWith('data:')) return src;
-    if (src.startsWith('/')) return src;
-    return '/' + src;
+    if (src.includes('static/avatar/default.svg')) return defaultAvatarUrl;
+    const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+    if (src.startsWith('/')) return cleanBase.replace(/\/$/, '') + src;
+    return cleanBase + src.replace(/^\.?\//, '');
   }
   const userAvatar = computed(() => resolveAvatar(userInfo.value?.avatar));
   const userLevel = computed(() => userInfo.value?.level || 0);

@@ -4,7 +4,7 @@
     <view class="user-header">
       <view class="user-info-card">
         <view class="user-avatar-wrap" @tap="goToProfile">
-          <image class="user-avatar" :src="userStore.userAvatar" mode="aspectFill" />
+          <image class="user-avatar" :src="userStore.userAvatar" mode="aspectFill" @error="handleAvatarError" />
           <view class="level-badge">Lv{{ userStore.userLevel }}</view>
         </view>
         
@@ -233,6 +233,10 @@ const handleLogout = async () => {
   if (confirm) {
     userStore.logout();
   }
+};
+
+const handleAvatarError = () => {
+  userStore.updateUserInfo({ avatar: '' });
 };
 </script>
 
