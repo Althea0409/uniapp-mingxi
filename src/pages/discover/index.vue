@@ -15,7 +15,7 @@
         <Card v-for="item in discussions" :key="item.id" @click="goToDiscussionDetail(item)">
           <view class="discussion-item">
             <view class="discussion-header">
-              <image class="avatar" :src="item.avatar" mode="aspectFill" />
+              <image class="avatar" :src="resolveAvatar(item.avatar)" mode="aspectFill" />
               <view class="user-info">
                 <text class="username">{{ item.username }}</text>
                 <text class="time">{{ item.time }}</text>
@@ -98,6 +98,17 @@ import portraitData from '@/mock/portrait.json';
 
 const appStore = useAppStore();
 const currentTab = ref(0);
+
+const baseUrl = import.meta.env.BASE_URL || '/';
+const defaultAvatarUrl = new URL('../../static/avatar/default.svg', import.meta.url).href;
+function resolveAvatar(src?: string) {
+  if (!src) return defaultAvatarUrl;
+  if (/^(https?:)?\/\//.test(src) || src.startsWith('data:')) return src;
+  if (src.includes('static/avatar/default.svg')) return defaultAvatarUrl;
+  const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
+  if (src.startsWith('/')) return cleanBase.replace(/\/$/, '') + src;
+  return cleanBase + src.replace(/^\.?\//, '');
+}
 
 const tabs = ref([
   { label: '课堂讨论' },
