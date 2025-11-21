@@ -23,60 +23,48 @@
         <view class="section">
           <text class="section-title">作业内容</text>
           <view v-for="(q, i) in hw.questions" :key="q.id" class="question">
-          <text class="q-title">{{ i + 1 }}. {{ q.stem }} ({{ q.score }}分)</text>
-          
-          <!-- 选择题 -->
-          <block v-if="q.type === 'choice'">
-            <view class="choice-options">
-              <view 
-                v-for="opt in q.options" 
-                :key="opt.label" 
-                :class="['option', { 
+            <text class="q-title">{{ i + 1 }}. {{ q.stem }} ({{ q.score }}分)</text>
+
+            <!-- 选择题 -->
+            <block v-if="q.type === 'choice'">
+              <view class="choice-options">
+                <view v-for="opt in q.options" :key="opt.label" :class="['option', {
                   'selected': (hw.studentAnswers || {})[q.id] === opt.label,
                   'correct': hw.status === 'graded' && q.type === 'choice' && opt.label === q.answer,
                   'wrong': hw.status === 'graded' && q.type === 'choice' && (hw.studentAnswers || {})[q.id] === opt.label && opt.label !== q.answer,
                   'disabled': !editable
-                }]" 
-                @click="editable && selectAnswer(q.id, opt.label)">
-                <text class="option-label">{{ opt.label }}</text>
-                <text>{{ opt.text }}</text>
+                }]" @click="editable && selectAnswer(q.id, opt.label)">
+                  <text class="option-label">{{ opt.label }}</text>
+                  <text>{{ opt.text }}</text>
+                </view>
               </view>
+            </block>
+
+            <!-- 填空题 -->
+            <block v-if="q.type === 'fill-blank'">
+              <input class="q-input" :value="(hw.studentAnswers || {})[q.id]" :disabled="!editable"
+                @input="onInput(q.id, $event)" placeholder="在此填写答案" />
+            </block>
+
+            <!-- 问答题 -->
+            <block v-if="q.type === 'essay'">
+              <textarea class="q-textarea" :value="(hw.studentAnswers || {})[q.id]" :disabled="!editable"
+                @input="onInput(q.id, $event)" placeholder="在此填写答案" auto-height />
+            </block>
+
+            <view v-if="hw.status === 'graded'" class="q-review">
+              <text class="review-row">你的答案：{{ formatStudentAnswer(q) }}</text>
+              <text class="review-row">正确答案：{{ formatCorrectAnswer(q) }}</text>
+              <text v-if="q.explanation" class="review-row">解析：{{ q.explanation }}</text>
             </view>
-          </block>
-
-          <!-- 填空题 -->
-          <block v-if="q.type === 'fill-blank'">
-            <input 
-              class="q-input" 
-              :value="(hw.studentAnswers || {})[q.id]" 
-              :disabled="!editable"
-              @input="onInput(q.id, $event)" 
-              placeholder="在此填写答案" />
-          </block>
-
-          <!-- 问答题 -->
-          <block v-if="q.type === 'essay'">
-            <textarea 
-              class="q-textarea" 
-              :value="(hw.studentAnswers || {})[q.id]" 
-              :disabled="!editable"
-              @input="onInput(q.id, $event)" 
-              placeholder="在此填写答案" 
-              auto-height />
-          </block>
-
-          <view v-if="hw.status === 'graded'" class="q-review">
-            <text class="review-row">你的答案：{{ formatStudentAnswer(q) }}</text>
-            <text class="review-row">正确答案：{{ formatCorrectAnswer(q) }}</text>
-            <text v-if="q.explanation" class="review-row">解析：{{ q.explanation }}</text>
           </view>
         </view>
-      </view>
-    </Card>
+      </Card>
 
       <Card v-if="hw.status === 'pending'">
         <view class="actions">
-          <Button text="提交作业" type="primary" size="large" @click="submitHomework" />
+          <Button :text="submitting ? '提交中' : '提交作业'" :type="submitting ? 'secondary' : 'primary'" size="large"
+            :disabled="submitting" @click="submitHomework" />
         </view>
       </Card>
     </view>
@@ -100,6 +88,7 @@ const userStore = useUserStore();
 const loading = ref(true);
 const hw = ref<Homework>({} as Homework);
 const editable = computed(() => hw.value.status === 'pending');
+const submitting = ref(false);
 
 const statusText = computed(() => {
   switch (hw.value.status) {
@@ -112,7 +101,8 @@ const statusText = computed(() => {
 
 function loadHomework(id: string) {
   loading.value = true;
-  const list = (homeworkJson as any).homework || [];
+  const stored = (storage.get(StorageKeys.HOMEWORK) as any) || [];
+  const list = (stored.length ? stored : (homeworkJson as any).homework) || [];
   const data = list.find((x: any) => x.id === id);
   if (!data) {
     loading.value = false;
@@ -129,12 +119,14 @@ function loadHomework(id: string) {
 function selectAnswer(questionId: string, answer: string) {
   if (hw.value.studentAnswers) {
     hw.value.studentAnswers[questionId] = answer;
+    saveDraft();
   }
 }
 
 function recordAnswer(questionId: string, answer: string) {
   if (hw.value.studentAnswers) {
     hw.value.studentAnswers[questionId] = answer;
+    saveDraft();
   }
 }
 
@@ -144,14 +136,17 @@ onLoad((options: any) => {
 });
 
 const submitHomework = async () => {
+  if (submitting.value) return;
   const ok = await appStore.showConfirm('确认提交作业吗？');
   if (!ok) return;
+  submitting.value = true;
 
   let wrong = 0;
   let score = 0;
   const questions = hw.value.questions || [];
   const answers = hw.value.studentAnswers || {};
 
+  const gradedDetails: Record<string, any> = {};
   for (const q of questions) {
     const studentAnswer = answers[q.id];
     if (!studentAnswer) {
@@ -161,13 +156,21 @@ const submitHomework = async () => {
     if (q.type === 'choice') {
       if (studentAnswer.toLowerCase() === (q as ChoiceQuestion).answer.toLowerCase()) {
         score += q.score;
+        gradedDetails[q.id] = { isCorrect: true, studentAnswer };
       } else {
         wrong++;
+        gradedDetails[q.id] = { isCorrect: false, studentAnswer };
       }
     }
     // 简单处理填空和问答，实际应由教师批改
-    else if (q.type === 'fill-blank' || q.type === 'essay') {
-      score += q.score; // 模拟自动得分
+    else if (q.type === 'fill-blank') {
+      const correct = Array.isArray(q.answer) ? (q.answer[0] ?? '') : String(q.answer ?? '').trim();
+      const okAns = String(studentAnswer ?? '').trim();
+      const isCorrect = correct !== '' && okAns === correct;
+      if (isCorrect) score += q.score; else wrong++;
+      gradedDetails[q.id] = { isCorrect, studentAnswer: okAns };
+    } else if (q.type === 'essay') {
+      gradedDetails[q.id] = { isCorrect: undefined, studentAnswer };
     }
   }
 
@@ -176,11 +179,23 @@ const submitHomework = async () => {
     appStore.showToast(`有${wrong}题错误或未作答，请检查`, 'none');
   } else {
     appStore.resetWrongAnswer();
-    hw.value.status = 'submitted';
-    appStore.showToast('已提交作业，等待教师批改', 'success');
-    userStore.addPoints(30);
-    appStore.triggerEncouragement('celebration');
+    const mode = gradingMode;
+    if (mode === 'auto') {
+      hw.value.status = 'graded';
+      (hw.value as any).gradedDetails = gradedDetails;
+      (hw.value as any).score = score;
+      appStore.showToast('已自动批改', 'success');
+      userStore.addPoints(30);
+      appStore.triggerEncouragement('celebration');
+    } else {
+      hw.value.status = 'submitted';
+      (hw.value as any).gradedDetails = gradedDetails;
+      appStore.showToast('已提交作业，等待教师批改', 'success');
+    }
   }
+
+  persistHomework();
+  submitting.value = false;
 };
 
 const totalScore = computed(() => {
@@ -223,39 +238,126 @@ function onInput(questionId: string, e: any) {
   const val = e && e.detail ? e.detail.value : '';
   recordAnswer(questionId, val);
 }
+
+// 草稿与持久化
+import { storage, StorageKeys } from '@/utils/storage';
+const gradingMode = 'auto';
+function persistHomework() {
+  const list = (storage.get(StorageKeys.HOMEWORK) as any) || (homeworkJson as any).homework || [];
+  const idx = list.findIndex((x: any) => x.id === hw.value.id);
+  const item = { ...hw.value } as any;
+  if (idx >= 0) list[idx] = item; else list.push(item);
+  storage.set(StorageKeys.HOMEWORK, list);
+}
+function saveDraft() { persistHomework(); }
 </script>
 
 <style lang="scss" scoped>
 @import '@/styles/variables.scss';
 
-.homework-detail-page { padding: 24rpx 32rpx; }
+.homework-detail-page {
+  padding: 24rpx 32rpx;
+}
 
-.header { display: flex; align-items: center; justify-content: space-between; }
-.title { font-size: $font-size-xl; font-weight: bold; color: $text-primary; }
-.status { padding: 8rpx 16rpx; border-radius: 24rpx; font-size: $font-size-xs; font-weight: bold; }
-.status.pending { background-color: rgba(250, 173, 20, 0.1); color: $warning-color; }
-.status.submitted { background-color: rgba(24, 144, 255, 0.1); color: $info-color; }
-.status.graded { background-color: rgba(82, 196, 26, 0.1); color: $success-color; }
-.sub { display: block; margin-top: 8rpx; font-size: $font-size-sm; color: $text-secondary; }
-.desc { display: block; margin-top: 8rpx; font-size: $font-size-sm; color: $text-secondary; }
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-.summary { display: flex; flex-direction: column; gap: 12rpx; }
-.summary-title { font-size: $font-size-lg; font-weight: bold; color: $text-primary; }
-.summary-row { font-size: $font-size-base; color: $text-secondary; }
+.title {
+  font-size: $font-size-xl;
+  font-weight: bold;
+  color: $text-primary;
+}
 
-.section-title { font-size: $font-size-lg; font-weight: bold; color: $text-primary; margin-bottom: 24rpx; }
-.question { margin-bottom: 32rpx; }
-.q-title { display: block; font-size: $font-size-base; color: $text-primary; margin-bottom: 16rpx; }
-.q-input, .q-textarea { 
-  background-color: $bg-color; 
-  border-radius: $border-radius; 
-  padding: 20rpx; 
-  font-size: $font-size-base; 
+.status {
+  padding: 8rpx 16rpx;
+  border-radius: 24rpx;
+  font-size: $font-size-xs;
+  font-weight: bold;
+}
+
+.status.pending {
+  background-color: rgba(250, 173, 20, 0.1);
+  color: $warning-color;
+}
+
+.status.submitted {
+  background-color: rgba(24, 144, 255, 0.1);
+  color: $info-color;
+}
+
+.status.graded {
+  background-color: rgba(82, 196, 26, 0.1);
+  color: $success-color;
+}
+
+.sub {
+  display: block;
+  margin-top: 8rpx;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.desc {
+  display: block;
+  margin-top: 8rpx;
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.summary-title {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  color: $text-primary;
+}
+
+.summary-row {
+  font-size: $font-size-base;
+  color: $text-secondary;
+}
+
+.section-title {
+  font-size: $font-size-lg;
+  font-weight: bold;
+  color: $text-primary;
+  margin-bottom: 24rpx;
+}
+
+.question {
+  margin-bottom: 32rpx;
+}
+
+.q-title {
+  display: block;
+  font-size: $font-size-base;
+  color: $text-primary;
+  margin-bottom: 16rpx;
+}
+
+.q-input,
+.q-textarea {
+  background-color: $bg-color;
+  border-radius: $border-radius;
+  padding: 20rpx;
+  font-size: $font-size-base;
   width: 100%;
   box-sizing: border-box;
 }
 
-.choice-options { display: flex; flex-direction: column; gap: 16rpx; }
+.choice-options {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
 .option {
   display: flex;
   align-items: center;
@@ -265,19 +367,27 @@ function onInput(questionId: string, e: any) {
   border: 2rpx solid transparent;
   transition: all 0.2s;
 }
+
 .option.selected {
   border-color: $primary-color;
   background-color: rgba(43, 70, 254, 0.05);
 }
+
 .option.correct {
   border-color: $success-color;
   background-color: rgba(82, 196, 26, 0.08);
 }
+
 .option.wrong {
   border-color: $error-color;
   background-color: rgba(245, 34, 45, 0.05);
 }
-.option.disabled { opacity: 0.7; pointer-events: none; }
+
+.option.disabled {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
 .option-label {
   font-weight: bold;
   margin-right: 24rpx;
@@ -289,15 +399,27 @@ function onInput(questionId: string, e: any) {
   justify-content: center;
   border: 2rpx solid $border-color;
 }
+
 .option.selected .option-label {
   background-color: $primary-color;
   color: #fff;
   border-color: $primary-color;
 }
 
-.q-review { margin-top: 12rpx; display: flex; flex-direction: column; gap: 8rpx; }
-.review-row { font-size: $font-size-sm; color: $text-secondary; }
+.q-review {
+  margin-top: 12rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
 
-.actions { display: flex; justify-content: center; }
+.review-row {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+}
+
+.actions {
+  display: flex;
+  justify-content: center;
+}
 </style>
-

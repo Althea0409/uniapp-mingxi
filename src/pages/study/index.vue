@@ -2,12 +2,8 @@
   <view class="study-page">
     <!-- 顶部Tab切换 -->
     <view class="tab-bar">
-      <view 
-        v-for="(tab, index) in tabs" 
-        :key="index"
-        :class="['tab-item', { active: currentTab === index }]"
-        @tap="switchTab(index)"
-      >
+      <view v-for="(tab, index) in tabs" :key="index" :class="['tab-item', { active: currentTab === index }]"
+        @tap="switchTab(index)">
         <text class="tab-text">{{ tab.label }}</text>
         <view v-if="tab.badge > 0" class="tab-badge">{{ tab.badge }}</view>
       </view>
@@ -35,11 +31,7 @@
           <text class="empty-text">暂无课程</text>
         </view>
         <view v-else>
-          <Card 
-            v-for="course in filteredCourses" 
-            :key="course.id"
-            @tap="goToCourseDetail(course)"
-          >
+          <Card v-for="course in filteredCourses" :key="course.id" @tap="goToCourseDetail(course)">
             <view class="course-item">
               <image class="course-cover" :src="course.cover" mode="aspectFill" />
               <view class="course-content">
@@ -68,11 +60,7 @@
           <text class="empty-text">暂无作业</text>
         </view>
         <view v-else>
-          <Card 
-            v-for="homework in filteredHomework" 
-            :key="homework.id"
-            @click="goToHomeworkDetail(homework)"
-          >
+          <Card v-for="homework in filteredHomework" :key="homework.id" @click="goToHomeworkDetail(homework)">
             <view class="homework-item">
               <view class="homework-header">
                 <text class="homework-title">{{ homework.title }}</text>
@@ -100,11 +88,7 @@
           <text class="empty-text">暂无预习任务</text>
         </view>
         <view v-else>
-          <Card 
-            v-for="preview in filteredPreview" 
-            :key="preview.id"
-            @click="goToPreviewDetail(preview)"
-          >
+          <Card v-for="preview in filteredPreview" :key="preview.id" @click="goToPreviewDetail(preview)">
             <view class="preview-item">
               <view class="preview-header">
                 <text class="preview-title">{{ preview.title }}</text>
@@ -131,24 +115,14 @@
     </scroll-view>
 
     <!-- 学科选择器 -->
-    <picker
-      v-if="showSubjectPicker"
-      mode="selector"
-      :range="subjects"
-      @change="onSubjectChange"
-      @cancel="showSubjectPicker = false"
-    >
+    <picker v-if="showSubjectPicker" mode="selector" :range="subjects" @change="onSubjectChange"
+      @cancel="showSubjectPicker = false">
       <view></view>
     </picker>
 
     <!-- 状态选择器 -->
-    <picker
-      v-if="showStatusPicker"
-      mode="selector"
-      :range="statuses"
-      @change="onStatusChange"
-      @cancel="showStatusPicker = false"
-    >
+    <picker v-if="showStatusPicker" mode="selector" :range="statuses" @change="onStatusChange"
+      @cancel="showStatusPicker = false">
       <view></view>
     </picker>
   </view>
@@ -159,6 +133,7 @@ import { ref, computed, onMounted } from 'vue';
 import Card from '@/components/common/Card.vue';
 import coursesJson from '@/mock/courses.json';
 import homeworkJson from '@/mock/homework.json';
+import { storage, StorageKeys } from '@/utils/storage';
 import { useAppStore } from '@/stores/app';
 
 // Tab配置
@@ -208,7 +183,7 @@ function getCoverBySubject(subject: string): string {
   }
 }
 
-const courses = ref((coursesJson.courses || []).map((c:any)=>({
+const courses = ref((coursesJson.courses || []).map((c: any) => ({
   id: c.id,
   name: c.name,
   teacher: c.teacher,
@@ -221,25 +196,25 @@ const courses = ref((coursesJson.courses || []).map((c:any)=>({
   status: c.status || 'ongoing'
 })));
 
-function statusText(s:string){ return s==='pending'?'待完成': s==='completed'?'已完成': s==='graded'?'已批改':'进行中'; }
-const homework = ref((homeworkJson.homework||[]).map((h:any)=>({
+function statusText(s: string) { return s === 'pending' ? '待完成' : s === 'completed' ? '已完成' : s === 'graded' ? '已批改' : '进行中'; }
+const homework = ref(((storage.get(StorageKeys.HOMEWORK) as any) || homeworkJson.homework || []).map((h: any) => ({
   id: h.id,
   title: h.title,
   subject: h.courseName,
-  deadline: h.deadline||'-',
-  remainingTime: h.deadline? '—' : '-',
+  deadline: h.deadline || '-',
+  remainingTime: h.deadline ? '—' : '-',
   status: h.status,
   statusText: statusText(h.status)
 })));
 
-const preview = ref((homeworkJson.preview||[]).map((p:any)=>({
+const preview = ref((((storage.get(StorageKeys.PREVIEW) as any) || homeworkJson.preview) || []).map((p: any) => ({
   id: p.id,
   title: `${p.courseName} - ${p.title}`,
   subject: p.courseName,
   duration: p.duration,
   contents: p.content,
-  status: p.completed?'completed':'pending',
-  statusText: p.completed?'已完成':'待预习'
+  status: p.completed ? 'completed' : 'pending',
+  statusText: p.completed ? '已完成' : '待预习'
 })));
 
 // 过滤数据
@@ -381,14 +356,14 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   height: 88rpx;
-  
+
   .tab-text {
     font-size: $font-size-base;
     color: $text-secondary;
     font-weight: 500;
     transition: $transition-fast;
   }
-  
+
   .tab-badge {
     position: absolute;
     top: 16rpx;
@@ -405,7 +380,7 @@ onMounted(() => {
     color: $text-white;
     font-weight: bold;
   }
-  
+
   &.active .tab-text {
     color: $primary-color;
     font-weight: bold;
@@ -439,12 +414,12 @@ onMounted(() => {
   padding: 16rpx 24rpx;
   background-color: $bg-color;
   border-radius: $border-radius-small;
-  
+
   .filter-text {
     font-size: $font-size-sm;
     color: $text-primary;
   }
-  
+
   .filter-icon {
     font-size: 20rpx;
     color: $text-placeholder;
@@ -465,12 +440,12 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   padding: 120rpx 0;
-  
+
   .empty-icon {
     font-size: 120rpx;
     margin-bottom: 24rpx;
   }
-  
+
   .empty-text {
     font-size: $font-size-base;
     color: $text-placeholder;
@@ -518,7 +493,7 @@ onMounted(() => {
   align-items: center;
   gap: 16rpx;
   margin-top: 16rpx;
-  
+
   .progress-bar {
     flex: 1;
     height: 8rpx;
@@ -526,13 +501,13 @@ onMounted(() => {
     border-radius: 4rpx;
     overflow: hidden;
   }
-  
+
   .progress-fill {
     height: 100%;
     background: $gradient-primary;
     border-radius: 4rpx;
   }
-  
+
   .progress-text {
     font-size: $font-size-xs;
     color: $primary-color;
@@ -545,7 +520,7 @@ onMounted(() => {
   display: flex;
   gap: 24rpx;
   margin-top: 8rpx;
-  
+
   .course-info {
     font-size: $font-size-xs;
     color: $text-placeholder;
@@ -560,7 +535,7 @@ onMounted(() => {
     align-items: center;
     margin-bottom: 16rpx;
   }
-  
+
   .homework-title {
     flex: 1;
     font-size: $font-size-lg;
@@ -568,36 +543,36 @@ onMounted(() => {
     color: $text-primary;
     margin-right: 16rpx;
   }
-  
+
   .homework-status {
     padding: 8rpx 16rpx;
     border-radius: 24rpx;
     font-size: $font-size-xs;
     font-weight: bold;
-    
+
     &.pending {
       background-color: rgba(255, 184, 77, 0.1);
       color: $accent-color;
     }
-    
+
     &.completed {
       background-color: rgba(82, 196, 26, 0.1);
       color: $success-color;
     }
   }
-  
+
   .homework-meta {
     display: flex;
     gap: 24rpx;
     margin-bottom: 16rpx;
   }
-  
+
   .homework-subject,
   .homework-time {
     font-size: $font-size-sm;
     color: $text-secondary;
   }
-  
+
   .homework-countdown {
     display: flex;
     align-items: center;
@@ -605,11 +580,11 @@ onMounted(() => {
     padding: 12rpx 16rpx;
     background-color: rgba(245, 34, 45, 0.05);
     border-radius: $border-radius-small;
-    
+
     .countdown-icon {
       font-size: 28rpx;
     }
-    
+
     .countdown-text {
       font-size: $font-size-sm;
       color: $error-color;
@@ -626,7 +601,7 @@ onMounted(() => {
     align-items: center;
     margin-bottom: 16rpx;
   }
-  
+
   .preview-title {
     flex: 1;
     font-size: $font-size-lg;
@@ -634,55 +609,55 @@ onMounted(() => {
     color: $text-primary;
     margin-right: 16rpx;
   }
-  
+
   .preview-status {
     padding: 8rpx 16rpx;
     border-radius: 24rpx;
     font-size: $font-size-xs;
     font-weight: bold;
-    
+
     &.pending {
       background-color: rgba(24, 144, 255, 0.1);
       color: $info-color;
     }
-    
+
     &.completed {
       background-color: rgba(82, 196, 26, 0.1);
       color: $success-color;
     }
   }
-  
+
   .preview-meta {
     display: flex;
     gap: 24rpx;
     margin-bottom: 16rpx;
   }
-  
+
   .preview-subject,
   .preview-duration {
     font-size: $font-size-sm;
     color: $text-secondary;
   }
-  
+
   .preview-content {
     padding: 16rpx;
     background-color: $bg-color;
     border-radius: $border-radius-small;
   }
-  
+
   .preview-label {
     font-size: $font-size-sm;
     color: $text-secondary;
     margin-bottom: 12rpx;
     display: block;
   }
-  
+
   .content-tags {
     display: flex;
     flex-wrap: wrap;
     gap: 12rpx;
   }
-  
+
   .content-tag {
     padding: 8rpx 16rpx;
     background-color: $card-bg;
@@ -692,4 +667,3 @@ onMounted(() => {
   }
 }
 </style>
-
