@@ -8,24 +8,23 @@ export const useUserStore = defineStore('user', () => {
   // 状态
   const token = ref<string>(storage.get(StorageKeys.TOKEN) || '');
   const userInfo = ref<UserInfo | null>(storage.get(StorageKeys.USER_INFO));
-  
+
   // 计算属性
   const isLogin = computed(() => !!token.value && !!userInfo.value);
   const userId = computed(() => userInfo.value?.id || '');
   const userName = computed(() => userInfo.value?.name || '');
-  const baseUrl = import.meta.env.BASE_URL || '/';
   function resolveAvatar(src?: string) {
-    if (!src) return baseUrl + 'static/avatar/default.svg';
+    const defaultAvatar = '/static/avatar/default.svg';
+    if (!src) return defaultAvatar;
     if (/^(https?:)?\/\//.test(src) || src.startsWith('data:')) return src;
-    const cleanBase = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
-    if (src.startsWith('/')) return cleanBase.replace(/\/$/, '') + src; // '/static/...'
-    return cleanBase + src.replace(/^\.?\//, ''); // 'static/...'
+    if (src.startsWith('/')) return src;
+    return '/' + src;
   }
   const userAvatar = computed(() => resolveAvatar(userInfo.value?.avatar));
   const userLevel = computed(() => userInfo.value?.level || 0);
   const userExp = computed(() => userInfo.value?.exp || 0);
   const userPoints = computed(() => userInfo.value?.points || 0);
-  
+
   // 方法
   /**
    * 登录
@@ -50,13 +49,13 @@ export const useUserStore = defineStore('user', () => {
         grade: '初一',
         class: '2班',
       };
-      
+
       // 保存到状态和本地存储
       token.value = mockToken;
       userInfo.value = mockUserInfo;
       storage.set(StorageKeys.TOKEN, mockToken);
       storage.set(StorageKeys.USER_INFO, mockUserInfo);
-      
+
       return {
         success: true,
         message: '登录成功',
@@ -68,7 +67,7 @@ export const useUserStore = defineStore('user', () => {
       };
     }
   }
-  
+
   /**
    * 退出登录
    */
@@ -77,13 +76,13 @@ export const useUserStore = defineStore('user', () => {
     userInfo.value = null;
     storage.remove(StorageKeys.TOKEN);
     storage.remove(StorageKeys.USER_INFO);
-    
+
     // 跳转到登录页
     uni.reLaunch({
       url: '/pages/auth/login',
     });
   }
-  
+
   /**
    * 更新用户信息
    * @param data 用户信息
@@ -94,7 +93,7 @@ export const useUserStore = defineStore('user', () => {
       storage.set(StorageKeys.USER_INFO, userInfo.value);
     }
   }
-  
+
   /**
    * 增加经验值
    * @param exp 经验值
@@ -110,7 +109,7 @@ export const useUserStore = defineStore('user', () => {
       storage.set(StorageKeys.USER_INFO, userInfo.value);
     }
   }
-  
+
   /**
    * 增加积分
    * @param points 积分
@@ -124,7 +123,7 @@ export const useUserStore = defineStore('user', () => {
       storage.set(StorageKeys.GROWTH_LOG, logs);
     }
   }
-  
+
   /**
    * 获取用户信息
    */
@@ -136,7 +135,7 @@ export const useUserStore = defineStore('user', () => {
     }
     return null;
   }
-  
+
   return {
     // 状态
     token,
