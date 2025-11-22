@@ -7,7 +7,9 @@
       "description": "连续7天登录并完成学习任务",
       "status": "unlocked",
       "reward": 100,
-      "unlockTime": "2025-11-15"
+      "unlockTime": "2025-11-15",
+      "category": "习惯",
+      "rarity": "rare"
     },
     {
       "id": "a002",
@@ -18,17 +20,21 @@
       "progress": 15,
       "total": 15,
       "reward": 200,
-      "unlockTime": "2025-11-10"
+      "unlockTime": "2025-11-10",
+      "category": "作业",
+      "rarity": "epic"
     },
     {
       "id": "a003",
       "name": "讨论达人",
-      "icon": "⭐",
+      "icon": "💬",
       "description": "参与课堂讨论30次",
       "status": "in-progress",
       "progress": 18,
       "total": 30,
-      "reward": 150
+      "reward": 150,
+      "category": "互动",
+      "rarity": "common"
     },
     {
       "id": "a004",
@@ -36,7 +42,9 @@
       "icon": "🏆",
       "description": "综合评分达到95分以上",
       "status": "locked",
-      "reward": 500
+      "reward": 500,
+      "category": "考试",
+      "rarity": "rare"
     },
     {
       "id": "a005",
@@ -44,7 +52,65 @@
       "icon": "🌅",
       "description": "连续10天早上8点前完成学习",
       "status": "locked",
-      "reward": 120
+      "reward": 120,
+      "category": "习惯",
+      "rarity": "common"
+    },
+    {
+      "id": "a006",
+      "name": "错题收集家",
+      "icon": "🗂️",
+      "description": "整理50道错题并标注知识点",
+      "status": "in-progress",
+      "progress": 22,
+      "total": 50,
+      "reward": 180,
+      "category": "效率",
+      "rarity": "rare"
+    },
+    {
+      "id": "a007",
+      "name": "时间管理大师",
+      "icon": "⏰",
+      "description": "连续14天在计划时间内完成任务",
+      "status": "locked",
+      "reward": 200,
+      "category": "习惯",
+      "rarity": "rare"
+    },
+    {
+      "id": "a008",
+      "name": "知识点全覆盖",
+      "icon": "📚",
+      "description": "本周覆盖学习10个知识点",
+      "status": "in-progress",
+      "progress": 7,
+      "total": 10,
+      "reward": 120,
+      "category": "效率",
+      "rarity": "common"
+    },
+    {
+      "id": "a009",
+      "name": "考试提升达人",
+      "icon": "📈",
+      "description": "两次测验分数提升10分",
+      "status": "locked",
+      "reward": 220,
+      "category": "考试",
+      "rarity": "epic"
+    },
+    {
+      "id": "a010",
+      "name": "笔记小能手",
+      "icon": "📝",
+      "description": "高质量学习笔记累计20篇",
+      "status": "in-progress",
+      "progress": 9,
+      "total": 20,
+      "reward": 160,
+      "category": "效率",
+      "rarity": "common"
     }
   ],
   "discussions": [
