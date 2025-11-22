@@ -88,6 +88,7 @@ import Button from '@/components/common/Button.vue';
 import Loading from '@/components/common/Loading.vue';
 import { useAppStore } from '@/stores/app';
 import { useUserStore } from '@/stores/user';
+import { storage, StorageKeys } from '@/utils/storage';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
@@ -191,7 +192,15 @@ function loadDiscussion(id: string) {
   
   // 模拟加载延迟
   setTimeout(() => {
-    const data = mockDiscussions[id];
+    // 先从本地存储查找
+    const stored = storage.get(StorageKeys.DISCUSSIONS) || [];
+    let data = stored.find((d: any) => d.id === id);
+    
+    // 如果本地没有，从mock数据查找
+    if (!data) {
+      data = mockDiscussions[id];
+    }
+    
     if (!data) {
       appStore.showToast('讨论不存在', 'none');
       loading.value = false;
@@ -217,7 +226,18 @@ onLoad((options: any) => {
 const toggleLike = () => {
   isLiked.value = !isLiked.value;
   if (isLiked.value) {
+    discussion.value.likes += 1;
     appStore.showToast('已点赞', 'success');
+  } else {
+    discussion.value.likes = Math.max(0, discussion.value.likes - 1);
+  }
+  
+  // 保存到本地存储
+  const stored = storage.get(StorageKeys.DISCUSSIONS) || [];
+  const index = stored.findIndex((d: any) => d.id === discussion.value.id);
+  if (index >= 0) {
+    stored[index].likes = discussion.value.likes;
+    storage.set(StorageKeys.DISCUSSIONS, stored);
   }
 };
 

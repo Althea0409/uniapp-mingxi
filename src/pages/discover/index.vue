@@ -119,45 +119,53 @@ const tabs = ref([
   { label: '知识库' }
 ]);
 
-// Mock数据
-const discussions = ref([
-  {
-    id: 'd001',
-    avatar: 'static/avatar/default.svg',
-    username: '小王同学',
-    time: '2小时前',
-    isHot: true,
-    title: '第8章函数题目讨论',
-    content: '关于函数的单调性判断，大家有什么好的技巧吗？题目5特别难...',
-    views: 236,
-    replies: 18,
-    likes: 42
-  },
-  {
-    id: 'd002',
-    avatar: 'static/avatar/default.svg',
-    username: '学习小组长',
-    time: '5小时前',
-    isHot: false,
-    title: '物理实验报告格式分享',
-    content: '整理了一份详细的物理实验报告模板，包含所有必要部分...',
-    views: 158,
-    replies: 12,
-    likes: 28
-  },
-  {
-    id: 'd003',
-    avatar: 'static/avatar/default.svg',
-    username: '英语达人',
-    time: '昨天',
-    isHot: true,
-    title: '英语阅读理解技巧总结',
-    content: '分享一下我做阅读理解的方法，希望对大家有帮助...',
-    views: 412,
-    replies: 35,
-    likes: 87
-  }
-]);
+// 加载讨论列表
+const loadDiscussions = () => {
+  const mock = [
+    {
+      id: 'd001',
+      avatar: 'static/avatar/default.svg',
+      username: '小王同学',
+      time: '2小时前',
+      isHot: true,
+      title: '第8章函数题目讨论',
+      content: '关于函数的单调性判断，大家有什么好的技巧吗？题目5特别难...',
+      views: 236,
+      replies: 18,
+      likes: 42
+    },
+    {
+      id: 'd002',
+      avatar: 'static/avatar/default.svg',
+      username: '学习小组长',
+      time: '5小时前',
+      isHot: false,
+      title: '物理实验报告格式分享',
+      content: '整理了一份详细的物理实验报告模板，包含所有必要部分...',
+      views: 158,
+      replies: 12,
+      likes: 28
+    },
+    {
+      id: 'd003',
+      avatar: 'static/avatar/default.svg',
+      username: '英语达人',
+      time: '昨天',
+      isHot: true,
+      title: '英语阅读理解技巧总结',
+      content: '分享一下我做阅读理解的方法，希望对大家有帮助...',
+      views: 412,
+      replies: 35,
+      likes: 87
+    }
+  ];
+  
+  // 从本地存储加载新发布的讨论
+  const stored = storage.get(StorageKeys.DISCUSSIONS) || [];
+  discussions.value = [...stored, ...mock];
+};
+
+const discussions = ref<any[]>([]);
 
 const courseStore = useCourseStore();
 
@@ -346,12 +354,16 @@ const startResource = (item: any) => {
 
 // 查看知识
 const viewKnowledge = (item: any) => {
-  appStore.showToast('知识详情功能开发中', 'none');
+  uni.navigateTo({
+    url: `/pages/discover/knowledge-detail?id=${item.id}`
+  });
 };
 
 // 发帖
 const createPost = () => {
-  appStore.showToast('发帖功能开发中', 'none');
+  uni.navigateTo({
+    url: '/pages/discover/discussion-create'
+  });
 };
 
 const onAvatarError = (item: any) => {
@@ -360,6 +372,7 @@ const onAvatarError = (item: any) => {
 
 // 监听全局事件
 onMounted(async () => {
+  loadDiscussions();
   uni.$on('switchTab', (data: any) => {
     if (data.tab === 'discussion') {
       currentTab.value = 0;

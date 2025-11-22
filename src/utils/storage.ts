@@ -109,5 +109,9 @@ export const StorageKeys = {
   NOTIFICATIONS: 'notifications',
   STUDY_REMINDER: 'studyReminder',
   AUTO_SAVE: 'autoSave',
+  FAVORITES: 'favorites',
+  MESSAGES: 'messages',
+  DISCUSSIONS: 'discussions',
+  FEEDBACKS: 'feedbacks',
 };
 

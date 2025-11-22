@@ -21,7 +21,9 @@
             <text v-else class="avatar">🤖</text>
             <view class="bubble">
               <text v-if="m.role === 'user'" class="text">{{ m.text }}</text>
-              <rich-text v-else class="md" :nodes="mdToHtmlAdvanced(m.text)" />
+              <image v-if="m.image" class="msg-image" :src="m.image" mode="aspectFit" @tap="previewImage(m.image)" />
+              <text v-if="m.file" class="file-text">📎 {{ m.file }}</text>
+              <rich-text v-else-if="m.role === 'assistant'" class="md" :nodes="mdToHtmlAdvanced(m.text)" />
               <view v-if="m.role === 'assistant'" class="feedback">
                 <text class="fb" @tap="feedback(true)">👍 有帮助</text>
                 <text class="fb" @tap="feedback(false)">👎 没帮助</text>
@@ -36,8 +38,8 @@
       <view class="input-bar">
         <input class="input" v-model="input" placeholder="输入你的问题" />
         <view class="actions">
-          <text class="icon">📷</text>
-          <text class="icon">📁</text>
+          <text class="icon" @tap="chooseImage">📷</text>
+          <text class="icon" @tap="chooseFile">📁</text>
           <Button :text="sending ? '发送中' : '发送'" :type="sending ? 'secondary' : 'primary'" size="small"
             :disabled="sending" @click="send" />
         </view>
@@ -58,7 +60,7 @@ const appStore = useAppStore();
 const userStore = useUserStore();
 
 const quickTags = ['初一学习计划怎么做', '遇到挫折如何调整心态', '语文记叙文阅读要点', '数学分式与方程练习'];
-const messages = ref<{ role: 'user' | 'assistant'; text: string }[]>([
+const messages = ref<{ role: 'user' | 'assistant'; text: string; image?: string; file?: string }[]>([
   { role: 'assistant', text: '你好！我是明小蹊，你的AI学习伙伴～需要学习方法或情感支持，请尽管告诉我。' }
 ]);
 const input = ref('');
@@ -324,6 +326,80 @@ const scrollBottom = async () => {
   await nextTick();
   scrollIntoView.value = endAnchor;
 };
+
+// 选择图片
+const chooseImage = () => {
+  uni.chooseImage({
+    count: 1,
+    sizeType: ['compressed'],
+    sourceType: ['album', 'camera'],
+    success: (res) => {
+      const tempFilePath = res.tempFilePaths[0];
+      // 这里可以上传图片到服务器，然后发送图片URL
+      // 模拟发送图片消息
+      messages.value.push({ 
+        role: 'user', 
+        text: `[图片]`,
+        image: tempFilePath
+      });
+      scrollBottom();
+      appStore.showToast('图片已添加，AI助手暂不支持图片识别', 'none');
+    },
+    fail: (err) => {
+      console.error('选择图片失败:', err);
+    }
+  });
+};
+
+// 选择文件
+const chooseFile = () => {
+  // #ifdef H5
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.pdf,.doc,.docx,.txt';
+  input.onchange = (e: any) => {
+    const file = e.target.files[0];
+    if (file) {
+      messages.value.push({ 
+        role: 'user', 
+        text: `[文件] ${file.name}`,
+        file: file.name
+      });
+      scrollBottom();
+      appStore.showToast('文件已添加，AI助手暂不支持文件解析', 'none');
+    }
+  };
+  input.click();
+  // #endif
+  
+  // #ifndef H5
+  uni.chooseFile({
+    count: 1,
+    extension: ['.pdf', '.doc', '.docx', '.txt'],
+    success: (res) => {
+      const file = res.tempFiles[0];
+      messages.value.push({ 
+        role: 'user', 
+        text: `[文件] ${file.name}`,
+        file: file.name
+      });
+      scrollBottom();
+      appStore.showToast('文件已添加，AI助手暂不支持文件解析', 'none');
+    },
+    fail: (err) => {
+      console.error('选择文件失败:', err);
+    }
+  });
+  // #endif
+};
+
+// 预览图片
+const previewImage = (url: string) => {
+  uni.previewImage({
+    urls: [url],
+    current: url
+  });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -509,6 +585,24 @@ const scrollBottom = async () => {
 .fb {
   font-size: $font-size-xs;
   color: $text-secondary;
+  cursor: pointer;
+}
+
+.msg-image {
+  max-width: 100%;
+  max-height: 400rpx;
+  border-radius: $border-radius;
+  margin-bottom: 8rpx;
+}
+
+.file-text {
+  font-size: $font-size-sm;
+  color: $text-secondary;
+  padding: 8rpx 12rpx;
+  background: $bg-color;
+  border-radius: $border-radius-small;
+  margin-bottom: 8rpx;
+  display: block;
 }
 
 .chat-spacer {
@@ -550,5 +644,6 @@ const scrollBottom = async () => {
 .icon {
   font-size: 32rpx;
   color: $text-secondary;
+  cursor: pointer;
 }
 </style>

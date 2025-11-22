@@ -206,8 +206,87 @@ const handleLogin = async () => {
 };
 
 // 微信登录
-const handleWechatLogin = () => {
-  appStore.showToast('微信登录功能开发中', 'none');
+const handleWechatLogin = async () => {
+  loading.value = true;
+  
+  try {
+    // 模拟微信登录流程
+    // #ifdef MP-WEIXIN
+    // 微信小程序环境
+    const loginRes = await new Promise((resolve, reject) => {
+      uni.login({
+        provider: 'weixin',
+        success: resolve,
+        fail: reject
+      });
+    });
+    
+    if (loginRes.code) {
+      // 这里应该调用后端API，用code换取用户信息
+      // 模拟登录成功
+      const mockToken = 'wechat_token_' + Date.now();
+      const mockUserInfo: any = {
+        id: 'wx_' + Date.now(),
+        phone: '',
+        name: '微信用户',
+        avatar: 'static/avatar/default.svg',
+        level: 1,
+        exp: 0,
+        points: 0,
+        badges: 0,
+        school: '明蹊中学',
+        grade: '初一',
+        class: '2班',
+      };
+      
+      userStore.$patch({ token: mockToken, userInfo: mockUserInfo });
+      storage.set(StorageKeys.TOKEN, mockToken);
+      storage.set(StorageKeys.USER_INFO, mockUserInfo);
+      
+      appStore.showToast('微信登录成功', 'success');
+      setTimeout(() => {
+        uni.reLaunch({
+          url: '/pages/home/index',
+        });
+      }, 1000);
+    }
+    // #endif
+    
+    // #ifndef MP-WEIXIN
+    // 非微信小程序环境，模拟登录
+    setTimeout(() => {
+      const mockToken = 'wechat_token_' + Date.now();
+      const mockUserInfo: any = {
+        id: 'wx_' + Date.now(),
+        phone: '',
+        name: '微信用户',
+        avatar: 'static/avatar/default.svg',
+        level: 1,
+        exp: 0,
+        points: 0,
+        badges: 0,
+        school: '明蹊中学',
+        grade: '初一',
+        class: '2班',
+      };
+      
+      userStore.$patch({ token: mockToken, userInfo: mockUserInfo });
+      storage.set(StorageKeys.TOKEN, mockToken);
+      storage.set(StorageKeys.USER_INFO, mockUserInfo);
+      
+      appStore.showToast('微信登录成功（模拟）', 'success');
+      setTimeout(() => {
+        uni.reLaunch({
+          url: '/pages/home/index',
+        });
+      }, 1000);
+    }, 800);
+    // #endif
+  } catch (error: any) {
+    appStore.showToast(error.message || '微信登录失败', 'error');
+  } finally {
+    loading.value = false;
+  }
 };
 
 // 忘记密码

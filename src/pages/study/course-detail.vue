@@ -213,7 +213,36 @@ onLoad((options: any) => {
 });
 
 const continueStudy = () => {
-  appStore.showToast('继续学习功能开发中', 'none');
+  // 记录学习时长
+  appStore.recordStudySession(30);
+  
+  // 更新课程进度
+  if (course.value.progress < 100) {
+    const newProgress = Math.min(100, course.value.progress + 5);
+    course.value.progress = newProgress;
+    
+    // 保存进度
+    const courses = (coursesJson as any).courses || [];
+    const index = courses.findIndex((c: any) => c.id === course.value.id);
+    if (index >= 0) {
+      courses[index].progress = newProgress;
+      storage.set(StorageKeys.COURSES, courses);
+    }
+    
+    appStore.showToast('学习进度已更新', 'success');
+    userStore.addExp(5);
+    userStore.addPoints(10);
+    
+    // 如果进度达到100%，显示完成提示
+    if (newProgress >= 100) {
+      setTimeout(() => {
+        appStore.triggerEncouragement('celebration');
+        appStore.showToast('恭喜完成课程学习！', 'success');
+      }, 500);
+    }
+  } else {
+    appStore.showToast('课程已完成，可以复习或查看资源', 'none');
+  }
 };
 
 const viewResource = (r: any) => {

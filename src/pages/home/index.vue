@@ -375,7 +375,9 @@ const refreshEncouragement = () => {
 
 // 跳转到消息页面
 const goToMessages = () => {
-  appStore.showToast('消息功能开发中', 'none');
+  uni.navigateTo({
+    url: '/pages/messages/index'
+  });
 };
 
 // 跳转到个人中心

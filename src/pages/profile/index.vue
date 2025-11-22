@@ -217,7 +217,9 @@ const handleMenuClick = (item: any) => {
       url: item.url
     });
   } else if (item.action === 'help') {
-    appStore.showToast('帮助与反馈功能开发中', 'none');
+    uni.navigateTo({
+      url: '/pages/profile/help'
+    });
   } else if (item.action === 'about') {
     uni.showModal({
       title: '关于我们',

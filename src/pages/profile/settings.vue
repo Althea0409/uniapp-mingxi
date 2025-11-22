@@ -206,7 +206,61 @@ const clearCache = () => {
 };
 
 const exportData = () => {
-  appStore.showToast('数据导出功能开发中', 'none');
+  appStore.showLoading('正在导出数据...');
+  
+  // 收集所有用户数据
+  const userInfo = userStore.userInfo;
+  const courses = storage.get(StorageKeys.COURSES) || [];
+  const homework = storage.get(StorageKeys.HOMEWORK) || [];
+  const preview = storage.get(StorageKeys.PREVIEW) || [];
+  const schedule = storage.get(StorageKeys.SCHEDULE) || [];
+  const growthLog = storage.get(StorageKeys.GROWTH_LOG) || [];
+  const achievements = storage.get(StorageKeys.ACHIEVEMENTS) || [];
+  const studyStats = storage.get(StorageKeys.STUDY_STATS) || {};
+  
+  const exportData = {
+    exportTime: new Date().toISOString(),
+    userInfo,
+    courses,
+    homework,
+    preview,
+    schedule,
+    growthLog,
+    achievements,
+    studyStats
+  };
+  
+  // 转换为JSON字符串
+  const jsonStr = JSON.stringify(exportData, null, 2);
+  
+  // 创建文件并下载（H5环境）
+  if (typeof window !== 'undefined') {
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `mingxi-data-${new Date().getTime()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    appStore.hideLoading();
+    appStore.showToast('数据导出成功', 'success');
+  } else {
+    // 小程序环境，复制到剪贴板
+    uni.setClipboardData({
+      data: jsonStr,
+      success: () => {
+        appStore.hideLoading();
+        appStore.showToast('数据已复制到剪贴板', 'success');
+      },
+      fail: () => {
+        appStore.hideLoading();
+        appStore.showToast('导出失败，请稍后重试', 'error');
+      }
+    });
+  }
 };
 </script>
 

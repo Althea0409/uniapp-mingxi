@@ -118,6 +118,30 @@
       }
     },
     {
+      "path": "pages/discover/discussion-create",
+      "style": {
+        "navigationBarTitleText": "发起讨论"
+      }
+    },
+    {
+      "path": "pages/discover/knowledge-detail",
+      "style": {
+        "navigationBarTitleText": "知识详情"
+      }
+    },
+    {
+      "path": "pages/messages/index",
+      "style": {
+        "navigationBarTitleText": "消息"
+      }
+    },
+    {
+      "path": "pages/profile/help",
+      "style": {
+        "navigationBarTitleText": "帮助与反馈"
+      }
+    },
+    {
       "path": "pages/profile/settings",
       "style": {
         "navigationBarTitleText": "设置"
