@@ -87,7 +87,6 @@
               @tap="handleQuickAction(action)">
               <view class="grid-icon-wrap">
                 <text class="grid-icon">{{ action.icon }}</text>
-                <view v-if="action.badge > 0" class="grid-badge">{{ action.badge }}</view>
               </view>
               <text class="grid-label">{{ action.label }}</text>
             </view>
