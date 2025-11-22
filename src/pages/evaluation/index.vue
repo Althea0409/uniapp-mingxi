@@ -69,11 +69,8 @@
           <text class="ai-title">🤖 AI学习分析</text>
           <text class="ai-text">{{ aiText }}</text>
           <Button text="生成学习计划建议" type="primary" size="large" @click="genPlan" />
-          <Button text="打开复盘中心" type="secondary" size="small" @click="goReviewCenter" />
         </view>
       </Card>
-
-
     </scroll-view>
   </view>
 </template>

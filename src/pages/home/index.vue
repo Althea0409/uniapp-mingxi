@@ -110,7 +110,7 @@
                 <view class="ring-bg"></view>
                 <!-- 进度圆环 -->
                 <view class="ring-progress" :style="{
-                  background: `conic-gradient(${progressGradient} ${studyProgress * 3.6}deg, transparent 0)`
+                  background: `conic-gradient(#2B46FE 0deg, #7B61FF ${studyProgress * 3.6}deg, transparent ${studyProgress * 3.6}deg)`
                 }"></view>
                 <!-- 中心内容 -->
                 <view class="ring-center">
@@ -201,10 +201,22 @@
         </swiper>
       </view>
 
-      <!-- 占位内容，其他模块待开发 -->
-      <view class="placeholder-section">
+      <view class="today-feed-section">
+        <view class="section-header">
+          <text class="section-title">今日学习动态</text>
+          <text class="section-more" @tap="goGrowth">查看详情 →</text>
+        </view>
         <Card>
-          <text class="placeholder-text">今日学习动态等功能开发中...</text>
+          <view class="today-feed">
+            <view v-for="item in todayFeed" :key="item.id" class="feed-item" @tap="item.onClick && item.onClick()">
+              <text class="feed-icon">{{ item.icon }}</text>
+              <view class="feed-content">
+                <text class="feed-title">{{ item.title }}</text>
+                <text class="feed-sub">{{ item.sub }}</text>
+              </view>
+              <text v-if="item.actionText" class="feed-action">{{ item.actionText }}</text>
+            </view>
+          </view>
         </Card>
       </view>
     </scroll-view>
@@ -217,6 +229,8 @@ import { useUserStore } from '@/stores/user';
 import { useAppStore } from '@/stores/app';
 import Card from '@/components/common/Card.vue';
 import coursesJson from '@/mock/courses.json';
+import homeworkJson from '@/mock/homework.json';
+import { storage, StorageKeys } from '@/utils/storage';
 
 const userStore = useUserStore();
 const appStore = useAppStore();
@@ -266,13 +280,11 @@ const completedCourses = ref(6); // 完成课程数
 const completedHomework = ref(15); // 完成作业数
 const earnedPoints = ref(320); // 获得积分
 
-// 环形进度渐变色
-const progressGradient = computed(() => {
-  return 'linear-gradient(135deg, #2B46FE, #7B61FF)';
-});
 
 // 推荐课程数据（动态从 mock 读取）
 const recommendCourses = ref<any[]>([]);
+
+const todayFeed = ref<any[]>([]);
 
 function detectSubject(name: string): string {
   if (!name) return '综合';
@@ -322,6 +334,43 @@ function loadRecommendCourses() {
     console.warn('加载推荐课程失败', e);
     recommendCourses.value = [];
   }
+}
+
+function buildTodayFeed() {
+  const list: any[] = [];
+  const stats = (storage.get(StorageKeys.STUDY_STATS) as any) || {};
+  const minutes = Number(stats.todayStudyMinutes || 0);
+  list.push({ id: 'feed_time', icon: '⏱️', title: '学习时长', sub: `今日 ${minutes} 分钟`, actionText: minutes > 0 ? '继续学习' : '开始学习', onClick: () => uni.switchTab({ url: '/pages/study/index' }) });
+
+  const pv = ((homeworkJson as any).preview || []).filter((p: any) => String(p.publishTime || '').includes('今天'));
+  pv.forEach((p: any) => {
+    list.push({ id: `feed_pv_${p.id}`, icon: '📖', title: `课前预习 · ${p.courseName}`, sub: `${p.title} · 建议 ${p.duration}min`, actionText: '去预习', onClick: () => uni.navigateTo({ url: `/pages/study/preview-detail?id=${p.id}` }) });
+  });
+
+  const pending = ((homeworkJson as any).homework || []).filter((h: any) => h.status === 'pending').slice(0, 2);
+  pending.forEach((h: any) => {
+    list.push({ id: `feed_hw_${h.id}`, icon: '📝', title: `待交作业 · ${h.courseName}`, sub: `${h.title} · 截止 ${h.deadline}`, actionText: '去完成', onClick: () => uni.navigateTo({ url: `/pages/study/homework-detail?id=${h.id}` }) });
+  });
+
+  const graded = ((homeworkJson as any).homework || []).find((h: any) => h.status === 'graded');
+  if (graded) {
+    list.push({ id: `feed_g_${graded.id}`, icon: '✅', title: `批改结果 · ${graded.courseName}`, sub: `${graded.title} · 得分 ${graded.score}/${graded.totalScore} · 用时 ${graded.timeSpent}min`, actionText: '查看', onClick: () => uni.navigateTo({ url: '/pages/review/index' }) });
+  }
+
+  const logs = (storage.get(StorageKeys.GROWTH_LOG) as any) || [];
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth();
+  const d = now.getDate();
+  const todayPoints = logs
+    .filter((x: any) => x.type === 'points')
+    .filter((x: any) => { const t = new Date(x.at); return t.getFullYear() === y && t.getMonth() === m && t.getDate() === d; })
+    .reduce((s: number, x: any) => s + (x.delta || 0), 0);
+  if (todayPoints) {
+    list.push({ id: 'feed_pts', icon: '🎯', title: '积分变动', sub: `今日 +${todayPoints} 分`, actionText: '查看成长', onClick: () => uni.navigateTo({ url: '/pages/achievement/index' }) });
+  }
+
+  todayFeed.value = list;
 }
 
 // 刷新激励语
@@ -403,12 +452,17 @@ const closeEncourage = () => {
   appStore.closeEncouragement();
 };
 
+const goGrowth = () => {
+  uni.navigateTo({ url: '/pages/growth/index' });
+};
+
 // 页面加载
 onMounted(() => {
   // 获取激励语
   encouragement.value = appStore.getRandomEncouragement();
   // 加载推荐课程
   loadRecommendCourses();
+  buildTodayFeed();
 
   // 检查用户信息
   if (!userStore.isLogin) {
@@ -975,6 +1029,54 @@ onMounted(() => {
 .meta-item {
   font-size: $font-size-xs;
   color: $text-placeholder;
+}
+
+.today-feed-section {
+  margin-bottom: 24rpx;
+}
+
+.today-feed {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+  padding: 8rpx 0;
+}
+
+.feed-item {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  padding: 12rpx;
+  background: $bg-color;
+  border-radius: $border-radius-small;
+}
+
+.feed-icon {
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.feed-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.feed-title {
+  font-size: $font-size-sm;
+  color: $text-primary;
+  font-weight: 600;
+}
+
+.feed-sub {
+  font-size: $font-size-xs;
+  color: $text-secondary;
+}
+
+.feed-action {
+  font-size: $font-size-sm;
+  color: $primary-color;
 }
 
 // 占位内容
