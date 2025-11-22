@@ -33,6 +33,18 @@
       {
         "name": "写作表达",
         "value": 78
+      },
+      {
+        "name": "文言文理解",
+        "value": 80
+      },
+      {
+        "name": "信息提取",
+        "value": 83
+      },
+      {
+        "name": "结构分析",
+        "value": 79
       }
     ],
     "appliedSkills": [
@@ -47,6 +59,18 @@
       {
         "name": "修辞运用",
         "value": 76
+      },
+      {
+        "name": "古诗鉴赏",
+        "value": 82
+      },
+      {
+        "name": "段落概括",
+        "value": 78
+      },
+      {
+        "name": "病句辨析",
+        "value": 74
       }
     ],
     "knowledge": {
@@ -67,6 +91,18 @@
       {
         "name": "关联词与句式",
         "value": 84
+      },
+      {
+        "name": "文言虚词",
+        "value": 78
+      },
+      {
+        "name": "诗歌意象",
+        "value": 80
+      },
+      {
+        "name": "修辞辨析",
+        "value": 76
       }
     ],
     "modernKnowledge": [
@@ -81,6 +117,18 @@
       {
         "name": "议论文入门",
         "value": 70
+      },
+      {
+        "name": "说明方法",
+        "value": 78
+      },
+      {
+        "name": "叙述顺序",
+        "value": 76
+      },
+      {
+        "name": "论证方法",
+        "value": 74
       }
     ],
     "resources": [
@@ -453,6 +501,14 @@
       {
         "name": "数据处理",
         "value": 76
+      },
+      {
+        "name": "实验安全",
+        "value": 82
+      },
+      {
+        "name": "变量控制",
+        "value": 78
       }
     ],
     "appliedSkills": [
@@ -467,6 +523,14 @@
       {
         "name": "图像分析",
         "value": 78
+      },
+      {
+        "name": "数据拟合",
+        "value": 74
+      },
+      {
+        "name": "报告撰写",
+        "value": 80
       }
     ],
     "knowledge": {
@@ -487,6 +551,10 @@
       {
         "name": "生物的基本结构",
         "value": 74
+      },
+      {
+        "name": "能量与转换",
+        "value": 76
       }
     ],
     "modernKnowledge": [
@@ -501,6 +569,14 @@
       {
         "name": "观察方法",
         "value": 82
+      },
+      {
+        "name": "测量与误差",
+        "value": 78
+      },
+      {
+        "name": "数据统计与图表",
+        "value": 80
       }
     ],
     "resources": [
@@ -681,6 +757,14 @@
       {
         "name": "社会认知",
         "value": 70
+      },
+      {
+        "name": "历史常识",
+        "value": 72
+      },
+      {
+        "name": "事件分析",
+        "value": 73
       }
     ],
     "appliedSkills": [
@@ -695,6 +779,14 @@
       {
         "name": "资料整合",
         "value": 70
+      },
+      {
+        "name": "图表解读",
+        "value": 72
+      },
+      {
+        "name": "讨论与表达",
+        "value": 74
       }
     ],
     "knowledge": {
@@ -715,6 +807,10 @@
       {
         "name": "道德与法治基本概念",
         "value": 72
+      },
+      {
+        "name": "历史与社会基础",
+        "value": 70
       }
     ],
     "modernKnowledge": [
@@ -729,6 +825,14 @@
       {
         "name": "表达与讨论",
         "value": 70
+      },
+      {
+        "name": "图表与数据",
+        "value": 72
+      },
+      {
+        "name": "调查与访谈",
+        "value": 71
       }
     ],
     "resources": [
