@@ -129,7 +129,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import Card from '@/components/common/Card.vue';
 import coursesJson from '@/mock/courses.json';
 import homeworkJson from '@/mock/homework.json';
@@ -197,15 +197,60 @@ const courses = ref((coursesJson.courses || []).map((c: any) => ({
 })));
 
 function statusText(s: string) { return s === 'pending' ? '待完成' : s === 'completed' ? '已完成' : s === 'graded' ? '已批改' : '进行中'; }
+
+// 计算剩余时间
+function calculateRemainingTime(deadline: string): string {
+  if (!deadline || deadline === '-') return '-';
+  
+  try {
+    const deadlineTime = new Date(deadline.replace(/-/g, '/'));
+    const now = new Date();
+    const diff = deadlineTime.getTime() - now.getTime();
+    
+    if (diff < 0) {
+      return '已过期';
+    }
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (days > 0) {
+      return `${days}天${hours}小时`;
+    } else if (hours > 0) {
+      return `${hours}小时${minutes}分钟`;
+    } else if (minutes > 0) {
+      return `${minutes}分钟`;
+    } else {
+      return '不足1分钟';
+    }
+  } catch (e) {
+    console.error('计算剩余时间失败:', e);
+    return '-';
+  }
+}
+
+// 更新作业剩余时间
+const updateHomeworkRemainingTime = () => {
+  homework.value.forEach((h: any) => {
+    if (h.status === 'pending' && h.deadline && h.deadline !== '-') {
+      h.remainingTime = calculateRemainingTime(h.deadline);
+    }
+  });
+};
+
 const homework = ref(((storage.get(StorageKeys.HOMEWORK) as any) || homeworkJson.homework || []).map((h: any) => ({
   id: h.id,
   title: h.title,
   subject: h.courseName,
   deadline: h.deadline || '-',
-  remainingTime: h.deadline ? '—' : '-',
+  remainingTime: calculateRemainingTime(h.deadline),
   status: h.status,
   statusText: statusText(h.status)
 })));
+
+// 定时更新剩余时间（每分钟更新一次）
+let remainingTimeTimer: any = null;
 
 const preview = ref((((storage.get(StorageKeys.PREVIEW) as any) || homeworkJson.preview) || []).map((p: any) => ({
   id: p.id,
@@ -320,6 +365,14 @@ const goToPreviewDetail = (pv: any) => {
 
 // 监听全局事件（来自首页快捷入口）
 onMounted(() => {
+  // 立即更新一次剩余时间
+  updateHomeworkRemainingTime();
+  
+  // 设置定时器，每分钟更新一次剩余时间
+  remainingTimeTimer = setInterval(() => {
+    updateHomeworkRemainingTime();
+  }, 60000); // 60秒 = 60000毫秒
+  
   uni.$on('switchTab', (data: any) => {
     if (data.tab === 'homework') {
       currentTab.value = 1;
@@ -327,6 +380,14 @@ onMounted(() => {
       currentTab.value = 2;
     }
   });
+});
+
+onUnmounted(() => {
+  // 清除定时器
+  if (remainingTimeTimer) {
+    clearInterval(remainingTimeTimer);
+    remainingTimeTimer = null;
+  }
 });
 </script>
 
