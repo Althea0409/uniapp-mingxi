@@ -106,5 +106,8 @@ export const StorageKeys = {
   AI_API_KEY: 'aiApiKey',
   AI_BASE_URL: 'aiBaseUrl',
   AI_MODEL: 'aiModel',
+  NOTIFICATIONS: 'notifications',
+  STUDY_REMINDER: 'studyReminder',
+  AUTO_SAVE: 'autoSave',
 };
 

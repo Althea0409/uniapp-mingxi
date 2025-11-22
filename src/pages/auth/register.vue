@@ -457,27 +457,24 @@ const handleRegister = async () => {
   }
   loading.value = true;
   try {
-    const res = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({
-        name: formData.name,
-        phone: formData.phone,
-        password: formData.password,
-        school: formData.school,
-        grade: formData.grade,
-        class: formData.class,
-      }),
-    });
-    const data = await res.json();
-    if (!res.ok) {
-      appStore.showToast(data?.error || '注册失败', 'none');
-      return;
-    }
+    const id = String(Date.now());
+    const token = 'mock_token_' + id;
+    const info = {
+      id,
+      phone: formData.phone,
+      name: formData.name,
+      avatar: 'static/avatar/default.svg',
+      level: 1,
+      exp: 0,
+      points: 0,
+      badges: 0,
+      school: formData.school,
+      grade: formData.grade,
+      class: formData.class,
+    } as any;
+    userStore.$patch({ token, userInfo: info });
     appStore.showToast('注册成功', 'success');
-    setTimeout(() => {
-      uni.redirectTo({ url: '/pages/auth/login' });
-    }, 800);
+    setTimeout(() => { uni.redirectTo({ url: '/pages/auth/login' }); }, 800);
   } catch (error: any) {
     appStore.showToast(error?.message || '注册失败', 'none');
   } finally {

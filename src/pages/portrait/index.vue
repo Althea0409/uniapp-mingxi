@@ -459,32 +459,54 @@ watch(currentTab, () => {
 });
 
 async function fetchTrend() {
-  try {
-    const res = await fetch(`/api/portrait/trend?subject=${encodeURIComponent(subject.value)}`);
-    const data = await res.json();
-    trendSeries.value = Array.isArray(data?.series) ? data.series : [];
-    nextTick(updateTrendChart);
-  } catch { }
+  const base = (dataBySubject[subject.value]?.stats?.dailyHours ?? 1.5) as number;
+  const days = 30;
+  const start = new Date(); start.setDate(start.getDate() - (days - 1));
+  const list = Array.from({ length: days }, (_, i) => {
+    const d = new Date(start); d.setDate(start.getDate() + i);
+    const v = base + Math.sin(i / 6) * 0.5 + (Math.random() - 0.5) * 0.3;
+    return { date: d.toISOString().slice(0, 10), hours: Number(Math.max(0.2, Number(v.toFixed(2)))) };
+  });
+  trendSeries.value = list;
+  nextTick(updateTrendChart);
 }
 
 async function fetchSkillGraph() {
-  try {
-    const res = await fetch(`/api/portrait/skills-graph?subject=${encodeURIComponent(subject.value)}`);
-    const data = await res.json();
-    skillNodes.value = Array.isArray(data?.nodes) ? data.nodes : [];
-    skillEdges.value = Array.isArray(data?.edges) ? data.edges : [];
-    nextTick(updateSkillChart);
-  } catch { }
+  const d = (dataBySubject[subject.value] || {}) as any;
+  const base = [...(d.coreSkills || []), ...(d.appliedSkills || [])];
+  const tags = ['基础', '应用', '拓展'];
+  const nodes = base.flatMap((n: any) => {
+    const children = tags.map(t => ({ name: `${n.name}-${t}`, value: Math.max(40, Math.min(95, n.value + Math.round((Math.random() - 0.5) * 20))) }));
+    return [n, ...children];
+  });
+  const center = subject.value;
+  const edges: any[] = [];
+  base.forEach((n: any) => {
+    edges.push({ source: center, target: n.name, weight: Math.max(1, Math.floor(n.value / 20)) });
+    tags.forEach(t => { edges.push({ source: n.name, target: `${n.name}-${t}`, weight: 1 }); });
+  });
+  skillNodes.value = nodes;
+  skillEdges.value = edges;
+  nextTick(updateSkillChart);
 }
 
 async function fetchKnowledgeGraph() {
-  try {
-    const res = await fetch(`/api/portrait/knowledge-graph?subject=${encodeURIComponent(subject.value)}`);
-    const data = await res.json();
-    knowledgeNodes.value = Array.isArray(data?.nodes) ? data.nodes : [];
-    knowledgeEdges.value = Array.isArray(data?.edges) ? data.edges : [];
-    nextTick(updateKnowledgeChart);
-  } catch { }
+  const d = (dataBySubject[subject.value] || {}) as any;
+  const base = [...(d.classicKnowledge || []), ...(d.modernKnowledge || [])];
+  const tags = ['基础概念', '例题', '易错点'];
+  const nodes = base.flatMap((n: any) => {
+    const children = tags.map(t => ({ name: `${n.name}-${t}`, value: Math.max(40, Math.min(95, n.value + Math.round((Math.random() - 0.5) * 20))) }));
+    return [n, ...children];
+  });
+  const center = subject.value;
+  const edges: any[] = [];
+  base.forEach((n: any) => {
+    edges.push({ source: center, target: n.name, weight: Math.max(1, Math.floor(n.value / 20)) });
+    tags.forEach(t => { edges.push({ source: n.name, target: `${n.name}-${t}`, weight: 1 }); });
+  });
+  knowledgeNodes.value = nodes;
+  knowledgeEdges.value = edges;
+  nextTick(updateKnowledgeChart);
 }
 </script>
 

@@ -64,16 +64,7 @@
         </Card>
       </view>
 
-      <!-- 激励弹窗 -->
-      <view v-if="appStore.encourageVisible" class="encourage-modal">
-        <view class="encourage-box">
-          <text class="encourage-type">{{ encourageTypeText }}</text>
-          <text class="encourage-text-large">{{ encouragement }}</text>
-          <view class="encourage-actions">
-            <Button text="收到" type="primary" size="small" @click="closeEncourage" />
-          </view>
-        </view>
-      </view>
+      
 
       <!-- 快捷功能宫格 -->
       <view class="quick-actions-section">
@@ -1090,38 +1081,3 @@ onMounted(() => {
   }
 }
 </style>
-
-function detectSubject(name: string): string {
-if (!name) return '综合';
-if (name.includes('语文')) return '语文';
-if (name.includes('数学')) return '数学';
-if (name.includes('英语')) return '英语';
-if (name.includes('科学')) return '科学';
-if (name.includes('历史与社会')) return '历史与社会';
-return '综合';
-}
-
-function getCoverBySubject(subject: string): string {
-switch (subject) {
-case '语文':
-return '/static/course/chinese.svg';
-case '数学':
-return '/static/course/math.svg';
-case '英语':
-return '/static/course/english.svg';
-case '科学':
-return '/static/course/science.svg';
-case '历史与社会':
-return '/static/course/history.svg';
-default:
-return '/static/logo.png';
-}
-}
-
-.encourage-modal { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex;
-align-items: center; justify-content: center; z-index: $z-index-modal; }
-.encourage-box { background: $card-bg; border-radius: $border-radius; padding: 32rpx; width: 80%; box-shadow:
-$shadow-card; display: flex; flex-direction: column; gap: 16rpx; }
-.encourage-type { font-size: $font-size-sm; color: $text-secondary; }
-.encourage-text-large { font-size: $font-size-lg; color: $text-primary; font-weight: bold; }
-.encourage-actions { display: flex; justify-content: flex-end; }

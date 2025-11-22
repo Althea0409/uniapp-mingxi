@@ -12,6 +12,8 @@ export type Evaluation = {
   created_at: string;
 };
 
+import { getSeed } from '@/mocks/data/evaluation';
+
 export async function listEvaluations(params: {
   course_id?: number;
   clazz_id?: number;
@@ -20,20 +22,14 @@ export async function listEvaluations(params: {
   offset?: number;
   scenario?: 'ok' | 'empty' | 'error';
 } = {}): Promise<Evaluation[]> {
-  const usp = new URLSearchParams();
-  Object.entries(params).forEach(([k, v]) => {
-    if (v !== undefined && v !== null) usp.set(k, String(v));
-  });
-  const res = await fetch(`/api/evaluation${usp.toString() ? `?${usp.toString()}` : ''}`);
-  const ct = res.headers.get('content-type') || '';
-  const text = await res.text();
-  if (!ct.includes('application/json')) return [];
-  try {
-    const data = JSON.parse(text);
-    return Array.isArray(data) ? data as Evaluation[] : [];
-  } catch {
-    return [];
-  }
+  const { course_id, clazz_id, student_id, limit = 50, offset = 0, scenario = 'ok' } = params || {};
+  if (scenario === 'error') return [];
+  let rows = getSeed();
+  if (course_id) rows = rows.filter(r => r.course_id === course_id);
+  if (clazz_id !== undefined && clazz_id !== null) rows = rows.filter(r => (r.clazz_id ?? null) === clazz_id);
+  if (student_id) rows = rows.filter(r => r.student_id === String(student_id));
+  if (scenario === 'empty') rows = [];
+  return rows.slice(offset, offset + Math.min(limit, 200));
 }
 
 export async function createEvaluation(payload: {
@@ -47,19 +43,8 @@ export async function createEvaluation(payload: {
   score_homework?: number | null;
   comment?: string | null;
 }): Promise<{ id: number }> {
-  const res = await fetch('/api/evaluation', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(payload),
-  });
-  const ct = res.headers.get('content-type') || '';
-  const text = await res.text();
-  if (!ct.includes('application/json')) return { id: 0 };
-  try {
-    const data = JSON.parse(text);
-    const id = typeof (data as any)?.id === 'number' ? (data as any).id : 0;
-    return { id };
-  } catch {
-    return { id: 0 };
-  }
+  if (!payload?.course_id || !payload?.student_id) return { id: 0 };
+  const list = getSeed();
+  const nextId = Math.max(...list.map(i => i.id)) + 1;
+  return { id: nextId };
 }

@@ -1,14 +1,12 @@
+let items: { id: number; name: string }[] = [{ id: 1, name: '示例条目' }];
+
 export async function listItems() {
-  const res = await fetch('/api/items');
-  return res.json();
+  return items.slice();
 }
 
 export async function createItem(name: string) {
-  const res = await fetch('/api/items', {
-    method: 'POST',
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify({ name }),
-  });
-  return res.json();
+  const id = Math.max(...items.map(i => i.id)) + 1;
+  const it = { id, name };
+  items.push(it);
+  return { id };
 }
-

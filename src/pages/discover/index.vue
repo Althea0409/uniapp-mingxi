@@ -669,6 +669,3 @@ onMounted(async () => {
   }
 }
 </style>
-function onAvatarError(item: any) {
-item.avatar = defaultAvatarUrl;
-}
