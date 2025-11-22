@@ -70,8 +70,8 @@ const days = ref<any[]>([]);
 function genDays() {
   const { mon } = rangeOfWeek(baseDate.value);
   const arr = [] as any[];
-  const names = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-  for (let i = 0; i < 7; i++) {
+  const names = ['周一', '周二', '周三', '周四', '周五'];
+  for (let i = 0; i < 5; i++) {
     const d = new Date(mon);
     d.setDate(mon.getDate() + i);
     const full = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
