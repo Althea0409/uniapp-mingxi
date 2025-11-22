@@ -25,7 +25,15 @@ export async function listEvaluations(params: {
     if (v !== undefined && v !== null) usp.set(k, String(v));
   });
   const res = await fetch(`/api/evaluation${usp.toString() ? `?${usp.toString()}` : ''}`);
-  return res.json();
+  const ct = res.headers.get('content-type') || '';
+  const text = await res.text();
+  if (!ct.includes('application/json')) return [];
+  try {
+    const data = JSON.parse(text);
+    return Array.isArray(data) ? data as Evaluation[] : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function createEvaluation(payload: {
@@ -44,5 +52,14 @@ export async function createEvaluation(payload: {
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  return res.json();
+  const ct = res.headers.get('content-type') || '';
+  const text = await res.text();
+  if (!ct.includes('application/json')) return { id: 0 };
+  try {
+    const data = JSON.parse(text);
+    const id = typeof (data as any)?.id === 'number' ? (data as any).id : 0;
+    return { id };
+  } catch {
+    return { id: 0 };
+  }
 }
