@@ -1,98 +1,98 @@
 {
-	"pages": [
-		{
-			"path": "pages/auth/login",
-			"style": {
-				"navigationBarTitleText": "登录",
-				"navigationStyle": "custom"
-			}
-		},
-		{
-			"path": "pages/auth/register",
-			"style": {
-				"navigationBarTitleText": "注册"
-			}
-		},
-		{
-			"path": "pages/home/index",
-			"style": {
-				"navigationBarTitleText": "明蹊智慧学习",
-				"navigationBarBackgroundColor": "#2B46FE",
-				"navigationBarTextStyle": "white"
-			}
-		},
-		{
-			"path": "pages/study/index",
-			"style": {
-				"navigationBarTitleText": "学习中心"
-			}
-		},
-		{
-			"path": "pages/discover/index",
-			"style": {
-				"navigationBarTitleText": "发现"
-			}
-		},
+  "pages": [
+    {
+      "path": "pages/auth/login",
+      "style": {
+        "navigationBarTitleText": "登录",
+        "navigationStyle": "custom"
+      }
+    },
+    {
+      "path": "pages/auth/register",
+      "style": {
+        "navigationBarTitleText": "注册"
+      }
+    },
+    {
+      "path": "pages/home/index",
+      "style": {
+        "navigationBarTitleText": "明蹊智慧学习",
+        "navigationBarBackgroundColor": "#2B46FE",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/study/index",
+      "style": {
+        "navigationBarTitleText": "学习中心"
+      }
+    },
+    {
+      "path": "pages/discover/index",
+      "style": {
+        "navigationBarTitleText": "发现"
+      }
+    },
     {
       "path": "pages/discover/resource-detail",
       "style": {
         "navigationBarTitleText": "资源详情"
       }
     },
-		{
-			"path": "pages/profile/index",
-			"style": {
-				"navigationBarTitleText": "我的"
-			}
-		},
-		{
-			"path": "pages/schedule/index",
-			"style": {
-				"navigationBarTitleText": "我的课表"
-			}
-		},
-		{
-			"path": "pages/study/course-detail",
-			"style": {
-				"navigationBarTitleText": "课程详情"
-			}
-		},
-		{
-			"path": "pages/study/homework-detail",
-			"style": {
-				"navigationBarTitleText": "作业详情"
-			}
-		},
-		{
-			"path": "pages/study/preview-detail",
-			"style": {
-				"navigationBarTitleText": "课前预习"
-			}
-		},
-		{
-			"path": "pages/assistant/index",
-			"style": {
-				"navigationBarTitleText": "AI学习助手"
-			}
-		},
-		{
-			"path": "pages/plan/index",
-			"style": {
-				"navigationBarTitleText": "个性化学习路径"
-			}
-		},
-		{
-			"path": "pages/portrait/index",
-			"style": {
-				"navigationBarTitleText": "学生画像"
-			}
-		},
-		{
-			"path": "pages/evaluation/index",
-			"style": {
-				"navigationBarTitleText": "学习指标评估"
-			}
-		},
+    {
+      "path": "pages/profile/index",
+      "style": {
+        "navigationBarTitleText": "我的"
+      }
+    },
+    {
+      "path": "pages/schedule/index",
+      "style": {
+        "navigationBarTitleText": "我的课表"
+      }
+    },
+    {
+      "path": "pages/study/course-detail",
+      "style": {
+        "navigationBarTitleText": "课程详情"
+      }
+    },
+    {
+      "path": "pages/study/homework-detail",
+      "style": {
+        "navigationBarTitleText": "作业详情"
+      }
+    },
+    {
+      "path": "pages/study/preview-detail",
+      "style": {
+        "navigationBarTitleText": "课前预习"
+      }
+    },
+    {
+      "path": "pages/assistant/index",
+      "style": {
+        "navigationBarTitleText": "AI学习助手"
+      }
+    },
+    {
+      "path": "pages/plan/index",
+      "style": {
+        "navigationBarTitleText": "个性化学习路径"
+      }
+    },
+    {
+      "path": "pages/portrait/index",
+      "style": {
+        "navigationBarTitleText": "学生画像"
+      }
+    },
+    {
+      "path": "pages/evaluation/index",
+      "style": {
+        "navigationBarTitleText": "学习指标评估"
+      }
+    },
     {
       "path": "pages/achievement/index",
       "style": {
@@ -105,61 +105,67 @@
         "navigationBarTitleText": "成长档案"
       }
     },
-		{
-			"path": "pages/discover/discussion-detail",
-			"style": {
-				"navigationBarTitleText": "讨论详情"
-			}
-		},
-		{
-			"path": "pages/profile/settings",
-			"style": {
-				"navigationBarTitleText": "设置"
-			}
-		}
-	],
-	"globalStyle": {
-		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "明蹊智慧学习",
-		"navigationBarBackgroundColor": "#FFFFFF",
-		"backgroundColor": "#F7F8FC"
-	},
-	"tabBar": {
-		"color": "#999999",
-		"selectedColor": "#2B46FE",
-        "backgroundColor": "#FFFFFF",
-        "borderStyle": "white",
-        "list": [
-            {
-                "pagePath": "pages/study/index",
-                "text": "学习",
-                "iconPath": "static/tabbar/study.svg",
-                "selectedIconPath": "static/tabbar/study-active.svg"
-            },
-            {
-                "pagePath": "pages/discover/index",
-                "text": "发现",
-                "iconPath": "static/tabbar/discover.svg",
-                "selectedIconPath": "static/tabbar/discover-active.svg"
-            },
-            {
-                "pagePath": "pages/home/index",
-                "text": "首页",
-                "iconPath": "static/tabbar/home.svg",
-                "selectedIconPath": "static/tabbar/home-active.svg"
-            },
-            {
-                "pagePath": "pages/assistant/index",
-                "text": "对话",
-                "iconPath": "static/tabbar/assistant.svg",
-                "selectedIconPath": "static/tabbar/assistant-active.svg"
-            },
-            {
-                "pagePath": "pages/profile/index",
-                "text": "我的",
-                "iconPath": "static/tabbar/profile.svg",
-                "selectedIconPath": "static/tabbar/profile-active.svg"
-            }
-        ]
-	}
+    {
+      "path": "pages/review/index",
+      "style": {
+        "navigationBarTitleText": "复盘中心"
+      }
+    },
+    {
+      "path": "pages/discover/discussion-detail",
+      "style": {
+        "navigationBarTitleText": "讨论详情"
+      }
+    },
+    {
+      "path": "pages/profile/settings",
+      "style": {
+        "navigationBarTitleText": "设置"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "明蹊智慧学习",
+    "navigationBarBackgroundColor": "#FFFFFF",
+    "backgroundColor": "#F7F8FC"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#2B46FE",
+    "backgroundColor": "#FFFFFF",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/study/index",
+        "text": "学习",
+        "iconPath": "static/tabbar/study.svg",
+        "selectedIconPath": "static/tabbar/study-active.svg"
+      },
+      {
+        "pagePath": "pages/discover/index",
+        "text": "发现",
+        "iconPath": "static/tabbar/discover.svg",
+        "selectedIconPath": "static/tabbar/discover-active.svg"
+      },
+      {
+        "pagePath": "pages/home/index",
+        "text": "首页",
+        "iconPath": "static/tabbar/home.svg",
+        "selectedIconPath": "static/tabbar/home-active.svg"
+      },
+      {
+        "pagePath": "pages/assistant/index",
+        "text": "对话",
+        "iconPath": "static/tabbar/assistant.svg",
+        "selectedIconPath": "static/tabbar/assistant-active.svg"
+      },
+      {
+        "pagePath": "pages/profile/index",
+        "text": "我的",
+        "iconPath": "static/tabbar/profile.svg",
+        "selectedIconPath": "static/tabbar/profile-active.svg"
+      }
+    ]
+  }
 }

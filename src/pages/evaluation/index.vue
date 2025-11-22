@@ -67,10 +67,13 @@
       <Card>
         <view class="ai-section">
           <text class="ai-title">🤖 AI学习分析</text>
-          <text class="ai-text">• 你在数学学科表现优异，保持！\n• 英语学习时长略少，建议增加...\n• 课堂参与度有提升空间，可以...</text>
+          <text class="ai-text">{{ aiText }}</text>
           <Button text="生成学习计划建议" type="primary" size="large" @click="genPlan" />
+          <Button text="打开复盘中心" type="secondary" size="small" @click="goReviewCenter" />
         </view>
       </Card>
+
+
     </scroll-view>
   </view>
 </template>
@@ -210,6 +213,11 @@ function computeRadar(periodSel: string): number[] {
 const labels = ['知识掌握', '作业质量', '学习态度', '课堂参与', '自主学习'];
 const totalScore = ref(85);
 const surpass = ref(78);
+
+// AI分析文本
+const aiText = ref('• 点击下方按钮，生成你的本周学习计划建议');
+
+// 深度复盘模块已迁移到成长档案页
 
 function drawRadar() {
   try {
@@ -450,6 +458,10 @@ const genPlan = () => {
     appStore.showToast('生成失败', 'none');
   }
 };
+
+const goReviewCenter = () => {
+  uni.navigateTo({ url: '/pages/review/index' });
+};
 </script>
 
 <style lang="scss" scoped>
@@ -590,4 +602,3 @@ const genPlan = () => {
   line-height: 1.6;
 }
 </style>
-const aiText = ref('• 点击下方按钮，生成你的本周学习计划建议');

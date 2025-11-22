@@ -23,20 +23,20 @@
               <image class="user-avatar" :src="userStore.userAvatar" mode="aspectFill" />
               <view class="level-badge">Lv{{ userStore.userLevel }}</view>
             </view>
-            
+
             <view class="user-info">
               <view class="user-name-row">
                 <text class="user-name">{{ userStore.userName }}</text>
                 <text class="user-grade">{{ userInfo?.grade }} {{ userInfo?.class }}</text>
               </view>
-              
+
               <view class="exp-section">
                 <view class="exp-bar">
                   <view class="exp-progress" :style="{ width: `${userStore.userExp}%` }"></view>
                 </view>
                 <text class="exp-text">{{ userStore.userExp }}/100</text>
               </view>
-              
+
               <view class="user-stats">
                 <view class="stat-item" @tap="goToAchievement">
                   <text class="stat-value">{{ userStore.userPoints }}</text>
@@ -80,15 +80,11 @@
         <view class="section-header">
           <text class="section-title">快捷功能</text>
         </view>
-        
+
         <Card>
           <view class="quick-grid">
-            <view 
-              v-for="(action, index) in quickActions"
-              :key="index"
-              class="grid-item"
-              @tap="handleQuickAction(action)"
-            >
+            <view v-for="(action, index) in quickActions" :key="index" class="grid-item"
+              @tap="handleQuickAction(action)">
               <view class="grid-icon-wrap">
                 <text class="grid-icon">{{ action.icon }}</text>
                 <view v-if="action.badge > 0" class="grid-badge">{{ action.badge }}</view>
@@ -105,7 +101,7 @@
           <text class="section-title">本周学习数据</text>
           <text class="section-more" @tap="goToEvaluation">查看详情 →</text>
         </view>
-        
+
         <Card>
           <view class="dashboard-content">
             <!-- 环形进度图 -->
@@ -114,8 +110,8 @@
                 <!-- 背景圆环 -->
                 <view class="ring-bg"></view>
                 <!-- 进度圆环 -->
-                <view class="ring-progress" :style="{ 
-                  background: `conic-gradient(${progressGradient} ${studyProgress * 3.6}deg, transparent 0)` 
+                <view class="ring-progress" :style="{
+                  background: `conic-gradient(${progressGradient} ${studyProgress * 3.6}deg, transparent 0)`
                 }"></view>
                 <!-- 中心内容 -->
                 <view class="ring-center">
@@ -124,7 +120,7 @@
                 </view>
               </view>
             </view>
-            
+
             <!-- 数据指标 -->
             <view class="dashboard-stats">
               <view class="stat-row">
@@ -143,7 +139,7 @@
                   </view>
                 </view>
               </view>
-              
+
               <view class="stat-row">
                 <view class="stat-item-dash">
                   <text class="stat-icon-dash">✅</text>
@@ -171,45 +167,30 @@
           <text class="section-title">推荐课程</text>
           <text class="section-more" @tap="goToStudyCenter">查看更多 →</text>
         </view>
-        
-        <swiper 
-          class="course-swiper"
-          :indicator-dots="true"
-          :autoplay="true"
-          :interval="5000"
-          :duration="500"
-          :circular="true"
-          indicator-color="rgba(0,0,0,0.3)"
-          indicator-active-color="#2B46FE"
-        >
+
+        <swiper class="course-swiper" :indicator-dots="true" :autoplay="true" :interval="5000" :duration="500"
+          :circular="true" indicator-color="rgba(0,0,0,0.3)" indicator-active-color="#2B46FE">
           <swiper-item v-for="(course, index) in recommendCourses" :key="index">
             <view class="course-item" @tap="goToCourseDetail(course)">
               <Card custom-class="course-card">
                 <view class="course-cover-wrap">
-                  <image 
-                    class="course-cover" 
-                    :src="course.cover || '/static/logo.png'" 
-                    mode="aspectFill"
-                  />
+                  <image class="course-cover" :src="course.cover || '/static/logo.png'" mode="aspectFill" />
                   <view class="course-tag">
                     <text class="tag-text">{{ course.tag }}</text>
                   </view>
                 </view>
-                
+
                 <view class="course-info">
                   <text class="course-name">{{ course.name }}</text>
                   <text class="course-teacher">{{ course.teacher }} · {{ course.department }}</text>
-                  
+
                   <view class="course-progress-wrap">
                     <view class="progress-bar-small">
-                      <view 
-                        class="progress-fill" 
-                        :style="{ width: `${course.progress}%` }"
-                      ></view>
+                      <view class="progress-fill" :style="{ width: `${course.progress}%` }"></view>
                     </view>
                     <text class="progress-text">{{ course.progress }}%</text>
                   </view>
-                  
+
                   <view class="course-meta">
                     <text class="meta-item">📖 {{ course.chapter }}</text>
                     <text class="meta-item">⏰ {{ course.nextClass }}</text>
@@ -244,19 +225,19 @@ const appStore = useAppStore();
 // 状态
 const unreadCount = ref(3); // Mock未读消息数
 const encouragement = ref('');
-const encourageTypeText = computed(()=>{
+const encourageTypeText = computed(() => {
   const t = appStore.encourageType;
-  return t==='fatigue'?'休息提醒': t==='celebration'?'庆祝时刻': t==='daily'?'每日激励':'加油打气';
+  return t === 'fatigue' ? '休息提醒' : t === 'celebration' ? '庆祝时刻' : t === 'daily' ? '每日激励' : '加油打气';
 });
 const userInfo = computed(() => userStore.userInfo);
 
 // 快捷功能配置
 const quickActions = ref([
   {
-    icon: '📅',
-    label: '我的课表',
-    badge: 0,
-    url: '/pages/schedule/index'
+    icon: '📖',
+    label: '课前预习',
+    badge: 2,
+    url: '/pages/study/index?tab=preview'
   },
   {
     icon: '📝',
@@ -265,16 +246,16 @@ const quickActions = ref([
     url: '/pages/study/index?tab=homework'
   },
   {
-    icon: '📖',
-    label: '课前预习',
-    badge: 2,
-    url: '/pages/study/index?tab=preview'
-  },
-  {
     icon: '🧭',
     label: '学习路径',
     badge: 1,
     url: '/pages/plan/index'
+  },
+  {
+    icon: '📄',
+    label: '复盘中心',
+    badge: 0,
+    url: '/pages/review/index'
   }
 ]);
 
@@ -429,7 +410,7 @@ onMounted(() => {
   encouragement.value = appStore.getRandomEncouragement();
   // 加载推荐课程
   loadRecommendCourses();
-  
+
   // 检查用户信息
   if (!userStore.isLogin) {
     uni.reLaunch({
@@ -485,11 +466,11 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  
+
   .icon {
     font-size: 40rpx;
   }
-  
+
   .badge {
     position: absolute;
     top: -8rpx;
@@ -534,14 +515,14 @@ onMounted(() => {
 .user-avatar-wrap {
   position: relative;
   flex-shrink: 0;
-  
+
   .user-avatar {
     width: 120rpx;
     height: 120rpx;
     border-radius: 60rpx;
     border: none;
   }
-  
+
   .level-badge {
     position: absolute;
     bottom: -8rpx;
@@ -574,13 +555,13 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  
+
   .user-name {
     font-size: $font-size-xl;
     font-weight: bold;
     color: $text-white;
   }
-  
+
   .user-grade {
     font-size: $font-size-sm;
     color: rgba(255, 255, 255, 0.8);
@@ -594,7 +575,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  
+
   .exp-bar {
     flex: 1;
     height: 16rpx;
@@ -602,14 +583,14 @@ onMounted(() => {
     border-radius: 8rpx;
     overflow: hidden;
   }
-  
+
   .exp-progress {
     height: 100%;
     background: $accent-color;
     border-radius: 8rpx;
     transition: width 0.5s ease;
   }
-  
+
   .exp-text {
     font-size: $font-size-xs;
     color: rgba(255, 255, 255, 0.9);
@@ -622,25 +603,25 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 24rpx;
-  
+
   .stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4rpx;
   }
-  
+
   .stat-value {
     font-size: $font-size-lg;
     font-weight: bold;
     color: $text-white;
   }
-  
+
   .stat-label {
     font-size: $font-size-xs;
     color: rgba(255, 255, 255, 0.8);
   }
-  
+
   .stat-divider {
     width: 1rpx;
     height: 32rpx;
@@ -662,12 +643,12 @@ onMounted(() => {
   align-items: center;
   gap: 16rpx;
   padding: 16rpx 0;
-  
+
   .encouragement-icon {
     font-size: 40rpx;
     flex-shrink: 0;
   }
-  
+
   .encouragement-text {
     flex: 1;
     font-size: $font-size-base;
@@ -675,13 +656,13 @@ onMounted(() => {
     line-height: 1.6;
     font-weight: 500;
   }
-  
+
   .refresh-icon {
     font-size: 32rpx;
     flex-shrink: 0;
     cursor: pointer;
     transition: transform 0.3s ease;
-    
+
     &:active {
       transform: rotate(180deg);
     }
@@ -699,7 +680,7 @@ onMounted(() => {
   justify-content: space-between;
   margin-bottom: 16rpx;
   padding: 0 8rpx;
-  
+
   .section-title {
     font-size: $font-size-lg;
     font-weight: bold;
@@ -721,7 +702,7 @@ onMounted(() => {
   padding: 32rpx 16rpx;
   position: relative;
   transition: $transition-fast;
-  
+
   &:active {
     background-color: $bg-color;
     border-radius: $border-radius;
@@ -731,12 +712,12 @@ onMounted(() => {
 .grid-icon-wrap {
   position: relative;
   margin-bottom: 16rpx;
-  
+
   .grid-icon {
     font-size: 56rpx;
     display: block;
   }
-  
+
   .grid-badge {
     position: absolute;
     top: -8rpx;
@@ -765,7 +746,7 @@ onMounted(() => {
 // 学习指标仪表盘
 .dashboard-section {
   margin-bottom: 24rpx;
-  
+
   .section-more {
     font-size: $font-size-sm;
     color: $primary-color;
@@ -1010,35 +991,36 @@ onMounted(() => {
 </style>
 
 function detectSubject(name: string): string {
-  if (!name) return '综合';
-  if (name.includes('语文')) return '语文';
-  if (name.includes('数学')) return '数学';
-  if (name.includes('英语')) return '英语';
-  if (name.includes('科学')) return '科学';
-  if (name.includes('历史与社会')) return '历史与社会';
-  return '综合';
+if (!name) return '综合';
+if (name.includes('语文')) return '语文';
+if (name.includes('数学')) return '数学';
+if (name.includes('英语')) return '英语';
+if (name.includes('科学')) return '科学';
+if (name.includes('历史与社会')) return '历史与社会';
+return '综合';
 }
 
 function getCoverBySubject(subject: string): string {
-  switch (subject) {
-    case '语文':
-      return '/static/course/chinese.svg';
-    case '数学':
-      return '/static/course/math.svg';
-    case '英语':
-      return '/static/course/english.svg';
-    case '科学':
-      return '/static/course/science.svg';
-    case '历史与社会':
-      return '/static/course/history.svg';
-    default:
-      return '/static/logo.png';
-  }
+switch (subject) {
+case '语文':
+return '/static/course/chinese.svg';
+case '数学':
+return '/static/course/math.svg';
+case '英语':
+return '/static/course/english.svg';
+case '科学':
+return '/static/course/science.svg';
+case '历史与社会':
+return '/static/course/history.svg';
+default:
+return '/static/logo.png';
+}
 }
 
-.encourage-modal { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: $z-index-modal; }
-.encourage-box { background: $card-bg; border-radius: $border-radius; padding: 32rpx; width: 80%; box-shadow: $shadow-card; display: flex; flex-direction: column; gap: 16rpx; }
+.encourage-modal { position: fixed; left: 0; right: 0; top: 0; bottom: 0; background: rgba(0,0,0,0.4); display: flex;
+align-items: center; justify-content: center; z-index: $z-index-modal; }
+.encourage-box { background: $card-bg; border-radius: $border-radius; padding: 32rpx; width: 80%; box-shadow:
+$shadow-card; display: flex; flex-direction: column; gap: 16rpx; }
 .encourage-type { font-size: $font-size-sm; color: $text-secondary; }
 .encourage-text-large { font-size: $font-size-lg; color: $text-primary; font-weight: bold; }
 .encourage-actions { display: flex; justify-content: flex-end; }
-
