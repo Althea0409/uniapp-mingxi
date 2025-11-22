@@ -12,10 +12,14 @@
     <scroll-view class="content-area" scroll-y>
       <!-- 课堂讨论 -->
       <view v-if="currentTab === 0" class="discussion-list">
+        <view v-if="discussions.length === 0" class="empty-state">
+          <text class="empty-icon">💬</text>
+          <text class="empty-text">暂无讨论，快来发起第一个讨论吧！</text>
+        </view>
         <Card v-for="item in discussions" :key="item.id" @click="goToDiscussionDetail(item)">
           <view class="discussion-item">
             <view class="discussion-header">
-              <image class="avatar" :src="userStore.userAvatar" mode="aspectFill" />
+              <image class="avatar" :src="resolveAvatar(item.avatar)" mode="aspectFill" @error="onAvatarError(item)" />
               <view class="user-info">
                 <text class="username">{{ item.username }}</text>
                 <text class="time">{{ item.time }}</text>
@@ -93,6 +97,7 @@ import { ref, onMounted, computed } from 'vue';
 import { useAppStore } from '@/stores/app';
 import { useCourseStore } from '@/stores/course';
 import { useUserStore } from '@/stores/user';
+import { storage, StorageKeys } from '@/utils/storage';
 import Card from '@/components/common/Card.vue';
 import achievementsJson from '@/mock/achievements.json';
 import portraitData from '@/mock/portrait.json';
@@ -129,10 +134,11 @@ const loadDiscussions = () => {
       time: '2小时前',
       isHot: true,
       title: '第8章函数题目讨论',
-      content: '关于函数的单调性判断，大家有什么好的技巧吗？题目5特别难...',
+      content: '关于函数的单调性判断，大家有什么好的技巧吗？题目5特别难，我做了好几遍都没做出来，求大神指点！',
       views: 236,
       replies: 18,
-      likes: 42
+      likes: 42,
+      tags: ['数学', '函数', '求助']
     },
     {
       id: 'd002',
@@ -141,10 +147,11 @@ const loadDiscussions = () => {
       time: '5小时前',
       isHot: false,
       title: '物理实验报告格式分享',
-      content: '整理了一份详细的物理实验报告模板，包含所有必要部分...',
+      content: '整理了一份详细的物理实验报告模板，包含所有必要部分：实验目的、原理、步骤、数据记录、结果分析等，需要的同学可以私信我！',
       views: 158,
       replies: 12,
-      likes: 28
+      likes: 28,
+      tags: ['物理', '实验', '分享']
     },
     {
       id: 'd003',
@@ -153,15 +160,108 @@ const loadDiscussions = () => {
       time: '昨天',
       isHot: true,
       title: '英语阅读理解技巧总结',
-      content: '分享一下我做阅读理解的方法，希望对大家有帮助...',
+      content: '分享一下我做阅读理解的方法，希望对大家有帮助。主要是先看题目，再读文章，这样效率会高很多。还有就是要抓住关键词，理解文章主旨。',
       views: 412,
       replies: 35,
-      likes: 87
+      likes: 87,
+      tags: ['英语', '阅读', '技巧']
+    },
+    {
+      id: 'd004',
+      avatar: 'static/avatar/default.svg',
+      username: '数学课代表',
+      time: '昨天',
+      isHot: false,
+      title: '一元一次方程解题步骤详解',
+      content: '很多同学问一元一次方程怎么解，我总结了一下标准步骤：1.去分母 2.去括号 3.移项 4.合并同类项 5.系数化为1。每一步都要仔细检查！',
+      views: 189,
+      replies: 15,
+      likes: 56,
+      tags: ['数学', '方程', '学习技巧']
+    },
+    {
+      id: 'd005',
+      avatar: 'static/avatar/default.svg',
+      username: '语文爱好者',
+      time: '2天前',
+      isHot: false,
+      title: '古诗词背诵方法分享',
+      content: '我发现了一个很好的背诵方法：先理解诗词的意思和背景，然后分段记忆，最后整体串联。这样记得更牢固，不容易忘记。',
+      views: 124,
+      replies: 8,
+      likes: 32,
+      tags: ['语文', '古诗词', '背诵']
+    },
+    {
+      id: 'd006',
+      avatar: 'static/avatar/default.svg',
+      username: '科学探索者',
+      time: '2天前',
+      isHot: true,
+      title: '化学元素周期表记忆口诀',
+      content: '分享一个记忆元素周期表的口诀，特别有用！氢氦锂铍硼，碳氮氧氟氖...这样记起来快多了，大家试试看！',
+      views: 298,
+      replies: 22,
+      likes: 71,
+      tags: ['化学', '元素周期表', '记忆方法']
+    },
+    {
+      id: 'd007',
+      avatar: 'static/avatar/default.svg',
+      username: '历史迷',
+      time: '3天前',
+      isHot: false,
+      title: '如何整理历史时间线？',
+      content: '历史事件太多，时间线容易搞混。我建议用时间轴的方式整理，把重要事件按时间顺序排列，再标注关键信息，这样复习起来一目了然。',
+      views: 156,
+      replies: 11,
+      likes: 39,
+      tags: ['历史', '学习方法', '整理']
+    },
+    {
+      id: 'd008',
+      avatar: 'static/avatar/default.svg',
+      username: '地理小达人',
+      time: '3天前',
+      isHot: false,
+      title: '中国地理知识速记',
+      content: '中国有34个省级行政区，包括23个省、5个自治区、4个直辖市、2个特别行政区。可以用地图配合记忆，效果更好！',
+      views: 203,
+      replies: 14,
+      likes: 48,
+      tags: ['地理', '知识', '记忆']
+    },
+    {
+      id: 'd009',
+      avatar: 'static/avatar/default.svg',
+      username: '生物观察员',
+      time: '4天前',
+      isHot: false,
+      title: '植物细胞结构图绘制技巧',
+      content: '画植物细胞结构图时，要注意各个细胞器的位置和形状。细胞壁要画得厚一些，叶绿体要画成椭圆形，细胞核要画在中间位置。',
+      views: 167,
+      replies: 9,
+      likes: 35,
+      tags: ['生物', '细胞', '绘图']
+    },
+    {
+      id: 'd010',
+      avatar: 'static/avatar/default.svg',
+      username: '作业互助组',
+      time: '4天前',
+      isHot: false,
+      title: '周末作业讨论组',
+      content: '这周末的作业有点多，大家进度如何？数学作业第3题有点难，有做出来的同学吗？可以一起讨论一下解题思路。',
+      views: 145,
+      replies: 19,
+      likes: 41,
+      tags: ['作业', '互助', '讨论']
     }
   ];
   
   // 从本地存储加载新发布的讨论
   const stored = storage.get(StorageKeys.DISCUSSIONS) || [];
+  // 合并数据，新发布的在前，模拟数据在后
   discussions.value = [...stored, ...mock];
 };
 
@@ -444,6 +544,30 @@ onMounted(async () => {
 }
 
 // 讨论列表
+.discussion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 120rpx 0;
+}
+
+.empty-icon {
+  font-size: 120rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: $font-size-base;
+  color: $text-placeholder;
+}
+
 .discussion-item {
   .discussion-header {
     display: flex;
